@@ -337,6 +337,16 @@
   .marker-done{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 24px; cursor: pointer; }
   .marker-done input{ accent-color: var(--yellow); width: 14px; height: 14px; }
 
+  /* ===== Exemplo extra + desafio prático ===== */
+  .extra-h3{ font-family: 'Space Grotesk', sans-serif; font-size: 16.5px; color: var(--text); margin: 30px 0 4px 0; }
+  .challenge-box{ max-width: 660px; margin-top: 28px; border: 1px solid var(--blue-dim); border-radius: 8px; padding: 20px 22px 22px 22px; background: linear-gradient(180deg, rgba(75,139,190,0.06), transparent 60%); }
+  .challenge-head{ font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--blue-bright); letter-spacing: .02em; margin-bottom: 8px; }
+  .challenge-desc{ font-size: 14.5px; color: #d7dbe2; margin-bottom: 4px; }
+  .solution-toggle{ margin-top: 4px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: var(--radius); padding: 8px 14px; font-size: 12.5px; font-family: 'JetBrains Mono', monospace; cursor: pointer; }
+  .solution-toggle:hover{ border-color: var(--yellow); color: var(--yellow); }
+  .solution-box{ margin-top: 12px; }
+  .solution-box pre{ margin: 0; background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cfe3d8; overflow-x: auto; white-space: pre-wrap; }
+
   footer{ padding: 50px 56px 100px 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); background: linear-gradient(180deg, rgba(75,139,190,0.04), transparent 40%); }
   footer .fmark{ font-family: 'JetBrains Mono', monospace; color: var(--yellow); }
   footer .reslist{ margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 640px; }
@@ -486,9 +496,22 @@
     .cert-name{ min-width: 160px; font-size: 20px; }
   }
 
+
+  /* ===== Menu de troca de curso ===== */
+  .course-switcher{ background: var(--panel); border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .cs-inner{ display:flex; align-items:center; gap:6px; padding: 8px 16px; white-space:nowrap; }
+  .cs-label{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-right:4px; }
+  .cs-item{ font-family:'JetBrains Mono',monospace; font-size:12.5px; padding:5px 10px; border-radius: var(--radius); color:var(--muted); text-decoration:none; border:1px solid transparent; display:inline-flex; align-items:center; gap:5px; }
+  .cs-item:hover{ color:var(--text); border-color: var(--line); }
+  .cs-item.active{ color:#14181f; background: var(--yellow); font-weight:600; }
+  .cs-item.cs-soon{ opacity:.5; cursor:default; }
+  .cs-soon-tag{ font-size:9.5px; color:var(--muted); }
+  .cs-item.active .cs-soon-tag{ color:#14181f; }
+
 </style>
 </head>
 <body>
+<div class="course-switcher"><div class="cs-inner"><span class="cs-label">cursos:</span><a class="cs-item active" href="curso_python.html">🐍 Python</a><a class="cs-item" href="curso_html.html">&lt;/&gt; HTML</a><span class="cs-item cs-soon" title="Em breve">🎨 CSS <span class="cs-soon-tag">em breve</span></span><span class="cs-item cs-soon" title="Em breve">⚡ JavaScript <span class="cs-soon-tag">em breve</span></span><span class="cs-item cs-soon" title="Em breve">☕ Java <span class="cs-soon-tag">em breve</span></span></div></div>
 <div class="scrollbar" id="scrollbar"></div>
 <div class="topbar">
 <span class="tmark">&gt;&gt;&gt; curso_python</span>
@@ -652,7 +675,36 @@
 <div class="out"><span class="lbl">SAÍDA</span>Olá, mundo!
 Estou aprendendo Python.</div>
 <div class="callout"><b>Dica:</b> a função <code>print()</code> mostra algo na tela. É a primeira ferramenta que todo programador Python usa.</div>
-<div class="quiz" data-qtotal="2" data-quiz="intro">
+<div class="callout"><b>Aprofundando:</b> Quando você roda um arquivo <code>.py</code>, o Python lê o código de cima para baixo, linha por linha, e executa cada instrução na ordem em que aparece — por isso a ordem das linhas importa.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-intro">
+        <div class="cb-top"><span class="cb-title">mais_prints.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">nome = "Mundo"
+print("Olá,", nome, "!")
+print("Isso é uma", "frase", "montada", "com", "várias", "partes")
+print(1, 2, 3, sep=" - ")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva um programa que imprima seu nome e uma frase de boas-vindas em duas linhas separadas, usando dois <code>print()</code>.</p>
+        <div class="codeblock" data-cbid="challenge-intro">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># escreva seu código abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>nome = "Ana"
+print(nome)
+print("Bem-vindo(a) ao curso de Python!")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="intro">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">O que organiza os blocos de código em Python, já que não existem chaves <code>{ }</code>?</p>
@@ -661,7 +713,7 @@ Estou aprendendo Python.</div>
 <button class="opt" data-correct="true">A indentação (espaços no início da linha)</button>
 <button class="opt" data-correct="false">Parênteses ao redor do bloco</button>
 </div>
-<button class="hint-btn" data-hint="Pense em como o Python sabe onde um bloco `if` termina sem usar chaves." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense em como o Python sabe onde um bloco `if` termina sem usar chaves.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -672,7 +724,7 @@ Estou aprendendo Python.</div>
 <button class="opt" data-correct="false">input()</button>
 <button class="opt" data-correct="false">return</button>
 </div>
-<button class="hint-btn" data-hint="É a primeira função que você usou neste capítulo." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É a primeira função que você usou neste capítulo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -708,7 +760,42 @@ esta_estudando = <span class="tok-kw">True</span>   <span class="tok-com"># bool
 <div class="out"><span class="lbl">SAÍDA</span>Ana 28 1.68 True
 &lt;class 'int'&gt;</div>
 <div class="callout"><b>Dica:</b> use <code>type(algo)</code> sempre que tiver dúvida sobre o tipo de uma variável.</div>
-<div class="quiz" data-qtotal="2" data-quiz="variaveis">
+<div class="callout"><b>Aprofundando:</b> Você pode converter um valor de um tipo para outro usando funções como <code>int()</code>, <code>float()</code> e <code>str()</code> — isso é chamado de conversão de tipo (type casting) e é muito comum ao ler dados digitados pelo usuário, que sempre chegam como texto.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-variaveis">
+        <div class="cb-top"><span class="cb-title">conversao_tipos.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">idade_texto = "28"
+idade_numero = int(idade_texto)
+
+print(idade_numero + 1)
+print(type(idade_texto), type(idade_numero))
+
+preco = 19.9
+print(str(preco) + " reais")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Crie três variáveis — <code>nome</code>, <code>idade</code> e <code>cidade</code> — e imprima uma frase única juntando as três com uma f-string.</p>
+        <div class="codeblock" data-cbid="challenge-variaveis">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># crie suas variáveis aqui
+# depois monte e imprima a frase com f-string
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>nome = "Carlos"
+idade = 30
+cidade = "Recife"
+print(f"{nome}, {idade} anos, mora em {cidade}.")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="variaveis">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Qual é o tipo do valor <code>3.14</code>?</p>
@@ -717,7 +804,7 @@ esta_estudando = <span class="tok-kw">True</span>   <span class="tok-com"># bool
 <button class="opt" data-correct="true">float</button>
 <button class="opt" data-correct="false">str</button>
 </div>
-<button class="hint-btn" data-hint="Números com casas decimais pertencem a esse tipo." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Números com casas decimais pertencem a esse tipo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -728,7 +815,7 @@ esta_estudando = <span class="tok-kw">True</span>   <span class="tok-com"># bool
 <button class="opt" data-correct="false">str</button>
 <button class="opt" data-correct="false">int</button>
 </div>
-<button class="hint-btn" data-hint="É o tipo usado em decisões, como True e False." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É o tipo usado em decisões, como True e False.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -763,7 +850,41 @@ b = 3
 1
 True
 True</div>
-<div class="quiz" data-qtotal="2" data-quiz="operadores">
+<div class="callout"><b>Aprofundando:</b> Assim como na matemática, Python segue uma ordem de precedência entre operadores: multiplicação e divisão acontecem antes de soma e subtração. Use parênteses <code>( )</code> sempre que quiser deixar a ordem explícita e evitar erros de leitura.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-operadores">
+        <div class="cb-top"><span class="cb-title">precedencia.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">resultado1 = 2 + 3 * 4
+resultado2 = (2 + 3) * 4
+
+print(resultado1)
+print(resultado2)
+print(10 - 2 ** 2)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Calcule a área de um retângulo de lados 8 e 5, e imprima o resultado em uma frase formatada.</p>
+        <div class="codeblock" data-cbid="challenge-operadores">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">base = 8
+altura = 5
+# calcule a área e imprima o resultado
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>base = 8
+altura = 5
+area = base * altura
+print(f"A área do retângulo é {area}")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="operadores">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Qual o resultado de <code>10 % 3</code> em Python?</p>
@@ -772,7 +893,7 @@ True</div>
 <button class="opt" data-correct="false">3.33</button>
 <button class="opt" data-correct="true">1</button>
 </div>
-<button class="hint-btn" data-hint="O operador % devolve o resto da divisão, não o resultado dela." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="O operador % devolve o resto da divisão, não o resultado dela.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -783,7 +904,7 @@ True</div>
 <button class="opt" data-correct="true">//</button>
 <button class="opt" data-correct="false">%</button>
 </div>
-<button class="hint-btn" data-hint="É formado por duas barras seguidas." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É formado por duas barras seguidas.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -816,7 +937,43 @@ mensagem = <span class="tok-str">f"{nome} fez {pontos} pontos!"</span>
 CARLOS
 6</div>
 <div class="callout"><b>Dica:</b> <code>len()</code> conta quantos caracteres tem o texto — muito útil para validar formulários e entradas de usuário.</div>
-<div class="quiz" data-qtotal="2" data-quiz="strings">
+<div class="callout"><b>Aprofundando:</b> Strings em Python podem ser "fatiadas" com colchetes, como listas: <code>texto[0:3]</code> pega os três primeiros caracteres. Isso é chamado de slicing e funciona porque, por baixo dos panos, uma string é uma sequência ordenada de caracteres.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-strings">
+        <div class="cb-top"><span class="cb-title">fatiando_texto.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">palavra = "programacao"
+
+print(palavra[0:4])
+print(palavra[-4:])
+print(palavra[::-1])
+print(palavra.replace("a", "@"))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva uma função que receba uma palavra e devolva ela invertida (de trás para frente).</p>
+        <div class="codeblock" data-cbid="challenge-strings">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">def inverter(palavra):
+    # complete aqui
+    pass
+
+print(inverter("python"))
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>def inverter(palavra):
+    return palavra[::-1]
+
+print(inverter("python"))</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="strings">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">O que faz <code>f"{nome} tem {idade} anos"</code>?</p>
@@ -825,7 +982,7 @@ CARLOS
 <button class="opt" data-correct="false">Cria uma lista com nome e idade</button>
 <button class="opt" data-correct="false">Compara nome com idade</button>
 </div>
-<button class="hint-btn" data-hint="Pense no que acontece quando você coloca um nome de variável entre chaves dentro do texto." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense no que acontece quando você coloca um nome de variável entre chaves dentro do texto.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -836,7 +993,7 @@ CARLOS
 <button class="opt" data-correct="false">python</button>
 <button class="opt" data-correct="false">Python</button>
 </div>
-<button class="hint-btn" data-hint="upper() deixa todas as letras em maiúsculas." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="upper() deixa todas as letras em maiúsculas.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -867,7 +1024,56 @@ CARLOS
     <span class="tok-fn">print</span>(<span class="tok-str">"Precisa estudar mais"</span>)</pre>
 </div>
 <div class="out"><span class="lbl">SAÍDA</span>Aprovado</div>
-<div class="quiz" data-qtotal="2" data-quiz="condicionais">
+<div class="callout"><b>Aprofundando:</b> É possível combinar várias condições usando <code>and</code> (todas precisam ser verdadeiras) e <code>or</code> (basta uma ser verdadeira). Condicionais também podem ficar "aninhadas", ou seja, um <code>if</code> dentro de outro <code>if</code>.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-condicionais">
+        <div class="cb-top"><span class="cb-title">condicoes_combinadas.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">idade = 20
+tem_carteira = True
+
+if idade &gt;= 18 and tem_carteira:
+    print("Pode dirigir")
+else:
+    print("Não pode dirigir")
+
+nota = 5
+if nota &lt; 0 or nota &gt; 10:
+    print("Nota inválida")
+else:
+    print("Nota válida")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva um programa que receba um número e diga se ele é positivo, negativo ou zero, e também se é par ou ímpar.</p>
+        <div class="codeblock" data-cbid="challenge-condicionais">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">numero = -7
+# escreva as condições abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>numero = -7
+
+if numero &gt; 0:
+    print("Positivo")
+elif numero &lt; 0:
+    print("Negativo")
+else:
+    print("Zero")
+
+if numero % 2 == 0:
+    print("Par")
+else:
+    print("Ímpar")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="condicionais">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Se <code>nota = 9.5</code> no exemplo acima, o que é impresso?</p>
@@ -876,7 +1082,7 @@ CARLOS
 <button class="opt" data-correct="false">Aprovado</button>
 <button class="opt" data-correct="false">Precisa estudar mais</button>
 </div>
-<button class="hint-btn" data-hint="Repare que 9.5 é maior ou igual a 9." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Repare que 9.5 é maior ou igual a 9.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -887,7 +1093,7 @@ CARLOS
 <button class="opt" data-correct="false">o mesmo que else</button>
 <button class="opt" data-correct="false">o fim do bloco condicional</button>
 </div>
-<button class="hint-btn" data-hint="É um meio-termo entre if e else." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É um meio-termo entre if e else.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -923,7 +1129,50 @@ Ainda contando...
 Ainda contando...
 Ainda contando...</div>
 <div class="callout warn"><b>Cuidado:</b> se você esquecer de aumentar o contador dentro do <code>while</code>, o laço nunca termina — isso se chama loop infinito.</div>
-<div class="quiz" data-qtotal="2" data-quiz="loops">
+<div class="callout"><b>Aprofundando:</b> Dentro de um laço, <code>break</code> interrompe a repetição imediatamente, e <code>continue</code> pula para a próxima repetição sem executar o restante do bloco. São ótimos para casos como "pare de procurar assim que encontrar" ou "ignore os itens inválidos".</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-loops">
+        <div class="cb-top"><span class="cb-title">break_continue.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">for numero in range(1, 10):
+    if numero == 5:
+        break
+    print(numero)
+
+print("---")
+
+for numero in range(1, 6):
+    if numero % 2 == 0:
+        continue
+    print(numero)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Use um <code>while</code> para somar todos os números de 1 até 10 e imprima o resultado final.</p>
+        <div class="codeblock" data-cbid="challenge-loops">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">soma = 0
+contador = 1
+# complete o laço while abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>soma = 0
+contador = 1
+
+while contador &lt;= 10:
+    soma += contador
+    contador += 1
+
+print(soma)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="loops">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Quantas vezes <code>range(1, 4)</code> repete o laço <code>for</code>?</p>
@@ -932,7 +1181,7 @@ Ainda contando...</div>
 <button class="opt" data-correct="true">3 vezes</button>
 <button class="opt" data-correct="false">1 vez</button>
 </div>
-<button class="hint-btn" data-hint="range(1, 4) vai do 1 até o 4, sem incluir o 4." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="range(1, 4) vai do 1 até o 4, sem incluir o 4.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -943,7 +1192,7 @@ Ainda contando...</div>
 <button class="opt" data-correct="false">usar for em vez de while</button>
 <button class="opt" data-correct="false">colocar um print dentro do laço</button>
 </div>
-<button class="hint-btn" data-hint="Pense em uma condição que nunca deixa de ser verdadeira." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense em uma condição que nunca deixa de ser verdadeira.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -979,7 +1228,46 @@ frutas.append(<span class="tok-str">"pera"</span>)  <span class="tok-com"># adic
 - banana
 - uva
 - pera</div>
-<div class="quiz" data-qtotal="2" data-quiz="listas">
+<div class="callout"><b>Aprofundando:</b> Listas também aceitam slicing, igual às strings — <code>lista[1:3]</code> pega uma "fatia" da lista. E funções como <code>sorted()</code>, <code>max()</code> e <code>min()</code> facilitam tarefas comuns sem precisar escrever um laço manualmente.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-listas">
+        <div class="cb-top"><span class="cb-title">mais_listas.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = [5, 2, 9, 1, 7]
+
+print(sorted(numeros))
+print(max(numeros))
+print(min(numeros))
+print(numeros[1:3])
+print(sum(numeros) / len(numeros))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Dada uma lista de números, escreva um código que encontre e imprima o maior valor — sem usar a função pronta <code>max()</code>, apenas com um laço.</p>
+        <div class="codeblock" data-cbid="challenge-listas">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = [4, 17, 2, 9, 23, 6]
+maior = numeros[0]
+# complete o laço abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>numeros = [4, 17, 2, 9, 23, 6]
+maior = numeros[0]
+
+for n in numeros:
+    if n &gt; maior:
+        maior = n
+
+print(maior)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="listas">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Em <code>frutas = ["maçã", "banana", "uva"]</code>, o que é <code>frutas[1]</code>?</p>
@@ -988,7 +1276,7 @@ frutas.append(<span class="tok-str">"pera"</span>)  <span class="tok-com"># adic
 <button class="opt" data-correct="true">banana</button>
 <button class="opt" data-correct="false">uva</button>
 </div>
-<button class="hint-btn" data-hint="As listas começam a contar a partir do índice 0." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="As listas começam a contar a partir do índice 0.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -999,7 +1287,7 @@ frutas.append(<span class="tok-str">"pera"</span>)  <span class="tok-com"># adic
 <button class="opt" data-correct="false">.add()</button>
 <button class="opt" data-correct="false">.push()</button>
 </div>
-<button class="hint-btn" data-hint="Foi o método usado no exemplo para adicionar " pera"."="" type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Foi o método usado no exemplo para adicionar &quot;pera&quot;.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1032,7 +1320,47 @@ pessoa[<span class="tok-str">"idade"</span>] = 32   <span class="tok-com"># atua
 </div>
 <div class="out"><span class="lbl">SAÍDA</span>Júlia
 {'nome': 'Júlia', 'idade': 32, 'cidade': 'São Paulo'}</div>
-<div class="quiz" data-qtotal="2" data-quiz="dicionarios">
+<div class="callout"><b>Aprofundando:</b> O método <code>.items()</code> permite percorrer um dicionário obtendo a chave e o valor ao mesmo tempo em um laço <code>for</code>. Já <code>.get("chave")</code> busca um valor sem gerar erro caso a chave não exista.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-dicionarios">
+        <div class="cb-top"><span class="cb-title">percorrendo_dict.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">precos = {"maçã": 3.5, "banana": 2.0, "uva": 8.9}
+
+for fruta, preco in precos.items():
+    print(f"{fruta}: R$ {preco}")
+
+print(precos.get("pera", "não encontrado"))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Dada uma lista de palavras, monte um dicionário que conte quantas vezes cada palavra aparece.</p>
+        <div class="codeblock" data-cbid="challenge-dicionarios">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">palavras = ["python", "codigo", "python", "dado", "codigo", "python"]
+contagem = {}
+# complete o laço abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>palavras = ["python", "codigo", "python", "dado", "codigo", "python"]
+contagem = {}
+
+for palavra in palavras:
+    if palavra in contagem:
+        contagem[palavra] += 1
+    else:
+        contagem[palavra] = 1
+
+print(contagem)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="dicionarios">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Como você acessa o valor associado à chave <code>"nome"</code> em <code>pessoa</code>?</p>
@@ -1041,7 +1369,7 @@ pessoa[<span class="tok-str">"idade"</span>] = 32   <span class="tok-com"># atua
 <button class="opt" data-correct="true">pessoa["nome"]</button>
 <button class="opt" data-correct="false">pessoa.nome()</button>
 </div>
-<button class="hint-btn" data-hint="Dicionários usam colchetes, mas com uma chave (texto), não uma posição." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Dicionários usam colchetes, mas com uma chave (texto), não uma posição.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1052,7 +1380,7 @@ pessoa[<span class="tok-str">"idade"</span>] = 32   <span class="tok-com"># atua
 <button class="opt" data-correct="false">dicionario.add("nova_chave", valor)</button>
 <button class="opt" data-correct="false">dicionario + "nova_chave"</button>
 </div>
-<button class="hint-btn" data-hint="É a mesma sintaxe usada para atualizar uma chave existente." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É a mesma sintaxe usada para atualizar uma chave existente.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1090,7 +1418,42 @@ pares = [n <span class="tok-kw">for</span> n <span class="tok-kw">in</span> nume
 <div class="out"><span class="lbl">SAÍDA</span>[2, 4, 6, 8, 10]
 [2, 4]</div>
 <div class="callout"><b>Dica:</b> se a linha ficar difícil de ler, volte para o <code>for</code> tradicional — clareza sempre vence esperteza.</div>
-<div class="quiz" data-qtotal="2" data-quiz="comprehensions">
+<div class="callout"><b>Aprofundando:</b> Também existem dict comprehensions, que criam dicionários da mesma forma compacta: <code>{chave: valor for item in lista}</code>. O princípio é o mesmo das list comprehensions, só muda o tipo de coleção criada.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-comprehensions">
+        <div class="cb-top"><span class="cb-title">dict_comprehension.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = [1, 2, 3, 4, 5]
+
+quadrados = {n: n ** 2 for n in numeros}
+print(quadrados)
+
+maiusculas = [p.upper() for p in ["python", "código", "dados"]]
+print(maiusculas)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Use uma list comprehension para gerar uma lista com o quadrado de todos os números pares entre 1 e 10.</p>
+        <div class="codeblock" data-cbid="challenge-comprehensions">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = range(1, 11)
+# escreva a list comprehension abaixo
+resultado = []
+print(resultado)
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>numeros = range(1, 11)
+resultado = [n ** 2 for n in numeros if n % 2 == 0]
+print(resultado)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="comprehensions">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">O que <code>[n for n in numeros if n % 2 == 0]</code> retorna?</p>
@@ -1099,7 +1462,7 @@ pares = [n <span class="tok-kw">for</span> n <span class="tok-kw">in</span> nume
 <button class="opt" data-correct="true">Apenas os números pares da lista</button>
 <button class="opt" data-correct="false">A soma de todos os números</button>
 </div>
-<button %="" 2='0"' class="hint-btn" colchetes."="" data-hint="Repare na condição " dentro="" dos="" if="" n="" type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Repare na condição &quot;if n % 2 == 0&quot; dentro dos colchetes.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1110,7 +1473,7 @@ pares = [n <span class="tok-kw">for</span> n <span class="tok-kw">in</span> nume
 <button class="opt" data-correct="false">[n for n in numeros * 2]</button>
 <button class="opt" data-correct="false">[numeros * 2]</button>
 </div>
-<button class="hint-btn" data-hint="A expressão antes do for é o que vai para a nova lista." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="A expressão antes do for é o que vai para a nova lista.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1140,7 +1503,50 @@ resultado = calcular_media(8, 6)
 </div>
 <div class="out"><span class="lbl">SAÍDA</span>Média: 7.0</div>
 <div class="callout"><b>Dica:</b> dê nomes de função que descrevam a ação, como <code>calcular_media</code> — isso torna o código autoexplicativo.</div>
-<div class="quiz" data-qtotal="2" data-quiz="funcoes">
+<div class="callout"><b>Aprofundando:</b> Parâmetros podem ter valores padrão (<code>def saudacao(nome="visitante")</code>), o que os torna opcionais na hora de chamar a função. E <code>*args</code> permite que uma função receba uma quantidade variável de argumentos.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-funcoes">
+        <div class="cb-top"><span class="cb-title">parametros_avancados.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">def saudacao(nome="visitante"):
+    print(f"Olá, {nome}!")
+
+saudacao()
+saudacao("Marina")
+
+def somar_tudo(*numeros):
+    return sum(numeros)
+
+print(somar_tudo(1, 2, 3, 4))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva uma função <code>fatorial(n)</code> que calcule o fatorial de um número usando um laço.</p>
+        <div class="codeblock" data-cbid="challenge-funcoes">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">def fatorial(n):
+    # complete aqui
+    pass
+
+print(fatorial(5))
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>def fatorial(n):
+    resultado = 1
+    for i in range(1, n + 1):
+        resultado *= i
+    return resultado
+
+print(fatorial(5))</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="funcoes">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">O que a palavra-chave <code>return</code> faz dentro de uma função?</p>
@@ -1149,7 +1555,7 @@ resultado = calcular_media(8, 6)
 <button class="opt" data-correct="true">Devolve um valor para quem chamou a função</button>
 <button class="opt" data-correct="false">Apaga a função da memória</button>
 </div>
-<button class="hint-btn" data-hint="Sem essa palavra-chave, a função não devolve nada para quem a chamou." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Sem essa palavra-chave, a função não devolve nada para quem a chamou.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1160,7 +1566,7 @@ resultado = calcular_media(8, 6)
 <button class="opt" data-correct="false">ela gera um erro</button>
 <button class="opt" data-correct="false">ela devolve 0</button>
 </div>
-<button class="hint-btn" data-hint="Python sempre devolve algum valor, mesmo que você não peça explicitamente." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Python sempre devolve algum valor, mesmo que você não peça explicitamente.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1188,7 +1594,46 @@ resultado = calcular_media(8, 6)
     <span class="tok-fn">print</span>(<span class="tok-str">"Isso não parece um número válido."</span>)</pre>
 </div>
 <div class="out"><span class="lbl">SAÍDA (se digitar "abc")</span>Isso não parece um número válido.</div>
-<div class="quiz" data-qtotal="2" data-quiz="erros">
+<div class="callout"><b>Aprofundando:</b> É possível capturar mais de um tipo de erro com blocos <code>except</code> separados, e usar <code>finally</code> para um trecho que sempre executa, dando erro ou não — muito usado para liberar recursos, como fechar um arquivo.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-erros">
+        <div class="cb-top"><span class="cb-title">varios_except.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">def dividir(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        print("Não é possível dividir por zero")
+    except TypeError:
+        print("Os valores precisam ser números")
+    finally:
+        print("Tentativa de divisão finalizada")
+
+dividir(10, 0)
+dividir(10, "a")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Peça um número ao usuário com <code>input()</code> dentro de um <code>try/except</code>, tratando o caso da pessoa digitar algo que não é número.</p>
+        <div class="codeblock" data-cbid="challenge-erros">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># use input() e try/except abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>try:
+    numero = int(input("Digite um número: "))
+    print(f"Você digitou {numero}")
+except ValueError:
+    print("Isso não é um número válido")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="erros">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Para que serve o bloco <code>except</code>?</p>
@@ -1197,7 +1642,7 @@ resultado = calcular_media(8, 6)
 <button class="opt" data-correct="false">Repetir o código várias vezes</button>
 <button class="opt" data-correct="false">Criar uma nova variável</button>
 </div>
-<button class="hint-btn" data-hint="Pense no que acontece depois que o erro é " pego"."="" type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense no que acontece depois que o erro é &quot;pego&quot;.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1208,7 +1653,7 @@ resultado = calcular_media(8, 6)
 <button class="opt" data-correct="false">except</button>
 <button class="opt" data-correct="false">else</button>
 </div>
-<button class="hint-btn" data-hint="É muito usado para limpeza, como fechar arquivos." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É muito usado para limpeza, como fechar arquivos.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1241,7 +1686,62 @@ meu_cachorro = Cachorro(<span class="tok-str">"Bolinha"</span>, <span class="tok
 meu_cachorro.latir()</pre>
 </div>
 <div class="out"><span class="lbl">SAÍDA</span>Bolinha diz: Au au!</div>
-<div class="quiz" data-qtotal="2" data-quiz="classes">
+<div class="callout"><b>Aprofundando:</b> Uma classe pode herdar de outra usando <code>class Filha(Mae):</code>, reaproveitando atributos e métodos e podendo adicionar ou sobrescrever comportamentos — essa é a ideia de herança, um dos pilares da programação orientada a objetos.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-classes">
+        <div class="cb-top"><span class="cb-title">heranca.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">class Animal:
+    def __init__(self, nome):
+        self.nome = nome
+
+    def emitir_som(self):
+        print(f"{self.nome} faz um som")
+
+class Gato(Animal):
+    def emitir_som(self):
+        print(f"{self.nome} diz: Miau!")
+
+Animal("Bicho").emitir_som()
+Gato("Whiskas").emitir_som()</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Crie uma classe <code>Retangulo</code> com atributos <code>largura</code> e <code>altura</code>, e um método <code>area()</code> que devolve a área.</p>
+        <div class="codeblock" data-cbid="challenge-classes">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">class Retangulo:
+    def __init__(self, largura, altura):
+        # complete aqui
+        pass
+
+    def area(self):
+        # complete aqui
+        pass
+
+r = Retangulo(4, 5)
+print(r.area())
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>class Retangulo:
+    def __init__(self, largura, altura):
+        self.largura = largura
+        self.altura = altura
+
+    def area(self):
+        return self.largura * self.altura
+
+r = Retangulo(4, 5)
+print(r.area())</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="classes">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Quando o método <code>__init__</code> é executado?</p>
@@ -1250,7 +1750,7 @@ meu_cachorro.latir()</pre>
 <button class="opt" data-correct="false">Só quando você chama init() manualmente</button>
 <button class="opt" data-correct="false">No final do programa</button>
 </div>
-<button algo."="" class="hint-btn" data-hint="Pense no nome de um método que " inicializa"="" type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense no nome de um método que &quot;inicializa&quot; algo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1261,7 +1761,7 @@ meu_cachorro.latir()</pre>
 <button class="opt" data-correct="false">a classe inteira</button>
 <button class="opt" data-correct="false">um valor fixo, igual para todos os objetos</button>
 </div>
-<button class="hint-btn" data-hint="É a forma como o objeto se refere a si mesmo." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É a forma como o objeto se refere a si mesmo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1293,7 +1793,39 @@ meu_cachorro.latir()</pre>
 3.141592653589793
 2026-08-31</div>
 <div class="callout"><b>Dica:</b> você também pode criar seu próprio módulo — qualquer arquivo <code>.py</code> pode ser importado por outro com <code>import nome_do_arquivo</code>.</div>
-<div class="quiz" data-qtotal="2" data-quiz="modulos">
+<div class="callout"><b>Aprofundando:</b> O módulo <code>random</code>, da biblioteca padrão, é muito usado para gerar números aleatórios, sortear itens de uma lista ou embaralhar dados — útil em jogos, simulações e testes.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-modulos">
+        <div class="cb-top"><span class="cb-title">modulo_random.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">import random
+
+print(random.randint(1, 6))
+frutas = ["maçã", "banana", "uva"]
+print(random.choice(frutas))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Use o módulo <code>random</code> para simular o lançamento de um dado de 6 lados e imprimir o resultado.</p>
+        <div class="codeblock" data-cbid="challenge-modulos">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">import random
+# simule o dado abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>import random
+
+resultado = random.randint(1, 6)
+print(f"Você tirou {resultado} no dado!")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="modulos">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">O que a palavra-chave <code>import</code> faz?</p>
@@ -1302,7 +1834,7 @@ meu_cachorro.latir()</pre>
 <button class="opt" data-correct="false">Exporta seu código para outro arquivo</button>
 <button class="opt" data-correct="false">Cria uma nova classe</button>
 </div>
-<button algo="" arquivo."="" class="hint-btn" data-hint="Pense na palavra que " de="" dentro"="" do="" fora="" para="" seu="" traz="" type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense na palavra que &quot;traz para dentro&quot; algo de fora do seu arquivo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1313,7 +1845,7 @@ meu_cachorro.latir()</pre>
 <button class="opt" data-correct="false">não há diferença nenhuma</button>
 <button class="opt" data-correct="false">a primeira é mais rápida de executar</button>
 </div>
-<button class="hint-btn" data-hint="Repare no que vem depois de from e depois de import." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Repare no que vem depois de from e depois de import.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1347,7 +1879,42 @@ meu_cachorro.latir()</pre>
 <div class="out"><span class="lbl">SAÍDA</span>Estudar Python
 Fazer exercícios</div>
 <div class="callout warn"><b>Cuidado:</b> o modo <code>"w"</code> apaga o conteúdo anterior do arquivo. Para adicionar sem apagar, use o modo <code>"a"</code> (append).</div>
-<div class="quiz" data-qtotal="2" data-quiz="arquivos">
+<div class="callout"><b>Aprofundando:</b> Além de <code>read()</code>, que lê o arquivo inteiro de uma vez, dá para usar <code>readlines()</code> para obter uma lista com cada linha, ou simplesmente percorrer o arquivo com um <code>for linha in arquivo:</code>, linha por linha.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-arquivos">
+        <div class="cb-top"><span class="cb-title">ler_linha_a_linha.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">with open("notas.txt", "w") as arquivo:
+    arquivo.write("Python\nDados\nAlgoritmos\n")
+
+with open("notas.txt", "r") as arquivo:
+    for linha in arquivo:
+        print("Linha:", linha.strip())</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva três linhas em um arquivo de texto e depois leia e conte quantas linhas o arquivo tem.</p>
+        <div class="codeblock" data-cbid="challenge-arquivos">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># escreva no arquivo e depois conte as linhas
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>with open("dados.txt", "w") as arquivo:
+    arquivo.write("linha 1\nlinha 2\nlinha 3\n")
+
+with open("dados.txt", "r") as arquivo:
+    linhas = arquivo.readlines()
+
+print(f"O arquivo tem {len(linhas)} linhas")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="arquivos">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Qual modo de abertura você usa para adicionar texto sem apagar o que já existe?</p>
@@ -1356,7 +1923,7 @@ Fazer exercícios</div>
 <button class="opt" data-correct="false">"r"</button>
 <button class="opt" data-correct="true">"a"</button>
 </div>
-<button (append)."="" adicionar"="" class="hint-btn" data-hint="Pense na palavra em inglês para " type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense na palavra em inglês para &quot;adicionar&quot; (append).">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1367,7 +1934,7 @@ Fazer exercícios</div>
 <button class="opt" data-correct="false">abre o arquivo mais rápido</button>
 <button class="opt" data-correct="false">permite abrir vários arquivos ao mesmo tempo</button>
 </div>
-<button class="hint-btn" data-hint="Pense no que acontece se você esquecer de fechar um arquivo manualmente." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense no que acontece se você esquecer de fechar um arquivo manualmente.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1403,7 +1970,56 @@ dados = resposta.json()
 <span class="tok-fn">print</span>(dados[<span class="tok-str">"piada"</span>])</pre>
 </div>
 <div class="out"><span class="lbl">SAÍDA (exemplo ilustrativo)</span>Por que o programador foi ao médico? Porque tinha um bug.</div>
-<div class="quiz" data-qtotal="2" data-quiz="bibliotecas">
+<div class="callout"><b>Aprofundando:</b> Mesmo sem instalar nada, dá para simular a ideia de "organizar dados em tabela" (como o pandas faz) usando só listas de dicionários — cada dicionário representa uma linha, e cada chave, uma coluna.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-bibliotecas">
+        <div class="cb-top"><span class="cb-title">tabela_sem_pandas.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">pessoas = [
+    {"nome": "Ana", "idade": 28},
+    {"nome": "Bruno", "idade": 34},
+    {"nome": "Clara", "idade": 22},
+]
+
+for pessoa in pessoas:
+    print(f"{pessoa['nome']} tem {pessoa['idade']} anos")
+
+media_idade = sum(p["idade"] for p in pessoas) / len(pessoas)
+print(f"Média de idade: {media_idade:.1f}")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Dada uma lista de dicionários representando produtos (nome e preço), filtre e imprima apenas os produtos com preço acima de 20.</p>
+        <div class="codeblock" data-cbid="challenge-bibliotecas">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">produtos = [
+    {"nome": "Caderno", "preco": 15},
+    {"nome": "Mochila", "preco": 89},
+    {"nome": "Caneta", "preco": 3},
+    {"nome": "Fone", "preco": 45},
+]
+# filtre e imprima os produtos com preco &gt; 20
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>produtos = [
+    {"nome": "Caderno", "preco": 15},
+    {"nome": "Mochila", "preco": 89},
+    {"nome": "Caneta", "preco": 3},
+    {"nome": "Fone", "preco": 45},
+]
+
+for produto in produtos:
+    if produto["preco"] &gt; 20:
+        print(produto["nome"])</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="bibliotecas">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Qual comando instala uma biblioteca externa em Python?</p>
@@ -1412,7 +2028,7 @@ dados = resposta.json()
 <button class="opt" data-correct="true">pip install nome</button>
 <button class="opt" data-correct="false">import nome --install</button>
 </div>
-<button class="hint-btn" data-hint="É o gerenciador de pacotes que já vem junto com o Python." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="É o gerenciador de pacotes que já vem junto com o Python.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1423,7 +2039,7 @@ dados = resposta.json()
 <button class="opt" data-correct="false">criar sites e APIs</button>
 <button class="opt" data-correct="false">escrever testes automatizados</button>
 </div>
-<button class="hint-btn" dados"."="" data-hint="Está na tabela do capítulo, ligada à palavra " type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Está na tabela do capítulo, ligada à palavra &quot;dados&quot;.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1457,7 +2073,48 @@ carrinho = [29.90, 15.50, 8.00]
 <span class="tok-fn">print</span>(calcular_total_carrinho(carrinho))</pre>
 </div>
 <div class="out"><span class="lbl">SAÍDA</span>53.4</div>
-<div class="quiz" data-qtotal="2" data-quiz="boas-praticas">
+<div class="callout"><b>Aprofundando:</b> Ferramentas como <code>black</code> (formatador automático) e <code>flake8</code> (linter) ajudam a manter o código dentro do padrão PEP 8 sem esforço manual — muito usadas em times profissionais para manter um estilo consistente entre todos.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-boas-praticas">
+        <div class="cb-top"><span class="cb-title">nomes_descritivos.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false"># ruim: nomes genéricos, sem explicação
+def calc(x, y):
+    return x * y * 0.1
+
+# melhor: nomes descritivos e uma docstring
+def calcular_comissao(valor_venda, taxa=0.1):
+    """Calcula a comissão de uma venda com base numa taxa."""
+    return valor_venda * taxa
+
+print(calcular_comissao(1000))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Reescreva a função abaixo trocando os nomes genéricos por nomes descritivos, seguindo o padrão <code>snake_case</code>.</p>
+        <div class="codeblock" data-cbid="challenge-boas-praticas">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">def f(a, b):
+    c = a + b
+    return c / 2
+
+print(f(8, 4))
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>def calcular_media(nota1, nota2):
+    soma = nota1 + nota2
+    return soma / 2
+
+print(calcular_media(8, 4))</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="boas-praticas">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Para que serve um ambiente virtual (<code>venv</code>)?</p>
@@ -1466,7 +2123,7 @@ carrinho = [29.90, 15.50, 8.00]
 <button class="opt" data-correct="false">Deixar o código mais rápido</button>
 <button class="opt" data-correct="false">Traduzir o código para outra linguagem</button>
 </div>
-<button as="" bibliotecas="" cada="" class="hint-btn" data-hint="Pense em " de="" isolar"="" projeto."="" type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense em &quot;isolar&quot; as bibliotecas de cada projeto.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1477,7 +2134,7 @@ carrinho = [29.90, 15.50, 8.00]
 <button class="opt" data-correct="false">PythonDoc</button>
 <button class="opt" data-correct="false">ISO Python</button>
 </div>
-<button class="hint-btn" data-hint="Foi mencionado logo no início da lista deste capítulo." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Foi mencionado logo no início da lista deste capítulo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1520,7 +2177,60 @@ listar()</pre>
 1. Estudar Python
 2. Fazer exercícios</div>
 <div class="callout"><b>Desafio:</b> tente adicionar uma função <code>remover(tarefa)</code> que usa <code>tarefas.remove(tarefa)</code> para tirar um item da lista.</div>
-<div class="quiz" data-qtotal="2" data-quiz="projeto">
+<div class="callout"><b>Aprofundando:</b> Projetos pequenos como este são a melhor forma de conectar tudo que você aprendeu — listas guardam o estado, funções organizam as ações, e cada função tem uma única responsabilidade clara.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-projeto">
+        <div class="cb-top"><span class="cb-title">com_remover.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">tarefas = []
+
+def adicionar(tarefa):
+    tarefas.append(tarefa)
+    print(f"'{tarefa}' adicionada.")
+
+def remover(tarefa):
+    if tarefa in tarefas:
+        tarefas.remove(tarefa)
+        print(f"'{tarefa}' removida.")
+    else:
+        print(f"'{tarefa}' não encontrada.")
+
+adicionar("Estudar Python")
+adicionar("Fazer exercícios")
+remover("Estudar Python")
+print(tarefas)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Adicione ao programa de lista de tarefas uma função <code>concluir(indice)</code> que marca uma tarefa como concluída, prefixando-a com <code>"[x] "</code> na lista.</p>
+        <div class="codeblock" data-cbid="challenge-projeto">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">tarefas = ["Estudar Python", "Fazer exercícios"]
+
+def concluir(indice):
+    # marque a tarefa na posição indice como concluída
+    pass
+
+concluir(0)
+print(tarefas)
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>tarefas = ["Estudar Python", "Fazer exercícios"]
+
+def concluir(indice):
+    tarefas[indice] = "[x] " + tarefas[indice]
+
+concluir(0)
+print(tarefas)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="projeto">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">No exemplo, o que <code>enumerate(tarefas, 1)</code> faz?</p>
@@ -1529,7 +2239,7 @@ listar()</pre>
 <button class="opt" data-correct="false">Ordena a lista em ordem alfabética</button>
 <button class="opt" data-correct="false">Remove o primeiro item da lista</button>
 </div>
-<button class="hint-btn" data-hint="Pense em uma função que numera itens enquanto percorre a lista." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense em uma função que numera itens enquanto percorre a lista.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1540,7 +2250,7 @@ listar()</pre>
 <button class="opt" data-correct="false">.delete(valor)</button>
 <button class="opt" data-correct="false">.pop(valor)</button>
 </div>
-<button class="hint-btn" data-hint="Foi sugerido no desafio deste capítulo." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Foi sugerido no desafio deste capítulo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1563,7 +2273,40 @@ listar()</pre>
 <li>Construa uma calculadora de IMC, um conversor de moedas ou um jogo de forca — projetos pequenos fixam o conteúdo.</li>
 <li>Leia código de outras pessoas em projetos abertos no GitHub para ver como programadores experientes organizam o código.</li>
 </ul>
-<div class="quiz" data-qtotal="2" data-quiz="recursos">
+<div class="callout"><b>Aprofundando:</b> Antes de seguir para outros materiais, vale a pena tentar um desafio final que junta praticamente tudo do curso: variáveis, laços, condicionais e funções.</div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Desafio final: crie um jogo de adivinhação onde o computador escolhe um número entre 1 e 20 (use <code>random</code>) e o jogador tenta acertar, recebendo dicas de "maior" ou "menor" a cada tentativa.</p>
+        <div class="codeblock" data-cbid="challenge-recursos">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">import random
+
+numero_secreto = random.randint(1, 20)
+# use um laço com input() para o jogador tentar adivinhar
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>import random
+
+numero_secreto = random.randint(1, 20)
+tentativas = 0
+
+while True:
+    palpite = int(input("Tente adivinhar (1-20): "))
+    tentativas += 1
+    if palpite == numero_secreto:
+        print(f"Acertou em {tentativas} tentativas!")
+        break
+    elif palpite &lt; numero_secreto:
+        print("Maior que isso...")
+    else:
+        print("Menor que isso...")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="recursos">
 <div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
 <div class="qblock" data-qindex="0">
 <p class="q">Qual é a melhor forma de fixar o que você aprendeu neste guia?</p>
@@ -1572,7 +2315,7 @@ listar()</pre>
 <button class="opt" data-correct="true">Praticar escrevendo pequenos programas com frequência</button>
 <button class="opt" data-correct="false">Decorar a sintaxe de memória</button>
 </div>
-<button capítulo."="" class="hint-btn" data-hint="Pense no verbo " deste="" no="" praticar",="" repetido="" texto="" type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="Pense no verbo &quot;praticar&quot;, repetido no texto deste capítulo.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1583,7 +2326,7 @@ listar()</pre>
 <button class="opt" data-correct="false">ignorar e tentar de novo do zero</button>
 <button class="opt" data-correct="false">apagar todo o código e recomeçar</button>
 </div>
-<button class="hint-btn" data-hint="O rodapé do curso dá essa dica diretamente." type="button">💡 dica</button>
+<button class="hint-btn" type="button" data-hint="O rodapé do curso dá essa dica diretamente.">💡 dica</button>
 <p class="hint-text"></p>
 <p class="feedback"></p>
 </div>
@@ -1915,15 +2658,15 @@ listar()</pre>
       if (status){ status.textContent = 'Executando...'; }
 
       let captured = '';
-      py.setStdout({ batched: (msg) => { captured += msg + '\\n'; } });
-      py.setStderr({ batched: (msg) => { captured += msg + '\\n'; } });
+      py.setStdout({ batched: (msg) => { captured += msg + '\n'; } });
+      py.setStderr({ batched: (msg) => { captured += msg + '\n'; } });
 
       py.globals.set('_prompt_fn', (msg) => window.prompt(msg || '') || '');
       await py.runPythonAsync(
-        "import builtins\\n" +
-        "def input(prompt=''):\\n" +
-        "    return _prompt_fn(prompt)\\n" +
-        "builtins.input = input\\n"
+        "import builtins\n" +
+        "def input(prompt=''):\n" +
+        "    return _prompt_fn(prompt)\n" +
+        "builtins.input = input\n"
       );
 
       await py.runPythonAsync(code);
@@ -2027,6 +2770,15 @@ listar()</pre>
   });
 
   // runCode/copyCode are already wired via inline onclick="" attributes on the buttons.
+  // botão "ver uma solução possível" dos desafios práticos
+  document.querySelectorAll('.solution-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const box = btn.nextElementSibling;
+      const isHidden = box.hidden;
+      box.hidden = !isHidden;
+      btn.textContent = isHidden ? 'Ocultar solução' : 'Ver uma solução possível';
+    });
+  });
   // add a status line under each codeblock for pyodide loading feedback
   document.querySelectorAll('.codeblock').forEach(cb => {
     const status = document.createElement('div');
