@@ -1,0 +1,3015 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aprenda Python — do zero ao primeiro projeto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+  :root{
+    --bg: #090b10;
+    --bg-2: #0c0f15;
+    --panel: #10141b;
+    --panel-2: #161c26;
+    --panel-3: #1d2531;
+    --line: #262f3d;
+    --line-soft: #1c232e;
+    --text: #e9ecf1;
+    --muted: #8b93a3;
+    --blue: #4B8BBE;
+    --blue-bright: #7bb9ea;
+    --blue-dim: #2f4f6b;
+    --yellow: #FFD43B;
+    --yellow-soft: #f0dd8f;
+    --green: #7ec699;
+    --red: #e8837a;
+    --radius: 5px;
+    --sidew: 300px;
+    --topbarh: 52px;
+    --crumbh: 42px;
+    --group-fundamentos: #7bb9ea;
+    --group-controle: #f0c15c;
+    --group-estruturas: #8fd6ac;
+    --group-organizando: #c79bf0;
+    --group-pratica: #f0a05c;
+    --group-proximos: #ffd43b;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(760px 420px at 88% -6%, rgba(75,139,190,0.10), transparent 60%),
+      radial-gradient(620px 360px at 6% 8%, rgba(255,212,59,0.045), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    line-height: 1.6;
+  }
+
+  h1,h2,h3, .disp{ font-family: 'Space Grotesk', sans-serif; color: #fdfdfe; margin: 0; letter-spacing: -0.012em; }
+  ::selection{ background: rgba(255,212,59,0.28); color: #fff; }
+  :focus-visible{ outline: 2px solid var(--blue-bright); outline-offset: 2px; }
+  code, pre, .mono{ font-family: 'JetBrains Mono', monospace; }
+  a{ color: var(--blue-bright); }
+  button{ font-family: inherit; }
+  svg{ display:block; }
+
+  /* ===== TOP SCROLL PROGRESS ===== */
+  .scrollbar{ position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--blue), var(--yellow)); width: 0%; z-index: 100; transition: width .08s linear; }
+
+  /* ===== TOPBAR (mobile) ===== */
+  .topbar{
+    display: none; position: sticky; top: 0; z-index: 40; height: var(--topbarh);
+    background: var(--panel); border-bottom: 1px solid var(--line);
+    align-items: center; justify-content: space-between; padding: 0 14px;
+  }
+  .topbar .tmark{ font-family:'JetBrains Mono', monospace; color: var(--yellow); font-size: 13px; }
+  .topbar .tbtns{ display:flex; gap: 8px; }
+  .iconbtn{
+    width: 32px; height: 32px; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius);
+    color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px;
+  }
+  .iconbtn:hover{ border-color: var(--blue-bright); }
+
+  /* ===== LAYOUT ===== */
+  .shell{ display: grid; grid-template-columns: var(--sidew) 1fr; min-height: 100vh; }
+
+  nav.side{
+    background: var(--panel); border-right: 1px solid var(--line);
+    padding: 0 0 30px 0; position: sticky; top: 0; height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  .side-head{ padding: 24px 20px 18px 20px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, rgba(75,139,190,0.05), transparent 70%); }
+  .side-head-row{ display: flex; align-items: center; gap: 14px; }
+  .ringwrap{ position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+  .ringwrap svg{ transform: rotate(-90deg); }
+  .ring-bg{ fill: none; stroke: var(--panel-3); stroke-width: 4; }
+  .ring-fg{ fill: none; stroke: url(#ringGrad); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset .5s cubic-bezier(.2,.8,.2,1); }
+  .ring-pct{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--text); font-weight: 600; }
+
+  .brand .mark{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--yellow); display:block; margin-bottom: 4px; letter-spacing: .01em; }
+  .brand h1{ font-size: 18.5px; font-weight: 700; }
+  .brand p{ color: var(--muted); font-size: 12px; margin-top: 3px; }
+
+  .quickrow{ display: flex; gap: 8px; margin-top: 14px; }
+  .qbtn{
+    flex: 1; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius);
+    color: var(--muted); font-size: 11.5px; font-family:'JetBrains Mono', monospace; padding: 7px 8px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: border-color .15s ease, color .15s ease, transform .1s ease;
+  }
+  .qbtn:hover{ color: var(--text); border-color: var(--blue-bright); }
+  .qbtn:active{ transform: scale(.97); }
+  .qbtn .kbd{ background: var(--panel-3); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; font-size: 10px; color: var(--muted); }
+  .qbtn.active{ color: var(--yellow); border-color: var(--yellow); }
+
+  .searchwrap{ padding: 14px 20px 6px 20px; }
+  .searchbox{ width: 100%; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); padding: 8px 10px; font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+  .searchbox::placeholder{ color: var(--muted); }
+  .searchbox:focus{ outline: none; border-color: var(--blue-bright); }
+
+  .navscroll{ flex: 1; overflow-y: auto; padding-top: 4px; }
+
+  .navgroup{ border-bottom: 1px solid rgba(38,46,58,0.5); }
+  .navgroup-head{
+    width: 100%; display: flex; align-items: center; gap: 10px; padding: 11px 20px;
+    background: none; border: none; color: var(--text); cursor: pointer; text-align: left;
+  }
+  .navgroup-head:hover{ background: var(--panel-2); }
+  .navgroup-head .chev{ font-size: 10px; color: var(--muted); transition: transform .18s ease; width: 10px; }
+  .navgroup.collapsed .chev{ transform: rotate(-90deg); }
+  .navgroup-head .glabel{ font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .03em; color: var(--muted); flex: 1; }
+  .navgroup-head .gcount{ font-family:'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); }
+  .gprogress{ height: 3px; background: var(--panel-3); margin: 0 20px 8px 20px; border-radius: 2px; overflow: hidden; }
+  .gprogress-fill{ height: 100%; background: var(--blue-bright); width: 0%; transition: width .3s ease; }
+  .navgroup-body{ overflow: hidden; max-height: 800px; transition: max-height .25s ease; }
+  .navgroup.collapsed .navgroup-body{ max-height: 0; }
+  .navgroup.collapsed .gprogress{ display: none; }
+
+  .navlink{
+    display: flex; align-items: center; gap: 9px; padding: 7px 20px 7px 20px; color: var(--muted);
+    text-decoration: none; font-size: 13.5px; border-left: 2px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .navlink .idx{ font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--blue-bright); width: 18px; flex-shrink:0; }
+  .navlink .lbl{ flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .navlink .star{ opacity: .25; font-size: 12px; cursor: pointer; padding: 2px; }
+  .navlink .star:hover{ opacity: .8; }
+  .navlink .star.on{ opacity: 1; color: var(--yellow); }
+  .navlink .check{ font-size: 11px; color: var(--green); opacity: 0; width: 12px; }
+  .navlink.done .check{ opacity: 1; }
+  .navlink:hover{ color: var(--text); background: var(--panel-2); }
+  .navlink.active{ color: #fff; border-left-color: var(--yellow); background: var(--panel-2); }
+  .navlink.hidden{ display: none; }
+  .navgroup.hidden{ display: none; }
+
+  /* ----- cor de destaque por trilha (facilita a orientação visual) ----- */
+  .navgroup[data-group="fundamentos"] .gprogress-fill{ background: var(--group-fundamentos); }
+  .navgroup[data-group="controle"] .gprogress-fill{ background: var(--group-controle); }
+  .navgroup[data-group="estruturas"] .gprogress-fill{ background: var(--group-estruturas); }
+  .navgroup[data-group="organizando"] .gprogress-fill{ background: var(--group-organizando); }
+  .navgroup[data-group="pratica"] .gprogress-fill{ background: var(--group-pratica); }
+  .navgroup[data-group="proximos"] .gprogress-fill{ background: var(--group-proximos); }
+  .navgroup[data-group="fundamentos"] .navlink .idx{ color: var(--group-fundamentos); }
+  .navgroup[data-group="controle"] .navlink .idx{ color: var(--group-controle); }
+  .navgroup[data-group="estruturas"] .navlink .idx{ color: var(--group-estruturas); }
+  .navgroup[data-group="organizando"] .navlink .idx{ color: var(--group-organizando); }
+  .navgroup[data-group="pratica"] .navlink .idx{ color: var(--group-pratica); }
+  .navgroup[data-group="proximos"] .navlink .idx{ color: var(--group-proximos); }
+  .navgroup[data-group="fundamentos"] .navlink.active{ border-left-color: var(--group-fundamentos); }
+  .navgroup[data-group="controle"] .navlink.active{ border-left-color: var(--group-controle); }
+  .navgroup[data-group="estruturas"] .navlink.active{ border-left-color: var(--group-estruturas); }
+  .navgroup[data-group="organizando"] .navlink.active{ border-left-color: var(--group-organizando); }
+  .navgroup[data-group="pratica"] .navlink.active{ border-left-color: var(--group-pratica); }
+  .navgroup[data-group="proximos"] .navlink.active{ border-left-color: var(--group-proximos); }
+
+  .side-foot{ padding: 12px 20px 0 20px; border-top: 1px solid var(--line); }
+  .continue-btn{
+    display: none; width: 100%; text-align: left; background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 10px 12px; color: var(--text); cursor: pointer; margin-top: 12px;
+  }
+  .continue-btn.show{ display: block; }
+  .continue-btn .cb-lbl{ font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); display:block; margin-bottom: 3px; }
+  .continue-btn .cb-chap{ font-size: 13px; color: var(--blue-bright); }
+  .continue-btn:hover{ border-color: var(--blue-bright); }
+
+  /* ===== COMMAND PALETTE ===== */
+  .palette-overlay{
+    display: none; position: fixed; inset: 0; background: rgba(6,8,11,0.72); z-index: 90;
+    align-items: flex-start; justify-content: center; padding-top: 12vh;
+  }
+  .palette-overlay.show{ display: flex; }
+  .palette{
+    width: 560px; max-width: 90vw; background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5); overflow: hidden;
+  }
+  .palette-input-row{ display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .palette-prompt{ font-family:'JetBrains Mono', monospace; color: var(--yellow); font-size: 15px; }
+  .palette-input{ flex: 1; background: none; border: none; color: var(--text); font-size: 15px; font-family:'JetBrains Mono', monospace; }
+  .palette-input:focus{ outline: none; }
+  .palette-esc{ font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 2px 5px; }
+  .palette-results{ max-height: 340px; overflow-y: auto; padding: 6px; }
+  .palette-item{
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius);
+    cursor: pointer; color: var(--text); font-size: 14px;
+  }
+  .palette-item .pi-idx{ font-family:'JetBrains Mono', monospace; color: var(--blue-bright); font-size: 11.5px; width: 22px; }
+  .palette-item .pi-group{ margin-left: auto; font-family:'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); }
+  .palette-item.sel{ background: var(--panel-2); }
+  .palette-item.sel .pi-group{ color: var(--yellow); }
+  .palette-empty{ padding: 24px; text-align: center; color: var(--muted); font-size: 13.5px; }
+
+  main{ padding: 0; max-width: 880px; }
+
+  /* Breadcrumb */
+  .crumbbar{
+    position: sticky; top: 0; z-index: 20; height: var(--crumbh); background: rgba(14,17,22,0.92);
+    backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); display: flex; align-items: center;
+    padding: 0 56px; gap: 8px; font-family:'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);
+  }
+  .crumbbar .cg{ color: var(--muted); }
+  .crumbbar .cc{ color: var(--text); }
+  .crumbbar .sep{ color: var(--line); }
+
+  .hero{ padding: 64px 56px 54px 56px; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0,1fr) 380px; gap: 48px; align-items: center; }
+  .hero-inner{ position: relative; z-index: 1; }
+  .hero .kicker{ font-family: 'JetBrains Mono', monospace; color: var(--muted); font-style: italic; font-size: 13px; margin-bottom: 16px; display: block; }
+  .hero .kicker::before{ content: "# "; color: var(--green); font-style: normal; }
+  .hero h1{ font-size: 42px; line-height: 1.15; max-width: 600px; }
+  .hero p.lead{ color: var(--muted); font-size: 16px; max-width: 520px; margin-top: 18px; }
+  .hero .startbtn{ display: inline-block; margin-top: 26px; background: linear-gradient(120deg, var(--yellow), var(--yellow-soft)); color: #14181f; font-weight: 600; padding: 12px 22px; border-radius: var(--radius); text-decoration: none; font-size: 14px; box-shadow: 0 8px 24px -10px rgba(255,212,59,0.45); transition: transform .15s ease, box-shadow .15s ease; }
+  .hero .startbtn:hover{ transform: translateY(-1px); box-shadow: 0 10px 28px -8px rgba(255,212,59,0.55); }
+  .hero .paletteopen{ display: inline-flex; align-items:center; gap: 8px; margin-top: 26px; margin-left: 10px; background: none; border: 1px solid var(--line); color: var(--muted); padding: 11px 16px; border-radius: var(--radius); font-size: 13px; cursor: pointer; transition: border-color .15s ease, color .15s ease; }
+  .hero .paletteopen:hover{ border-color: var(--blue-bright); color: var(--text); }
+  .hero .paletteopen .kbd{ background: var(--panel-3); border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px; font-family:'JetBrains Mono', monospace; font-size: 10.5px; }
+
+  /* ----- painel decorativo do hero: terminal com código real do curso ----- */
+  .hero-term{ background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; box-shadow: 0 30px 70px -30px rgba(0,0,0,.7); overflow: hidden; position: relative; z-index: 1; }
+  .hero-term .modal-termbar{ background: #12161e; }
+  .hero-term pre{ margin: 0; padding: 20px 20px 22px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.95; color: #cfe3d8; }
+  .hero-term .ht-line{ opacity: 0; transform: translateY(4px); animation: htIn .5s ease forwards; display:block; }
+  .hero-term .ht-line:nth-child(1){ animation-delay: .15s; }
+  .hero-term .ht-line:nth-child(2){ animation-delay: .55s; }
+  .hero-term .ht-line:nth-child(3){ animation-delay: .95s; }
+  .hero-term .ht-line:nth-child(4){ animation-delay: 1.35s; }
+  .hero-term .ht-line:nth-child(5){ animation-delay: 1.75s; }
+  .hero-term .ht-out{ color: var(--green); }
+  .hero-term .ht-cursor{ display:inline-block; width: 7px; height: 15px; background: var(--yellow); vertical-align: -2px; animation: htBlink 1s steps(1) infinite; opacity: 0; animation: htBlink 1s steps(1) infinite, htIn .3s ease 2.1s forwards; }
+  @keyframes htIn{ to{ opacity: 1; transform: translateY(0); } }
+  @keyframes htBlink{ 0%, 49%{ opacity: 1; } 50%, 100%{ opacity: 0; } }
+  @media (prefers-reduced-motion: reduce){
+    .hero-term .ht-line, .hero-term .ht-cursor{ animation: none; opacity: 1; transform: none; }
+  }
+  @media (max-width: 1080px){
+    .hero{ grid-template-columns: 1fr; }
+    .hero-term{ max-width: 480px; }
+  }
+
+  .progress-wrap{ margin-top: 30px; max-width: 480px; }
+  .progress-bar{ height: 6px; background: var(--panel-2); border-radius: 3px; overflow: hidden; }
+  .progress-fill{ height: 100%; background: linear-gradient(90deg, var(--blue), var(--yellow)); width: 0%; transition: width .4s ease; }
+  .progress-label{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 8px; display:flex; justify-content:space-between; align-items:center; gap: 10px;}
+  .progress-label .reset{ background:none; border:1px solid var(--line); color: var(--muted); border-radius: 3px; padding: 3px 9px; cursor: pointer; font-family:'JetBrains Mono', monospace; font-size: 11px;}
+  .progress-label .reset:hover{ color: var(--red); border-color: var(--red); }
+
+  section.topic{ padding: 50px 56px; border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--crumbh) + 16px); }
+  .topic-head{ display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .topic-num{ font-family: 'JetBrains Mono', monospace; color: var(--blue-bright); font-size: 15px; }
+  .topic h2{ font-size: 25px; flex: 1; }
+  .topic-star{ background: none; border: 1px solid var(--line); border-radius: var(--radius); width: 30px; height: 30px; color: var(--muted); cursor: pointer; font-size: 14px; }
+  .topic-star:hover{ border-color: var(--yellow); }
+  .topic-star.on{ color: var(--yellow); border-color: var(--yellow); }
+  .topic .dek{ color: var(--muted); font-size: 15px; max-width: 640px; margin: 10px 0 22px 0; }
+
+  section.topic[data-group="Fundamentos"] .topic-num{ color: var(--group-fundamentos); }
+  section.topic[data-group="Controle de fluxo"] .topic-num{ color: var(--group-controle); }
+  section.topic[data-group="Estruturas de dados"] .topic-num{ color: var(--group-estruturas); }
+  section.topic[data-group="Organizando código"] .topic-num{ color: var(--group-organizando); }
+  section.topic[data-group="Na prática"] .topic-num{ color: var(--group-pratica); }
+  section.topic[data-group="Próximos passos"] .topic-num{ color: var(--group-proximos); }
+
+  .topic p{ max-width: 660px; color: #c7ccd6; font-size: 15.5px; }
+  .topic ul{ max-width: 640px; color: #c7ccd6; font-size: 15.5px; padding-left: 20px; }
+  .topic li{ margin-bottom: 6px; }
+  .topic table{ border-collapse: collapse; max-width: 660px; margin: 16px 0; font-size: 14px; }
+  .topic th, .topic td{ border: 1px solid var(--line); padding: 8px 12px; text-align: left; color: #c7ccd6; }
+  .topic th{ color: var(--text); background: var(--panel-2); font-family:'JetBrains Mono', monospace; font-size: 12.5px; }
+
+  .codeblock{ background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; margin: 20px 0 14px 0; overflow: hidden; max-width: 660px; box-shadow: 0 14px 32px -20px rgba(0,0,0,.55); }
+  .codeblock .cb-top{ display: flex; align-items: center; padding: 9px 14px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+  .codeblock .cb-top::before{ content:""; width:8px; height:8px; border-radius:50%; background:#e0716b; box-shadow: 13px 0 0 #e6b95c, 26px 0 0 #7ec699; margin-right: 36px; flex-shrink:0; }
+  .codeblock .cb-title{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); flex: 1; }
+  .cb-actions{ display: flex; gap: 8px; }
+  .cb-btn{ font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--blue-bright); background: none; border: 1px solid var(--line); border-radius: 3px; padding: 3px 9px; cursor: pointer; }
+  .cb-btn:hover{ border-color: var(--blue-bright); }
+  .cb-btn.run{ color: var(--green); }
+  .cb-btn.run:hover{ border-color: var(--green); }
+  .codeblock pre{ margin: 0; padding: 16px 18px; font-size: 13.5px; overflow-x: auto; color: #cfe3d8; }
+  .tok-kw{ color: var(--blue-bright); }
+  .tok-str{ color: var(--yellow); }
+  .tok-com{ color: var(--muted); font-style: italic; }
+  .tok-fn{ color: #a3d9ff; }
+
+  .out{ max-width: 660px; background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--green); margin-bottom: 24px; white-space: pre-wrap; }
+  .out.shown{ animation: outFade .3s ease; }
+  .out .lbl{ color: var(--muted); display:block; font-size: 11px; margin-bottom: 6px; }
+  .out-placeholder{ color: var(--muted); font-style: italic; font-size: 12.5px; }
+  .out.placeholder{ border-style: dashed; }
+  @keyframes outFade{ from{ opacity: .3; } to{ opacity: 1; } }
+  @media (prefers-reduced-motion: reduce){ .out.shown{ animation: none; } }
+
+  .callout{ max-width: 640px; border-left: 3px solid var(--yellow); background: linear-gradient(90deg, rgba(255,212,59,0.07), transparent 60%); padding: 13px 16px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 14px; color: #d7dbe2; margin: 20px 0; }
+  .callout.warn{ border-left-color: var(--red); background: linear-gradient(90deg, rgba(232,131,122,0.08), transparent 60%); }
+  .callout b{ color: var(--yellow); }
+  .callout.warn b{ color: var(--red); }
+
+  .quiz{ max-width: 640px; background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 22px 24px; margin-top: 26px; }
+  .quiz .qtitle{ font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--blue-bright); margin-bottom: 12px; }
+  .quiz p.q{ font-size: 15px; color: var(--text); margin-bottom: 14px; }
+  .quiz .opts{ display: flex; flex-direction: column; gap: 8px; counter-reset: optletter; }
+  .quiz .opt{ position: relative; text-align: left; background: var(--panel-2); border: 1px solid var(--line); color: var(--text); padding: 11px 14px 11px 46px; border-radius: var(--radius); cursor: pointer; font-size: 14px; transition: border-color .12s ease, transform .08s ease; counter-increment: optletter; }
+  .quiz .opt::before{
+    content: counter(optletter, upper-alpha); position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%; background: var(--panel-3); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; transition: background .12s ease, color .12s ease;
+  }
+  .quiz .opt:hover{ border-color: var(--blue-bright); transform: translateX(1px); }
+  .quiz .opt:hover::before{ color: var(--blue-bright); }
+  .quiz .opt.correct{ border-color: var(--green); background: rgba(126,198,153,0.12); color: var(--green); }
+  .quiz .opt.correct::before{ background: var(--green); color: #0b0d12; content: "✓"; }
+  .quiz .opt.wrong{ border-color: var(--red); background: rgba(224,122,122,0.12); color: var(--red); }
+  .quiz .opt.wrong::before{ background: var(--red); color: #0b0d12; content: "✕"; }
+  .quiz .feedback{ margin-top: 12px; font-size: 13.5px; color: var(--muted); display:none; }
+
+  .chapnav{ display: flex; justify-content: space-between; align-items: center; max-width: 660px; margin-top: 36px; gap: 12px; }
+  .chapnav a{ flex: 1; display: block; border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 16px; text-decoration: none; color: var(--text); background: var(--panel-2); font-size: 13.5px; transition: border-color .15s ease, transform .1s ease; }
+  .chapnav a:hover{ border-color: var(--blue-bright); transform: translateY(-1px); }
+  .chapnav a.next{ text-align: right; }
+  .chapnav .lbl2{ display:block; font-family:'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); margin-bottom: 3px; }
+
+  .marker-done{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 24px; cursor: pointer; }
+  .marker-done input{ accent-color: var(--yellow); width: 14px; height: 14px; }
+
+  /* ===== Exemplo extra + desafio prático ===== */
+  .extra-h3{ font-family: 'Space Grotesk', sans-serif; font-size: 16.5px; color: var(--text); margin: 30px 0 4px 0; }
+  .challenge-box{ max-width: 660px; margin-top: 28px; border: 1px solid var(--blue-dim); border-radius: 8px; padding: 20px 22px 22px 22px; background: linear-gradient(180deg, rgba(75,139,190,0.06), transparent 60%); }
+  .challenge-head{ font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--blue-bright); letter-spacing: .02em; margin-bottom: 8px; }
+  .challenge-desc{ font-size: 14.5px; color: #d7dbe2; margin-bottom: 4px; }
+  .solution-toggle{ margin-top: 4px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: var(--radius); padding: 8px 14px; font-size: 12.5px; font-family: 'JetBrains Mono', monospace; cursor: pointer; }
+  .solution-toggle:hover{ border-color: var(--yellow); color: var(--yellow); }
+  .solution-box{ margin-top: 12px; }
+  .solution-box pre{ margin: 0; background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cfe3d8; overflow-x: auto; white-space: pre-wrap; }
+
+  footer{ padding: 50px 56px 100px 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); background: linear-gradient(180deg, rgba(75,139,190,0.04), transparent 40%); }
+  footer .fmark{ font-family: 'JetBrains Mono', monospace; color: var(--yellow); }
+  footer .reslist{ margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 640px; }
+  footer .reslist a{ display:block; border: 1px solid var(--line); border-radius: var(--radius); padding: 11px 14px; font-size: 13.5px; transition: border-color .15s ease, transform .1s ease; }
+  footer .reslist a:hover{ border-color: var(--blue-bright); transform: translateY(-1px); }
+
+  .toast{ position: fixed; bottom: 22px; right: 22px; background: var(--panel-2); border: 1px solid var(--green); color: var(--green); padding: 10px 16px; border-radius: var(--radius); font-family:'JetBrains Mono', monospace; font-size: 13px; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; z-index: 60; pointer-events:none; box-shadow: 0 12px 30px -10px rgba(0,0,0,.5); }
+  .toast.show{ opacity: 1; transform: translateY(0); }
+
+  ::-webkit-scrollbar{ width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track{ background: transparent; }
+  ::-webkit-scrollbar-thumb{ background: var(--panel-3); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--line); }
+
+  @media (max-width: 900px){
+    .topbar{ display: flex; }
+    .shell{ grid-template-columns: 1fr; }
+    nav.side{ position: fixed; left: 0; top: var(--topbarh); height: calc(100vh - var(--topbarh)); width: 88%; max-width: 340px; transform: translateX(-100%); transition: transform .25s ease; z-index: 50; box-shadow: 4px 0 24px rgba(0,0,0,.4); }
+    nav.side.open{ transform: translateX(0); }
+    .overlay{ display:none; position: fixed; inset: 0; top: var(--topbarh); background: rgba(0,0,0,.5); z-index: 45; }
+    .overlay.show{ display: block; }
+    .crumbbar{ padding: 0 22px; }
+    .hero{ padding: 40px 22px 32px 22px; }
+    .hero h1{ font-size: 28px; }
+    .hero-term{ display: none; }
+    section.topic{ padding: 32px 22px; }
+    footer{ padding: 40px 22px 70px 22px; }
+    footer .reslist{ grid-template-columns: 1fr; }
+    .palette{ width: 92vw; }
+  }
+
+  /* ===== LIGHT THEME ===== */
+  html[data-theme="light"]{
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --panel-2: #eef0f3;
+    --panel-3: #e2e5ea;
+    --line: #d9dce2;
+    --text: #1b2027;
+    --muted: #5b6472;
+  }
+  html[data-theme="light"] h1, html[data-theme="light"] h2, html[data-theme="light"] h3, html[data-theme="light"] .disp{ color: #14181f; }
+  html[data-theme="light"] .topic p, html[data-theme="light"] .topic ul, html[data-theme="light"] .topic th, html[data-theme="light"] .topic td{ color: #333b46; }
+  html[data-theme="light"] .codeblock, html[data-theme="light"] .out, html[data-theme="light"] .term-out{ background: #10151c; }
+  html[data-theme="light"] .codeblock pre{ color: #cfe3d8; }
+  html[data-theme="light"] .startbtn{ color: #14181f; }
+
+  /* ===== FONT SIZE STEP ===== */
+  .fontbtn{ width: 30px; }
+
+  /* ===== STATUS LINE (xp / level / streak) ===== */
+  .statusline{
+    margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line);
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted);
+    display: flex; align-items: baseline; justify-content: space-between; gap: 6px;
+  }
+  .statusline b{ color: var(--yellow); font-weight: 600; }
+  .statusline .sl-streak{ color: #ff9d5c; }
+  .statusline .sl-streak.sl-zero{ color: var(--muted); }
+  .xpbar{ height: 3px; background: var(--panel-3); border-radius: 2px; overflow:hidden; margin-top: 7px; }
+  .xpbar-fill{ height:100%; background: linear-gradient(90deg, var(--blue), var(--yellow)); width:0%; transition: width .5s cubic-bezier(.2,.8,.2,1); }
+
+  /* ===== HINTS (estilo comentário de código) ===== */
+  .quiz .qcounter{ float:right; color: var(--muted); font-size: 11px; font-weight: 400; }
+  .hint-btn{ margin-top: 6px; background:none; border: none; color: var(--muted); padding: 2px 0; font-size: 12.5px; font-family:'JetBrains Mono', monospace; font-style: italic; cursor:pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .hint-btn:hover{ color: var(--yellow); }
+  .hint-btn:disabled{ cursor: default; text-decoration: none; opacity: .6; }
+  .hint-text{ display:none; margin-top: 6px; font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-style: italic; }
+  .hint-text.shown{ display:block; }
+  .hint-text.shown::before{ content: "# "; color: var(--green); font-style: normal; }
+  .next-q-btn{ margin-top: 16px; background: none; border: none; color: var(--blue-bright); padding: 4px 0; font-size: 13.5px; font-family:'JetBrains Mono', monospace; cursor:pointer; }
+  .next-q-btn::after{ content: " →"; }
+  .next-q-btn:hover{ text-decoration: underline; }
+  .xp-pop{ display:inline-block; color: var(--green); font-family:'JetBrains Mono', monospace; font-size: 12px; margin-left: 8px; animation: xpFloat 1.1s ease forwards; }
+  @keyframes xpFloat{ 0%{ opacity: 0; transform: translateY(2px); } 20%{ opacity: 1; transform: translateY(0); } 100%{ opacity: 1; transform: translateY(-3px); } }
+  @media (prefers-reduced-motion: reduce){ .xp-pop{ animation: none; } }
+
+  /* ===== CODE EDITOR ===== */
+  .code-editor{ outline: none; white-space: pre-wrap; word-break: break-word; }
+  .code-editor:focus{ background: rgba(75,139,190,0.06); }
+  .cb-status{ font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); padding: 0 14px 8px 14px; display:none; }
+  .cb-status.shown{ display:block; }
+  .cb-status::before{ content: "$ "; color: var(--blue-bright); }
+  .out.err{ color: var(--red); border-color: var(--red); }
+
+  /* ===== MODALS: terminal-window chrome ===== */
+  .modal-overlay{ display:none; position: fixed; inset: 0; background: rgba(6,8,11,0.78); z-index: 90; align-items: center; justify-content: center; padding: 24px; }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{ width: 640px; max-width: 100%; max-height: 84vh; display:flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,.55); overflow: hidden; }
+  .modal-termbar{ display:flex; align-items:center; gap: 10px; padding: 10px 14px; background: var(--panel-2); border-bottom: 1px solid var(--line); flex-shrink: 0; }
+  .modal-dots{ display:flex; gap: 6px; }
+  .modal-dots span{ width: 10px; height: 10px; border-radius: 50%; display:block; }
+  .modal-dots span:nth-child(1){ background: #e0716b; }
+  .modal-dots span:nth-child(2){ background: #e6b95c; }
+  .modal-dots span:nth-child(3){ background: #7ec699; }
+  .modal-termbar .modal-path{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); flex: 1; text-align: center; }
+  .modal-close{ background:none; border:none; color: var(--muted); width:22px; height:22px; cursor:pointer; font-size: 14px; line-height:1; }
+  .modal-close:hover{ color: var(--red); }
+  .modal-body{ padding: 22px 26px 26px 26px; overflow-y: auto; }
+  .modal-box h3{ font-size: 18px; margin-bottom: 4px; }
+  .modal-box .modal-sub{ color: var(--muted); font-size: 13px; margin-bottom: 18px; font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== Achievements: terminal-style checklist ===== */
+  .ach-list{ display:flex; flex-direction: column; gap: 2px; }
+  .ach-row{ display:flex; align-items:flex-start; gap: 12px; padding: 10px 8px; border-left: 2px solid transparent; opacity: .45; }
+  .ach-row.unlocked{ opacity: 1; border-left-color: var(--yellow); background: var(--panel-2); }
+  .ach-row .ach-mark{ font-family:'JetBrains Mono', monospace; color: var(--muted); font-size: 13px; flex-shrink:0; margin-top: 1px; }
+  .ach-row.unlocked .ach-mark{ color: var(--green); }
+  .ach-row .ach-icon{ font-size: 17px; flex-shrink: 0; }
+  .ach-row .ach-text{ flex: 1; }
+  .ach-row .ach-name{ font-size: 13.5px; color: var(--text); display:block; }
+  .ach-row .ach-desc{ font-size: 12px; color: var(--muted); margin-top: 1px; display:block; }
+
+  /* ===== Estatísticas: saída de terminal ===== */
+  .term-out{ background: #0b0d12; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.85; }
+  .term-out .to-prompt{ color: var(--blue-bright); }
+  .term-out .to-line{ display:flex; justify-content: space-between; gap: 12px; color: #cfe3d8; }
+  .term-out .to-key{ color: var(--muted); }
+  .term-out .to-val{ color: var(--green); }
+  .cert-banner{ margin-bottom: 18px; padding: 12px 14px; border: 1px dashed var(--yellow); border-radius: var(--radius); background: rgba(255,212,59,0.06); font-size: 13px; color: var(--text); display:flex; align-items:center; justify-content:space-between; gap: 12px; flex-wrap: wrap; }
+  .cert-banner button{ background: var(--yellow); color: #14181f; border:none; border-radius: var(--radius); padding: 7px 14px; font-size: 12.5px; font-weight: 600; cursor:pointer; font-family: inherit; }
+
+  /* ===== Certificado ===== */
+  .cert-wrap{ padding: 30px 26px; }
+  .cert-frame{ border: 2px solid var(--yellow); border-radius: 4px; padding: 34px 30px; text-align:center; position: relative; }
+  .cert-frame::before, .cert-frame::after{ content:""; position:absolute; inset: 7px; border: 1px solid var(--line); border-radius: 2px; pointer-events:none; }
+  .cert-eyebrow{ font-family:'JetBrains Mono', monospace; color: var(--blue-bright); font-size: 12px; letter-spacing: .04em; }
+  .cert-title{ font-size: 24px; margin: 10px 0 4px 0; }
+  .cert-sub{ color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+  .cert-name{ font-family: 'Space Grotesk', sans-serif; font-size: 26px; color: var(--yellow); border-bottom: 1px solid var(--line); display:inline-block; padding: 4px 10px 8px 10px; min-width: 240px; background: transparent; text-align:center; }
+  .cert-name:focus{ outline: none; border-color: var(--blue-bright); }
+  .cert-foot{ margin-top: 22px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); }
+  .cert-actions{ margin-top: 20px; text-align:center; }
+  .cert-actions button{ background: var(--yellow); color: #14181f; border:none; border-radius: var(--radius); padding: 9px 18px; font-size: 13px; font-weight: 600; cursor:pointer; font-family: inherit; }
+  @media print{
+    body *{ visibility: hidden; }
+    #certModal, #certModal *{ visibility: visible; }
+    #certModal{ position: fixed; inset: 0; background: #fff; display:flex !important; align-items:center; justify-content:center; padding:0; }
+    #certModal .modal-termbar, #certModal .cert-actions, #certModal .modal-close{ display:none !important; }
+    #certModal .modal-box{ box-shadow:none; border:none; width: 100%; }
+    #certModal .cert-frame{ border-color:#333; }
+    #certModal .cert-frame::before, #certModal .cert-frame::after{ border-color:#999; }
+  }
+
+  @media (max-width: 640px){
+    .modal-box{ max-height: 90vh; }
+    .cert-name{ min-width: 160px; font-size: 20px; }
+  }
+
+
+  /* ===== Menu de troca de curso ===== */
+  .course-switcher{ background: var(--panel); border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .cs-inner{ display:flex; align-items:center; gap:6px; padding: 8px 16px; white-space:nowrap; }
+  .cs-label{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-right:4px; }
+  .cs-item{ font-family:'JetBrains Mono',monospace; font-size:12.5px; padding:5px 10px; border-radius: var(--radius); color:var(--muted); text-decoration:none; border:1px solid transparent; display:inline-flex; align-items:center; gap:5px; }
+  .cs-item:hover{ color:var(--text); border-color: var(--line); }
+  .cs-item.active{ color:#14181f; background: var(--yellow); font-weight:600; }
+  .cs-item.cs-soon{ opacity:.5; cursor:default; }
+  .cs-soon-tag{ font-size:9.5px; color:var(--muted); }
+  .cs-item.active .cs-soon-tag{ color:#14181f; }
+
+</style>
+</head>
+<body>
+<div class="course-switcher"><div class="cs-inner"><span class="cs-label">cursos:</span><a class="cs-item active" href="curso_python.html">🐍 Python</a><a class="cs-item" href="curso_html.html">&lt;/&gt; HTML</a><a class="cs-item" href="curso_css.html">{ } CSS</a><a class="cs-item" href="curso_js.html">⚡ JavaScript</a><span class="cs-item cs-soon" title="Em breve">☕ Java <span class="cs-soon-tag">em breve</span></span></div></div>
+<div class="scrollbar" id="scrollbar"></div>
+<div class="topbar">
+<span class="tmark">&gt;&gt;&gt; curso_python</span>
+<div class="tbtns">
+<button aria-label="Buscar" class="iconbtn" id="paletteBtnMobile">⌕</button>
+<button aria-label="Abrir menu" class="iconbtn" id="hamburger">☰</button>
+</div>
+</div>
+<div class="overlay" id="overlay"></div>
+<div class="shell">
+<nav class="side" id="sidenav">
+<div class="side-head">
+<div class="side-head-row">
+<div class="ringwrap">
+<svg height="44" viewbox="0 0 44 44" width="44">
+<defs>
+<linearGradient id="ringGrad" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="var(--blue-bright)"></stop>
+<stop offset="100%" stop-color="var(--yellow)"></stop>
+</linearGradient>
+</defs>
+<circle class="ring-bg" cx="22" cy="22" r="18"></circle>
+<circle class="ring-fg" cx="22" cy="22" id="ringFg" r="18" stroke-dasharray="113" stroke-dashoffset="113"></circle>
+</svg>
+<div class="ring-pct" id="ringPct">0%</div>
+</div>
+<div class="brand">
+<span class="mark">&gt;&gt;&gt; import aprendizado</span>
+<h1>Curso de Python</h1>
+<p>18 capítulos · do zero ao projeto</p>
+</div>
+</div>
+<div class="quickrow">
+<button class="qbtn" id="paletteBtn">⌕ buscar <span class="kbd">⌘K</span></button>
+<button class="qbtn" id="favBtn">★ favoritos</button>
+</div>
+<div class="quickrow">
+<button class="qbtn" id="themeBtn" title="Alternar tema claro/escuro">🌓 tema</button>
+<button class="qbtn fontbtn" id="fontDecBtn" title="Diminuir fonte">A-</button>
+<button class="qbtn fontbtn" id="fontIncBtn" title="Aumentar fonte">A+</button>
+</div>
+<div class="statusline">
+<span><b id="levelVal">1</b> · <span id="xpVal">0 XP</span></span>
+<span class="sl-streak sl-zero" id="streakVal">🔥 0d</span>
+</div>
+<div class="xpbar"><div class="xpbar-fill" id="xpBarFill"></div></div>
+</div>
+<div class="searchwrap">
+<input class="searchbox" id="searchbox" placeholder="Filtrar capítulos..." type="text"/>
+</div>
+<div class="navscroll" id="navscroll">
+<div class="navgroup" data-group="fundamentos">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">FUNDAMENTOS</span><span class="gcount">0/4</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="intro" href="#intro"><span class="idx">00</span><span class="lbl">O que é Python</span><span class="check">✓</span><span class="star" data-star="intro">★</span></a>
+<a class="navlink" data-target="variaveis" href="#variaveis"><span class="idx">01</span><span class="lbl">Variáveis e tipos</span><span class="check">✓</span><span class="star" data-star="variaveis">★</span></a>
+<a class="navlink" data-target="operadores" href="#operadores"><span class="idx">02</span><span class="lbl">Operadores</span><span class="check">✓</span><span class="star" data-star="operadores">★</span></a>
+<a class="navlink" data-target="strings" href="#strings"><span class="idx">03</span><span class="lbl">Texto (strings)</span><span class="check">✓</span><span class="star" data-star="strings">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="controle">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">CONTROLE DE FLUXO</span><span class="gcount">0/2</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="condicionais" href="#condicionais"><span class="idx">04</span><span class="lbl">Condicionais</span><span class="check">✓</span><span class="star" data-star="condicionais">★</span></a>
+<a class="navlink" data-target="loops" href="#loops"><span class="idx">05</span><span class="lbl">Laços de repetição</span><span class="check">✓</span><span class="star" data-star="loops">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="estruturas">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">ESTRUTURAS DE DADOS</span><span class="gcount">0/3</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="listas" href="#listas"><span class="idx">06</span><span class="lbl">Listas</span><span class="check">✓</span><span class="star" data-star="listas">★</span></a>
+<a class="navlink" data-target="dicionarios" href="#dicionarios"><span class="idx">07</span><span class="lbl">Dicionários</span><span class="check">✓</span><span class="star" data-star="dicionarios">★</span></a>
+<a class="navlink" data-target="comprehensions" href="#comprehensions"><span class="idx">08</span><span class="lbl">List comprehensions</span><span class="check">✓</span><span class="star" data-star="comprehensions">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="organizando">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">ORGANIZANDO CÓDIGO</span><span class="gcount">0/4</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="funcoes" href="#funcoes"><span class="idx">09</span><span class="lbl">Funções</span><span class="check">✓</span><span class="star" data-star="funcoes">★</span></a>
+<a class="navlink" data-target="erros" href="#erros"><span class="idx">10</span><span class="lbl">Tratando erros</span><span class="check">✓</span><span class="star" data-star="erros">★</span></a>
+<a class="navlink" data-target="classes" href="#classes"><span class="idx">11</span><span class="lbl">Classes e objetos</span><span class="check">✓</span><span class="star" data-star="classes">★</span></a>
+<a class="navlink" data-target="modulos" href="#modulos"><span class="idx">12</span><span class="lbl">Módulos</span><span class="check">✓</span><span class="star" data-star="modulos">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="pratica">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">NA PRÁTICA</span><span class="gcount">0/3</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="arquivos" href="#arquivos"><span class="idx">13</span><span class="lbl">Arquivos</span><span class="check">✓</span><span class="star" data-star="arquivos">★</span></a>
+<a class="navlink" data-target="bibliotecas" href="#bibliotecas"><span class="idx">14</span><span class="lbl">Bibliotecas populares</span><span class="check">✓</span><span class="star" data-star="bibliotecas">★</span></a>
+<a class="navlink" data-target="boas-praticas" href="#boas-praticas"><span class="idx">15</span><span class="lbl">Boas práticas</span><span class="check">✓</span><span class="star" data-star="boas-praticas">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="proximos">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">PRÓXIMOS PASSOS</span><span class="gcount">0/2</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="projeto" href="#projeto"><span class="idx">16</span><span class="lbl">Projeto final</span><span class="check">✓</span><span class="star" data-star="projeto">★</span></a>
+<a class="navlink" data-target="recursos" href="#recursos"><span class="idx">17</span><span class="lbl">Para onde ir depois</span><span class="check">✓</span><span class="star" data-star="recursos">★</span></a>
+</div>
+</div>
+</div>
+<div class="side-foot">
+<div class="quickrow" style="margin-top:0;">
+<button class="qbtn" id="achBtn">🏆 conquistas</button>
+<button class="qbtn" id="statsBtn">📊 estatísticas</button>
+</div>
+<button class="continue-btn" id="continueBtn">
+<span class="cb-lbl">CONTINUAR DE ONDE PAROU</span>
+<span class="cb-chap" id="continueChap">—</span>
+</button>
+</div>
+</nav>
+<main>
+<div class="crumbbar" id="crumbbar">
+<span class="cg" id="crumbGroup">Início</span><span class="sep">/</span><span class="cc" id="crumbChap">visão geral</span>
+</div>
+<div class="hero" id="topo">
+<div class="hero-inner">
+<span class="kicker">guia interativo, 18 capítulos</span>
+<h1>Aprenda Python lendo, testando e errando de propósito.</h1>
+<p class="lead">Cada capítulo tem uma explicação curta, um exemplo de código com botão "Executar" e um exercício de múltipla escolha. Use <span class="kbd" style="font-family:'JetBrains Mono',monospace;background:var(--panel-3);border:1px solid var(--line);border-radius:3px;padding:1px 5px;font-size:12px;">⌘K</span> a qualquer momento para pular direto para um capítulo.</p>
+<a class="startbtn" href="#intro" id="startBtn">Começar pelo capítulo 00 →</a>
+<button class="paletteopen" id="paletteBtnHero">Ir para um capítulo <span class="kbd">⌘K</span></button>
+<div class="progress-wrap">
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-label">
+<span id="progressLabel">0 de 18 capítulos concluídos</span>
+<button class="reset" id="resetBtn">reiniciar progresso</button>
+</div>
+</div>
+</div>
+<div class="hero-term" aria-hidden="true">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">boas_vindas.py</span>
+</div>
+<pre><span class="ht-line">&gt;&gt;&gt; import aprendizado</span>
+<span class="ht-line">&gt;&gt;&gt; curso = aprendizado.Curso(<span class="tok-str">"Python"</span>)</span>
+<span class="ht-line">&gt;&gt;&gt; curso.capitulos</span>
+<span class="ht-line ht-out">18</span>
+<span class="ht-line">&gt;&gt;&gt; curso.iniciar()<span class="ht-cursor"></span></span></pre>
+</div>
+</div>
+<!-- 00 INTRO -->
+<section class="topic" data-group="Fundamentos" data-title="O que é Python" id="intro">
+<div class="topic-head"><span class="topic-num">00</span><h2>O que é Python</h2><button class="topic-star" data-star-target="intro">★</button></div>
+<p class="dek">Uma linguagem de programação criada para ser lida quase como português ou inglês simples.</p>
+<p>Python foi criada por Guido van Rossum em 1991. Ela é usada para automatizar tarefas, analisar dados, construir sites, treinar modelos de inteligência artificial e muito mais. O motivo de tanta gente começar por Python é simples: a sintaxe é enxuta, sem chaves <code>{ }</code> ou ponto e vírgula <code>;</code> no fim de cada linha — os blocos de código são organizados por indentação (espaços no início da linha).</p>
+<div class="codeblock" data-cbid="cb0">
+<div class="cb-top"><span class="cb-title">meu_primeiro_programa.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-fn">print</span>(<span class="tok-str">"Olá, mundo!"</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">"Estou aprendendo Python."</span>)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Olá, mundo!
+Estou aprendendo Python.</div>
+<div class="callout"><b>Dica:</b> a função <code>print()</code> mostra algo na tela. É a primeira ferramenta que todo programador Python usa.</div>
+<div class="callout"><b>Aprofundando:</b> Quando você roda um arquivo <code>.py</code>, o Python lê o código de cima para baixo, linha por linha, e executa cada instrução na ordem em que aparece — por isso a ordem das linhas importa.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-intro">
+        <div class="cb-top"><span class="cb-title">mais_prints.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">nome = "Mundo"
+print("Olá,", nome, "!")
+print("Isso é uma", "frase", "montada", "com", "várias", "partes")
+print(1, 2, 3, sep=" - ")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva um programa que imprima seu nome e uma frase de boas-vindas em duas linhas separadas, usando dois <code>print()</code>.</p>
+        <div class="codeblock" data-cbid="challenge-intro">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># escreva seu código abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>nome = "Ana"
+print(nome)
+print("Bem-vindo(a) ao curso de Python!")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="intro">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que organiza os blocos de código em Python, já que não existem chaves <code>{ }</code>?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Ponto e vírgula no final da linha</button>
+<button class="opt" data-correct="true">A indentação (espaços no início da linha)</button>
+<button class="opt" data-correct="false">Parênteses ao redor do bloco</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense em como o Python sabe onde um bloco `if` termina sem usar chaves.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual função usamos para mostrar algo na tela em Python?</p>
+<div class="opts">
+<button class="opt" data-correct="true">print()</button>
+<button class="opt" data-correct="false">input()</button>
+<button class="opt" data-correct="false">return</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É a primeira função que você usou neste capítulo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="intro" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="next" href="#variaveis"><span class="lbl2">PRÓXIMO</span>01 · Variáveis e tipos →</a></div>
+</section>
+<!-- 01 VARIAVEIS -->
+<section class="topic" data-group="Fundamentos" data-title="Variáveis e tipos" id="variaveis">
+<div class="topic-head"><span class="topic-num">01</span><h2>Variáveis e tipos</h2><button class="topic-star" data-star-target="variaveis">★</button></div>
+<p class="dek">Uma variável é um nome que guarda um valor para você usar depois.</p>
+<p>Em Python você não precisa declarar o tipo da variável — ela descobre sozinha. Os tipos mais comuns são:</p>
+<table>
+<tr><th>Tipo</th><th>Exemplo</th><th>Uso comum</th></tr>
+<tr><td><code>int</code></td><td><code>7</code>, <code>-3</code></td><td>contagens, índices</td></tr>
+<tr><td><code>float</code></td><td><code>3.14</code></td><td>medidas, preços</td></tr>
+<tr><td><code>str</code></td><td><code>"Ana"</code></td><td>texto</td></tr>
+<tr><td><code>bool</code></td><td><code>True</code> / <code>False</code></td><td>decisões</td></tr>
+</table>
+<div class="codeblock" data-cbid="cb1">
+<div class="cb-top"><span class="cb-title">variaveis.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">nome = <span class="tok-str">"Ana"</span>        <span class="tok-com"># str</span>
+idade = 28             <span class="tok-com"># int</span>
+altura = 1.68           <span class="tok-com"># float</span>
+esta_estudando = <span class="tok-kw">True</span>   <span class="tok-com"># bool</span>
+
+<span class="tok-fn">print</span>(nome, idade, altura, esta_estudando)
+<span class="tok-fn">print</span>(<span class="tok-fn">type</span>(idade))</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Ana 28 1.68 True
+&lt;class 'int'&gt;</div>
+<div class="callout"><b>Dica:</b> use <code>type(algo)</code> sempre que tiver dúvida sobre o tipo de uma variável.</div>
+<div class="callout"><b>Aprofundando:</b> Você pode converter um valor de um tipo para outro usando funções como <code>int()</code>, <code>float()</code> e <code>str()</code> — isso é chamado de conversão de tipo (type casting) e é muito comum ao ler dados digitados pelo usuário, que sempre chegam como texto.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-variaveis">
+        <div class="cb-top"><span class="cb-title">conversao_tipos.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">idade_texto = "28"
+idade_numero = int(idade_texto)
+
+print(idade_numero + 1)
+print(type(idade_texto), type(idade_numero))
+
+preco = 19.9
+print(str(preco) + " reais")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Crie três variáveis — <code>nome</code>, <code>idade</code> e <code>cidade</code> — e imprima uma frase única juntando as três com uma f-string.</p>
+        <div class="codeblock" data-cbid="challenge-variaveis">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># crie suas variáveis aqui
+# depois monte e imprima a frase com f-string
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>nome = "Carlos"
+idade = 30
+cidade = "Recife"
+print(f"{nome}, {idade} anos, mora em {cidade}.")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="variaveis">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual é o tipo do valor <code>3.14</code>?</p>
+<div class="opts">
+<button class="opt" data-correct="false">int</button>
+<button class="opt" data-correct="true">float</button>
+<button class="opt" data-correct="false">str</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Números com casas decimais pertencem a esse tipo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual tipo representa Verdadeiro ou Falso?</p>
+<div class="opts">
+<button class="opt" data-correct="true">bool</button>
+<button class="opt" data-correct="false">str</button>
+<button class="opt" data-correct="false">int</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É o tipo usado em decisões, como True e False.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="variaveis" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#intro"><span class="lbl2">ANTERIOR</span>← 00 · O que é Python</a>
+<a class="next" href="#operadores"><span class="lbl2">PRÓXIMO</span>02 · Operadores →</a>
+</div>
+</section>
+<!-- 02 OPERADORES -->
+<section class="topic" data-group="Fundamentos" data-title="Operadores" id="operadores">
+<div class="topic-head"><span class="topic-num">02</span><h2>Operadores</h2><button class="topic-star" data-star-target="operadores">★</button></div>
+<p class="dek">Símbolos que fazem contas, comparações e combinam condições.</p>
+<p>Os operadores aritméticos (<code>+ - * /</code>) funcionam como em uma calculadora. Já os operadores de comparação (<code>== != &gt; &lt;</code>) sempre retornam <code>True</code> ou <code>False</code>.</p>
+<div class="codeblock" data-cbid="cb2">
+<div class="cb-top"><span class="cb-title">operadores.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">a = 10
+b = 3
+
+<span class="tok-fn">print</span>(a + b)    <span class="tok-com"># soma -&gt; 13</span>
+<span class="tok-fn">print</span>(a // b)   <span class="tok-com"># divisão inteira -&gt; 3</span>
+<span class="tok-fn">print</span>(a % b)    <span class="tok-com"># resto -&gt; 1</span>
+<span class="tok-fn">print</span>(a &gt; b)    <span class="tok-com"># comparação -&gt; True</span>
+<span class="tok-fn">print</span>(a == 10 <span class="tok-kw">and</span> b == 3)  <span class="tok-com"># -&gt; True</span></pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>13
+3
+1
+True
+True</div>
+<div class="callout"><b>Aprofundando:</b> Assim como na matemática, Python segue uma ordem de precedência entre operadores: multiplicação e divisão acontecem antes de soma e subtração. Use parênteses <code>( )</code> sempre que quiser deixar a ordem explícita e evitar erros de leitura.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-operadores">
+        <div class="cb-top"><span class="cb-title">precedencia.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">resultado1 = 2 + 3 * 4
+resultado2 = (2 + 3) * 4
+
+print(resultado1)
+print(resultado2)
+print(10 - 2 ** 2)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Calcule a área de um retângulo de lados 8 e 5, e imprima o resultado em uma frase formatada.</p>
+        <div class="codeblock" data-cbid="challenge-operadores">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">base = 8
+altura = 5
+# calcule a área e imprima o resultado
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>base = 8
+altura = 5
+area = base * altura
+print(f"A área do retângulo é {area}")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="operadores">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual o resultado de <code>10 % 3</code> em Python?</p>
+<div class="opts">
+<button class="opt" data-correct="false">3</button>
+<button class="opt" data-correct="false">3.33</button>
+<button class="opt" data-correct="true">1</button>
+</div>
+<button class="hint-btn" type="button" data-hint="O operador % devolve o resto da divisão, não o resultado dela.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual operador faz uma divisão inteira (sem casas decimais)?</p>
+<div class="opts">
+<button class="opt" data-correct="false">/</button>
+<button class="opt" data-correct="true">//</button>
+<button class="opt" data-correct="false">%</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É formado por duas barras seguidas.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="operadores" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#variaveis"><span class="lbl2">ANTERIOR</span>← 01 · Variáveis e tipos</a>
+<a class="next" href="#strings"><span class="lbl2">PRÓXIMO</span>03 · Texto (strings) →</a>
+</div>
+</section>
+<!-- 03 STRINGS -->
+<section class="topic" data-group="Fundamentos" data-title="Texto (strings)" id="strings">
+<div class="topic-head"><span class="topic-num">03</span><h2>Texto (strings)</h2><button class="topic-star" data-star-target="strings">★</button></div>
+<p class="dek">Como criar, juntar e formatar texto.</p>
+<p>A forma mais prática de montar textos com variáveis dentro é usando <b>f-strings</b>: coloque um <code>f</code> antes das aspas e escreva a variável entre chaves.</p>
+<div class="codeblock" data-cbid="cb3">
+<div class="cb-top"><span class="cb-title">strings.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">nome = <span class="tok-str">"Carlos"</span>
+pontos = 87
+
+mensagem = <span class="tok-str">f"{nome} fez {pontos} pontos!"</span>
+<span class="tok-fn">print</span>(mensagem)
+<span class="tok-fn">print</span>(nome.upper())
+<span class="tok-fn">print</span>(<span class="tok-fn">len</span>(nome))</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Carlos fez 87 pontos!
+CARLOS
+6</div>
+<div class="callout"><b>Dica:</b> <code>len()</code> conta quantos caracteres tem o texto — muito útil para validar formulários e entradas de usuário.</div>
+<div class="callout"><b>Aprofundando:</b> Strings em Python podem ser "fatiadas" com colchetes, como listas: <code>texto[0:3]</code> pega os três primeiros caracteres. Isso é chamado de slicing e funciona porque, por baixo dos panos, uma string é uma sequência ordenada de caracteres.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-strings">
+        <div class="cb-top"><span class="cb-title">fatiando_texto.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">palavra = "programacao"
+
+print(palavra[0:4])
+print(palavra[-4:])
+print(palavra[::-1])
+print(palavra.replace("a", "@"))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva uma função que receba uma palavra e devolva ela invertida (de trás para frente).</p>
+        <div class="codeblock" data-cbid="challenge-strings">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">def inverter(palavra):
+    # complete aqui
+    pass
+
+print(inverter("python"))
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>def inverter(palavra):
+    return palavra[::-1]
+
+print(inverter("python"))</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="strings">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que faz <code>f"{nome} tem {idade} anos"</code>?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Insere o valor das variáveis nome e idade dentro do texto</button>
+<button class="opt" data-correct="false">Cria uma lista com nome e idade</button>
+<button class="opt" data-correct="false">Compara nome com idade</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense no que acontece quando você coloca um nome de variável entre chaves dentro do texto.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">O que "python".upper() retorna?</p>
+<div class="opts">
+<button class="opt" data-correct="true">PYTHON</button>
+<button class="opt" data-correct="false">python</button>
+<button class="opt" data-correct="false">Python</button>
+</div>
+<button class="hint-btn" type="button" data-hint="upper() deixa todas as letras em maiúsculas.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="strings" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#operadores"><span class="lbl2">ANTERIOR</span>← 02 · Operadores</a>
+<a class="next" href="#condicionais"><span class="lbl2">PRÓXIMO</span>04 · Condicionais →</a>
+</div>
+</section>
+<!-- 04 CONDICIONAIS -->
+<section class="topic" data-group="Controle de fluxo" data-title="Condicionais" id="condicionais">
+<div class="topic-head"><span class="topic-num">04</span><h2>Condicionais</h2><button class="topic-star" data-star-target="condicionais">★</button></div>
+<p class="dek">Fazer o programa tomar decisões com <code>if</code>, <code>elif</code> e <code>else</code>.</p>
+<p>O bloco depois do <code>if</code> só roda se a condição for verdadeira. Repare que a linha seguinte é indentada — é assim que Python sabe o que pertence a cada bloco.</p>
+<div class="codeblock" data-cbid="cb4">
+<div class="cb-top"><span class="cb-title">condicionais.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">nota = 7.5
+
+<span class="tok-kw">if</span> nota &gt;= 9:
+    <span class="tok-fn">print</span>(<span class="tok-str">"Excelente"</span>)
+<span class="tok-kw">elif</span> nota &gt;= 6:
+    <span class="tok-fn">print</span>(<span class="tok-str">"Aprovado"</span>)
+<span class="tok-kw">else</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">"Precisa estudar mais"</span>)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Aprovado</div>
+<div class="callout"><b>Aprofundando:</b> É possível combinar várias condições usando <code>and</code> (todas precisam ser verdadeiras) e <code>or</code> (basta uma ser verdadeira). Condicionais também podem ficar "aninhadas", ou seja, um <code>if</code> dentro de outro <code>if</code>.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-condicionais">
+        <div class="cb-top"><span class="cb-title">condicoes_combinadas.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">idade = 20
+tem_carteira = True
+
+if idade &gt;= 18 and tem_carteira:
+    print("Pode dirigir")
+else:
+    print("Não pode dirigir")
+
+nota = 5
+if nota &lt; 0 or nota &gt; 10:
+    print("Nota inválida")
+else:
+    print("Nota válida")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva um programa que receba um número e diga se ele é positivo, negativo ou zero, e também se é par ou ímpar.</p>
+        <div class="codeblock" data-cbid="challenge-condicionais">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">numero = -7
+# escreva as condições abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>numero = -7
+
+if numero &gt; 0:
+    print("Positivo")
+elif numero &lt; 0:
+    print("Negativo")
+else:
+    print("Zero")
+
+if numero % 2 == 0:
+    print("Par")
+else:
+    print("Ímpar")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="condicionais">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Se <code>nota = 9.5</code> no exemplo acima, o que é impresso?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Excelente</button>
+<button class="opt" data-correct="false">Aprovado</button>
+<button class="opt" data-correct="false">Precisa estudar mais</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Repare que 9.5 é maior ou igual a 9.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">O que a palavra-chave elif significa na prática?</p>
+<div class="opts">
+<button class="opt" data-correct="true">"senão, se" — uma condição extra</button>
+<button class="opt" data-correct="false">o mesmo que else</button>
+<button class="opt" data-correct="false">o fim do bloco condicional</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É um meio-termo entre if e else.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="condicionais" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#strings"><span class="lbl2">ANTERIOR</span>← 03 · Texto (strings)</a>
+<a class="next" href="#loops"><span class="lbl2">PRÓXIMO</span>05 · Laços de repetição →</a>
+</div>
+</section>
+<!-- 05 LOOPS -->
+<section class="topic" data-group="Controle de fluxo" data-title="Laços de repetição" id="loops">
+<div class="topic-head"><span class="topic-num">05</span><h2>Laços de repetição</h2><button class="topic-star" data-star-target="loops">★</button></div>
+<p class="dek">Repetir uma ação várias vezes sem copiar e colar código.</p>
+<p>O <code>for</code> percorre um conjunto de itens (uma lista, um intervalo de números, um texto). O <code>while</code> repete enquanto uma condição continuar verdadeira.</p>
+<div class="codeblock" data-cbid="cb5">
+<div class="cb-top"><span class="cb-title">loops.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-kw">for</span> numero <span class="tok-kw">in</span> <span class="tok-fn">range</span>(1, 4):
+    <span class="tok-fn">print</span>(<span class="tok-str">f"Rodada {numero}"</span>)
+
+contador = 0
+<span class="tok-kw">while</span> contador &lt; 3:
+    <span class="tok-fn">print</span>(<span class="tok-str">"Ainda contando..."</span>)
+    contador += 1</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Rodada 1
+Rodada 2
+Rodada 3
+Ainda contando...
+Ainda contando...
+Ainda contando...</div>
+<div class="callout warn"><b>Cuidado:</b> se você esquecer de aumentar o contador dentro do <code>while</code>, o laço nunca termina — isso se chama loop infinito.</div>
+<div class="callout"><b>Aprofundando:</b> Dentro de um laço, <code>break</code> interrompe a repetição imediatamente, e <code>continue</code> pula para a próxima repetição sem executar o restante do bloco. São ótimos para casos como "pare de procurar assim que encontrar" ou "ignore os itens inválidos".</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-loops">
+        <div class="cb-top"><span class="cb-title">break_continue.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">for numero in range(1, 10):
+    if numero == 5:
+        break
+    print(numero)
+
+print("---")
+
+for numero in range(1, 6):
+    if numero % 2 == 0:
+        continue
+    print(numero)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Use um <code>while</code> para somar todos os números de 1 até 10 e imprima o resultado final.</p>
+        <div class="codeblock" data-cbid="challenge-loops">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">soma = 0
+contador = 1
+# complete o laço while abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>soma = 0
+contador = 1
+
+while contador &lt;= 10:
+    soma += contador
+    contador += 1
+
+print(soma)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="loops">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Quantas vezes <code>range(1, 4)</code> repete o laço <code>for</code>?</p>
+<div class="opts">
+<button class="opt" data-correct="false">4 vezes</button>
+<button class="opt" data-correct="true">3 vezes</button>
+<button class="opt" data-correct="false">1 vez</button>
+</div>
+<button class="hint-btn" type="button" data-hint="range(1, 4) vai do 1 até o 4, sem incluir o 4.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">O que geralmente causa um loop infinito em um while?</p>
+<div class="opts">
+<button class="opt" data-correct="true">esquecer de atualizar a condição dentro do laço</button>
+<button class="opt" data-correct="false">usar for em vez de while</button>
+<button class="opt" data-correct="false">colocar um print dentro do laço</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense em uma condição que nunca deixa de ser verdadeira.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="loops" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#condicionais"><span class="lbl2">ANTERIOR</span>← 04 · Condicionais</a>
+<a class="next" href="#listas"><span class="lbl2">PRÓXIMO</span>06 · Listas →</a>
+</div>
+</section>
+<!-- 06 LISTAS -->
+<section class="topic" data-group="Estruturas de dados" data-title="Listas" id="listas">
+<div class="topic-head"><span class="topic-num">06</span><h2>Listas</h2><button class="topic-star" data-star-target="listas">★</button></div>
+<p class="dek">Uma coleção ordenada de valores, que pode crescer ou encolher.</p>
+<p>Listas são criadas com colchetes <code>[ ]</code>. Cada item tem uma posição (índice), começando em <code>0</code>.</p>
+<div class="codeblock" data-cbid="cb6">
+<div class="cb-top"><span class="cb-title">listas.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">frutas = [<span class="tok-str">"maçã"</span>, <span class="tok-str">"banana"</span>, <span class="tok-str">"uva"</span>]
+
+<span class="tok-fn">print</span>(frutas[0])       <span class="tok-com"># primeiro item</span>
+frutas.append(<span class="tok-str">"pera"</span>)  <span class="tok-com"># adiciona no final</span>
+<span class="tok-fn">print</span>(frutas)
+
+<span class="tok-kw">for</span> fruta <span class="tok-kw">in</span> frutas:
+    <span class="tok-fn">print</span>(<span class="tok-str">f"- {fruta}"</span>)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>maçã
+['maçã', 'banana', 'uva', 'pera']
+- maçã
+- banana
+- uva
+- pera</div>
+<div class="callout"><b>Aprofundando:</b> Listas também aceitam slicing, igual às strings — <code>lista[1:3]</code> pega uma "fatia" da lista. E funções como <code>sorted()</code>, <code>max()</code> e <code>min()</code> facilitam tarefas comuns sem precisar escrever um laço manualmente.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-listas">
+        <div class="cb-top"><span class="cb-title">mais_listas.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = [5, 2, 9, 1, 7]
+
+print(sorted(numeros))
+print(max(numeros))
+print(min(numeros))
+print(numeros[1:3])
+print(sum(numeros) / len(numeros))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Dada uma lista de números, escreva um código que encontre e imprima o maior valor — sem usar a função pronta <code>max()</code>, apenas com um laço.</p>
+        <div class="codeblock" data-cbid="challenge-listas">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = [4, 17, 2, 9, 23, 6]
+maior = numeros[0]
+# complete o laço abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>numeros = [4, 17, 2, 9, 23, 6]
+maior = numeros[0]
+
+for n in numeros:
+    if n &gt; maior:
+        maior = n
+
+print(maior)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="listas">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Em <code>frutas = ["maçã", "banana", "uva"]</code>, o que é <code>frutas[1]</code>?</p>
+<div class="opts">
+<button class="opt" data-correct="false">maçã</button>
+<button class="opt" data-correct="true">banana</button>
+<button class="opt" data-correct="false">uva</button>
+</div>
+<button class="hint-btn" type="button" data-hint="As listas começam a contar a partir do índice 0.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual método adiciona um item ao final de uma lista?</p>
+<div class="opts">
+<button class="opt" data-correct="true">.append()</button>
+<button class="opt" data-correct="false">.add()</button>
+<button class="opt" data-correct="false">.push()</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Foi o método usado no exemplo para adicionar &quot;pera&quot;.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="listas" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#loops"><span class="lbl2">ANTERIOR</span>← 05 · Laços de repetição</a>
+<a class="next" href="#dicionarios"><span class="lbl2">PRÓXIMO</span>07 · Dicionários →</a>
+</div>
+</section>
+<!-- 07 DICIONARIOS -->
+<section class="topic" data-group="Estruturas de dados" data-title="Dicionários" id="dicionarios">
+<div class="topic-head"><span class="topic-num">07</span><h2>Dicionários</h2><button class="topic-star" data-star-target="dicionarios">★</button></div>
+<p class="dek">Pares de chave e valor — ótimo para representar um registro de dados.</p>
+<p>Ao contrário das listas, que usam posição, dicionários usam uma <b>chave</b> (geralmente texto) para buscar um valor.</p>
+<div class="codeblock" data-cbid="cb7">
+<div class="cb-top"><span class="cb-title">dicionarios.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">pessoa = {
+    <span class="tok-str">"nome"</span>: <span class="tok-str">"Júlia"</span>,
+    <span class="tok-str">"idade"</span>: 31,
+    <span class="tok-str">"cidade"</span>: <span class="tok-str">"São Paulo"</span>
+}
+
+<span class="tok-fn">print</span>(pessoa[<span class="tok-str">"nome"</span>])
+pessoa[<span class="tok-str">"idade"</span>] = 32   <span class="tok-com"># atualiza o valor</span>
+<span class="tok-fn">print</span>(pessoa)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Júlia
+{'nome': 'Júlia', 'idade': 32, 'cidade': 'São Paulo'}</div>
+<div class="callout"><b>Aprofundando:</b> O método <code>.items()</code> permite percorrer um dicionário obtendo a chave e o valor ao mesmo tempo em um laço <code>for</code>. Já <code>.get("chave")</code> busca um valor sem gerar erro caso a chave não exista.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-dicionarios">
+        <div class="cb-top"><span class="cb-title">percorrendo_dict.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">precos = {"maçã": 3.5, "banana": 2.0, "uva": 8.9}
+
+for fruta, preco in precos.items():
+    print(f"{fruta}: R$ {preco}")
+
+print(precos.get("pera", "não encontrado"))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Dada uma lista de palavras, monte um dicionário que conte quantas vezes cada palavra aparece.</p>
+        <div class="codeblock" data-cbid="challenge-dicionarios">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">palavras = ["python", "codigo", "python", "dado", "codigo", "python"]
+contagem = {}
+# complete o laço abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>palavras = ["python", "codigo", "python", "dado", "codigo", "python"]
+contagem = {}
+
+for palavra in palavras:
+    if palavra in contagem:
+        contagem[palavra] += 1
+    else:
+        contagem[palavra] = 1
+
+print(contagem)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="dicionarios">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Como você acessa o valor associado à chave <code>"nome"</code> em <code>pessoa</code>?</p>
+<div class="opts">
+<button class="opt" data-correct="false">pessoa[0]</button>
+<button class="opt" data-correct="true">pessoa["nome"]</button>
+<button class="opt" data-correct="false">pessoa.nome()</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Dicionários usam colchetes, mas com uma chave (texto), não uma posição.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Como você adiciona uma nova chave a um dicionário já existente?</p>
+<div class="opts">
+<button class="opt" data-correct="true">dicionario["nova_chave"] = valor</button>
+<button class="opt" data-correct="false">dicionario.add("nova_chave", valor)</button>
+<button class="opt" data-correct="false">dicionario + "nova_chave"</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É a mesma sintaxe usada para atualizar uma chave existente.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="dicionarios" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#listas"><span class="lbl2">ANTERIOR</span>← 06 · Listas</a>
+<a class="next" href="#comprehensions"><span class="lbl2">PRÓXIMO</span>08 · List comprehensions →</a>
+</div>
+</section>
+<!-- 08 COMPREHENSIONS -->
+<section class="topic" data-group="Estruturas de dados" data-title="List comprehensions" id="comprehensions">
+<div class="topic-head"><span class="topic-num">08</span><h2>List comprehensions</h2><button class="topic-star" data-star-target="comprehensions">★</button></div>
+<p class="dek">Uma forma compacta de criar listas a partir de outras listas.</p>
+<p>Em vez de escrever um <code>for</code> de várias linhas para transformar uma lista, você pode fazer isso em uma linha só. É uma das marcas registradas de um código Python "pythônico".</p>
+<div class="codeblock" data-cbid="cb8">
+<div class="cb-top"><span class="cb-title">comprehensions.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">numeros = [1, 2, 3, 4, 5]
+
+<span class="tok-com"># jeito tradicional</span>
+dobrados = []
+<span class="tok-kw">for</span> n <span class="tok-kw">in</span> numeros:
+    dobrados.append(n * 2)
+
+<span class="tok-com"># com list comprehension</span>
+dobrados = [n * 2 <span class="tok-kw">for</span> n <span class="tok-kw">in</span> numeros]
+pares = [n <span class="tok-kw">for</span> n <span class="tok-kw">in</span> numeros <span class="tok-kw">if</span> n % 2 == 0]
+
+<span class="tok-fn">print</span>(dobrados)
+<span class="tok-fn">print</span>(pares)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>[2, 4, 6, 8, 10]
+[2, 4]</div>
+<div class="callout"><b>Dica:</b> se a linha ficar difícil de ler, volte para o <code>for</code> tradicional — clareza sempre vence esperteza.</div>
+<div class="callout"><b>Aprofundando:</b> Também existem dict comprehensions, que criam dicionários da mesma forma compacta: <code>{chave: valor for item in lista}</code>. O princípio é o mesmo das list comprehensions, só muda o tipo de coleção criada.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-comprehensions">
+        <div class="cb-top"><span class="cb-title">dict_comprehension.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = [1, 2, 3, 4, 5]
+
+quadrados = {n: n ** 2 for n in numeros}
+print(quadrados)
+
+maiusculas = [p.upper() for p in ["python", "código", "dados"]]
+print(maiusculas)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Use uma list comprehension para gerar uma lista com o quadrado de todos os números pares entre 1 e 10.</p>
+        <div class="codeblock" data-cbid="challenge-comprehensions">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">numeros = range(1, 11)
+# escreva a list comprehension abaixo
+resultado = []
+print(resultado)
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>numeros = range(1, 11)
+resultado = [n ** 2 for n in numeros if n % 2 == 0]
+print(resultado)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="comprehensions">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que <code>[n for n in numeros if n % 2 == 0]</code> retorna?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Todos os números multiplicados por 2</button>
+<button class="opt" data-correct="true">Apenas os números pares da lista</button>
+<button class="opt" data-correct="false">A soma de todos os números</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Repare na condição &quot;if n % 2 == 0&quot; dentro dos colchetes.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual list comprehension dobra cada número da lista numeros?</p>
+<div class="opts">
+<button class="opt" data-correct="true">[n * 2 for n in numeros]</button>
+<button class="opt" data-correct="false">[n for n in numeros * 2]</button>
+<button class="opt" data-correct="false">[numeros * 2]</button>
+</div>
+<button class="hint-btn" type="button" data-hint="A expressão antes do for é o que vai para a nova lista.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="comprehensions" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#dicionarios"><span class="lbl2">ANTERIOR</span>← 07 · Dicionários</a>
+<a class="next" href="#funcoes"><span class="lbl2">PRÓXIMO</span>09 · Funções →</a>
+</div>
+</section>
+<!-- 09 FUNCOES -->
+<section class="topic" data-group="Organizando código" data-title="Funções" id="funcoes">
+<div class="topic-head"><span class="topic-num">09</span><h2>Funções</h2><button class="topic-star" data-star-target="funcoes">★</button></div>
+<p class="dek">Empacotar um pedaço de código para reutilizar quando quiser.</p>
+<p>Uma função é definida com <code>def</code>, pode receber parâmetros e devolver um resultado com <code>return</code>.</p>
+<div class="codeblock" data-cbid="cb9">
+<div class="cb-top"><span class="cb-title">funcoes.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-kw">def</span> <span class="tok-fn">calcular_media</span>(nota1, nota2):
+    media = (nota1 + nota2) / 2
+    <span class="tok-kw">return</span> media
+
+resultado = calcular_media(8, 6)
+<span class="tok-fn">print</span>(<span class="tok-str">f"Média: {resultado}"</span>)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Média: 7.0</div>
+<div class="callout"><b>Dica:</b> dê nomes de função que descrevam a ação, como <code>calcular_media</code> — isso torna o código autoexplicativo.</div>
+<div class="callout"><b>Aprofundando:</b> Parâmetros podem ter valores padrão (<code>def saudacao(nome="visitante")</code>), o que os torna opcionais na hora de chamar a função. E <code>*args</code> permite que uma função receba uma quantidade variável de argumentos.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-funcoes">
+        <div class="cb-top"><span class="cb-title">parametros_avancados.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">def saudacao(nome="visitante"):
+    print(f"Olá, {nome}!")
+
+saudacao()
+saudacao("Marina")
+
+def somar_tudo(*numeros):
+    return sum(numeros)
+
+print(somar_tudo(1, 2, 3, 4))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva uma função <code>fatorial(n)</code> que calcule o fatorial de um número usando um laço.</p>
+        <div class="codeblock" data-cbid="challenge-funcoes">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">def fatorial(n):
+    # complete aqui
+    pass
+
+print(fatorial(5))
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>def fatorial(n):
+    resultado = 1
+    for i in range(1, n + 1):
+        resultado *= i
+    return resultado
+
+print(fatorial(5))</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="funcoes">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que a palavra-chave <code>return</code> faz dentro de uma função?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Imprime o valor na tela</button>
+<button class="opt" data-correct="true">Devolve um valor para quem chamou a função</button>
+<button class="opt" data-correct="false">Apaga a função da memória</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Sem essa palavra-chave, a função não devolve nada para quem a chamou.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">O que acontece se uma função não tiver return?</p>
+<div class="opts">
+<button class="opt" data-correct="true">ela devolve None</button>
+<button class="opt" data-correct="false">ela gera um erro</button>
+<button class="opt" data-correct="false">ela devolve 0</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Python sempre devolve algum valor, mesmo que você não peça explicitamente.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="funcoes" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#comprehensions"><span class="lbl2">ANTERIOR</span>← 08 · List comprehensions</a>
+<a class="next" href="#erros"><span class="lbl2">PRÓXIMO</span>10 · Tratando erros →</a>
+</div>
+</section>
+<!-- 10 ERROS -->
+<section class="topic" data-group="Organizando código" data-title="Tratando erros" id="erros">
+<div class="topic-head"><span class="topic-num">10</span><h2>Tratando erros</h2><button class="topic-star" data-star-target="erros">★</button></div>
+<p class="dek">Evitar que o programa quebre quando algo dá errado.</p>
+<p>O bloco <code>try/except</code> permite "tentar" um código arriscado e capturar o erro (exceção) caso ele aconteça, em vez de derrubar o programa inteiro.</p>
+<div class="codeblock" data-cbid="cb10">
+<div class="cb-top"><span class="cb-title">erros.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-kw">try</span>:
+    idade = <span class="tok-fn">int</span>(<span class="tok-fn">input</span>(<span class="tok-str">"Digite sua idade: "</span>))
+    <span class="tok-fn">print</span>(<span class="tok-str">f"Você tem {idade} anos"</span>)
+<span class="tok-kw">except</span> <span class="tok-fn">ValueError</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">"Isso não parece um número válido."</span>)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA (se digitar "abc")</span>Isso não parece um número válido.</div>
+<div class="callout"><b>Aprofundando:</b> É possível capturar mais de um tipo de erro com blocos <code>except</code> separados, e usar <code>finally</code> para um trecho que sempre executa, dando erro ou não — muito usado para liberar recursos, como fechar um arquivo.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-erros">
+        <div class="cb-top"><span class="cb-title">varios_except.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">def dividir(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        print("Não é possível dividir por zero")
+    except TypeError:
+        print("Os valores precisam ser números")
+    finally:
+        print("Tentativa de divisão finalizada")
+
+dividir(10, 0)
+dividir(10, "a")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Peça um número ao usuário com <code>input()</code> dentro de um <code>try/except</code>, tratando o caso da pessoa digitar algo que não é número.</p>
+        <div class="codeblock" data-cbid="challenge-erros">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># use input() e try/except abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>try:
+    numero = int(input("Digite um número: "))
+    print(f"Você digitou {numero}")
+except ValueError:
+    print("Isso não é um número válido")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="erros">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Para que serve o bloco <code>except</code>?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Definir o que fazer quando um erro específico acontece</button>
+<button class="opt" data-correct="false">Repetir o código várias vezes</button>
+<button class="opt" data-correct="false">Criar uma nova variável</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense no que acontece depois que o erro é &quot;pego&quot;.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual bloco sempre executa, tendo ocorrido erro ou não?</p>
+<div class="opts">
+<button class="opt" data-correct="true">finally</button>
+<button class="opt" data-correct="false">except</button>
+<button class="opt" data-correct="false">else</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É muito usado para limpeza, como fechar arquivos.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="erros" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#funcoes"><span class="lbl2">ANTERIOR</span>← 09 · Funções</a>
+<a class="next" href="#classes"><span class="lbl2">PRÓXIMO</span>11 · Classes e objetos →</a>
+</div>
+</section>
+<!-- 11 CLASSES -->
+<section class="topic" data-group="Organizando código" data-title="Classes e objetos" id="classes">
+<div class="topic-head"><span class="topic-num">11</span><h2>Classes e objetos</h2><button class="topic-star" data-star-target="classes">★</button></div>
+<p class="dek">Modelar coisas do mundo real como código, com dados e comportamento juntos.</p>
+<p>Uma <b>classe</b> é um molde. Um <b>objeto</b> é algo criado a partir desse molde. O método especial <code>__init__</code> roda automaticamente quando um objeto é criado.</p>
+<div class="codeblock" data-cbid="cb11">
+<div class="cb-top"><span class="cb-title">classes.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-kw">class</span> <span class="tok-fn">Cachorro</span>:
+    <span class="tok-kw">def</span> <span class="tok-fn">__init__</span>(self, nome, raca):
+        self.nome = nome
+        self.raca = raca
+
+    <span class="tok-kw">def</span> <span class="tok-fn">latir</span>(self):
+        <span class="tok-fn">print</span>(<span class="tok-str">f"{self.nome} diz: Au au!"</span>)
+
+meu_cachorro = Cachorro(<span class="tok-str">"Bolinha"</span>, <span class="tok-str">"Vira-lata"</span>)
+meu_cachorro.latir()</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Bolinha diz: Au au!</div>
+<div class="callout"><b>Aprofundando:</b> Uma classe pode herdar de outra usando <code>class Filha(Mae):</code>, reaproveitando atributos e métodos e podendo adicionar ou sobrescrever comportamentos — essa é a ideia de herança, um dos pilares da programação orientada a objetos.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-classes">
+        <div class="cb-top"><span class="cb-title">heranca.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">class Animal:
+    def __init__(self, nome):
+        self.nome = nome
+
+    def emitir_som(self):
+        print(f"{self.nome} faz um som")
+
+class Gato(Animal):
+    def emitir_som(self):
+        print(f"{self.nome} diz: Miau!")
+
+Animal("Bicho").emitir_som()
+Gato("Whiskas").emitir_som()</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Crie uma classe <code>Retangulo</code> com atributos <code>largura</code> e <code>altura</code>, e um método <code>area()</code> que devolve a área.</p>
+        <div class="codeblock" data-cbid="challenge-classes">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">class Retangulo:
+    def __init__(self, largura, altura):
+        # complete aqui
+        pass
+
+    def area(self):
+        # complete aqui
+        pass
+
+r = Retangulo(4, 5)
+print(r.area())
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>class Retangulo:
+    def __init__(self, largura, altura):
+        self.largura = largura
+        self.altura = altura
+
+    def area(self):
+        return self.largura * self.altura
+
+r = Retangulo(4, 5)
+print(r.area())</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="classes">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Quando o método <code>__init__</code> é executado?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Automaticamente, quando um novo objeto é criado</button>
+<button class="opt" data-correct="false">Só quando você chama init() manualmente</button>
+<button class="opt" data-correct="false">No final do programa</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense no nome de um método que &quot;inicializa&quot; algo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">O que self representa dentro de um método de uma classe?</p>
+<div class="opts">
+<button class="opt" data-correct="true">o próprio objeto</button>
+<button class="opt" data-correct="false">a classe inteira</button>
+<button class="opt" data-correct="false">um valor fixo, igual para todos os objetos</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É a forma como o objeto se refere a si mesmo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="classes" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#erros"><span class="lbl2">ANTERIOR</span>← 10 · Tratando erros</a>
+<a class="next" href="#modulos"><span class="lbl2">PRÓXIMO</span>12 · Módulos →</a>
+</div>
+</section>
+<!-- 12 MODULOS -->
+<section class="topic" data-group="Organizando código" data-title="Módulos" id="modulos">
+<div class="topic-head"><span class="topic-num">12</span><h2>Módulos</h2><button class="topic-star" data-star-target="modulos">★</button></div>
+<p class="dek">Dividir o código em arquivos separados e reaproveitar código pronto.</p>
+<p>Python já vem com uma "caixa de ferramentas" enorme, a biblioteca padrão. Para usar, basta importar o módulo com <code>import</code>.</p>
+<div class="codeblock" data-cbid="cb12">
+<div class="cb-top"><span class="cb-title">modulos.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-kw">import</span> math
+<span class="tok-kw">from</span> datetime <span class="tok-kw">import</span> date
+
+<span class="tok-fn">print</span>(math.sqrt(16))
+<span class="tok-fn">print</span>(math.pi)
+<span class="tok-fn">print</span>(date.today())</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>4.0
+3.141592653589793
+2026-08-31</div>
+<div class="callout"><b>Dica:</b> você também pode criar seu próprio módulo — qualquer arquivo <code>.py</code> pode ser importado por outro com <code>import nome_do_arquivo</code>.</div>
+<div class="callout"><b>Aprofundando:</b> O módulo <code>random</code>, da biblioteca padrão, é muito usado para gerar números aleatórios, sortear itens de uma lista ou embaralhar dados — útil em jogos, simulações e testes.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-modulos">
+        <div class="cb-top"><span class="cb-title">modulo_random.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">import random
+
+print(random.randint(1, 6))
+frutas = ["maçã", "banana", "uva"]
+print(random.choice(frutas))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Use o módulo <code>random</code> para simular o lançamento de um dado de 6 lados e imprimir o resultado.</p>
+        <div class="codeblock" data-cbid="challenge-modulos">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">import random
+# simule o dado abaixo
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>import random
+
+resultado = random.randint(1, 6)
+print(f"Você tirou {resultado} no dado!")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="modulos">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que a palavra-chave <code>import</code> faz?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Traz um módulo pronto para dentro do seu programa</button>
+<button class="opt" data-correct="false">Exporta seu código para outro arquivo</button>
+<button class="opt" data-correct="false">Cria uma nova classe</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense na palavra que &quot;traz para dentro&quot; algo de fora do seu arquivo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual a diferença entre import math e from math import sqrt?</p>
+<div class="opts">
+<button class="opt" data-correct="true">a segunda importa só uma função específica do módulo</button>
+<button class="opt" data-correct="false">não há diferença nenhuma</button>
+<button class="opt" data-correct="false">a primeira é mais rápida de executar</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Repare no que vem depois de from e depois de import.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="modulos" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#classes"><span class="lbl2">ANTERIOR</span>← 11 · Classes e objetos</a>
+<a class="next" href="#arquivos"><span class="lbl2">PRÓXIMO</span>13 · Arquivos →</a>
+</div>
+</section>
+<!-- 13 ARQUIVOS -->
+<section class="topic" data-group="Na prática" data-title="Arquivos" id="arquivos">
+<div class="topic-head"><span class="topic-num">13</span><h2>Arquivos</h2><button class="topic-star" data-star-target="arquivos">★</button></div>
+<p class="dek">Ler e salvar informações em arquivos de texto, para que os dados sobrevivam ao fim do programa.</p>
+<p>O comando <code>with open(...)</code> abre um arquivo e garante que ele será fechado automaticamente, mesmo se algo der errado.</p>
+<div class="codeblock" data-cbid="cb13">
+<div class="cb-top"><span class="cb-title">arquivos.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-com"># escrever em um arquivo</span>
+<span class="tok-kw">with</span> <span class="tok-fn">open</span>(<span class="tok-str">"notas.txt"</span>, <span class="tok-str">"w"</span>) <span class="tok-kw">as</span> arquivo:
+    arquivo.write(<span class="tok-str">"Estudar Python\n"</span>)
+    arquivo.write(<span class="tok-str">"Fazer exercícios\n"</span>)
+
+<span class="tok-com"># ler o arquivo</span>
+<span class="tok-kw">with</span> <span class="tok-fn">open</span>(<span class="tok-str">"notas.txt"</span>, <span class="tok-str">"r"</span>) <span class="tok-kw">as</span> arquivo:
+    conteudo = arquivo.read()
+    <span class="tok-fn">print</span>(conteudo)</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>Estudar Python
+Fazer exercícios</div>
+<div class="callout warn"><b>Cuidado:</b> o modo <code>"w"</code> apaga o conteúdo anterior do arquivo. Para adicionar sem apagar, use o modo <code>"a"</code> (append).</div>
+<div class="callout"><b>Aprofundando:</b> Além de <code>read()</code>, que lê o arquivo inteiro de uma vez, dá para usar <code>readlines()</code> para obter uma lista com cada linha, ou simplesmente percorrer o arquivo com um <code>for linha in arquivo:</code>, linha por linha.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-arquivos">
+        <div class="cb-top"><span class="cb-title">ler_linha_a_linha.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">with open("notas.txt", "w") as arquivo:
+    arquivo.write("Python\nDados\nAlgoritmos\n")
+
+with open("notas.txt", "r") as arquivo:
+    for linha in arquivo:
+        print("Linha:", linha.strip())</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Escreva três linhas em um arquivo de texto e depois leia e conte quantas linhas o arquivo tem.</p>
+        <div class="codeblock" data-cbid="challenge-arquivos">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false"># escreva no arquivo e depois conte as linhas
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>with open("dados.txt", "w") as arquivo:
+    arquivo.write("linha 1\nlinha 2\nlinha 3\n")
+
+with open("dados.txt", "r") as arquivo:
+    linhas = arquivo.readlines()
+
+print(f"O arquivo tem {len(linhas)} linhas")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="arquivos">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual modo de abertura você usa para adicionar texto sem apagar o que já existe?</p>
+<div class="opts">
+<button class="opt" data-correct="false">"w"</button>
+<button class="opt" data-correct="false">"r"</button>
+<button class="opt" data-correct="true">"a"</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense na palavra em inglês para &quot;adicionar&quot; (append).">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Por que usar with open(...) em vez de só open(...)?</p>
+<div class="opts">
+<button class="opt" data-correct="true">garante que o arquivo será fechado automaticamente</button>
+<button class="opt" data-correct="false">abre o arquivo mais rápido</button>
+<button class="opt" data-correct="false">permite abrir vários arquivos ao mesmo tempo</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense no que acontece se você esquecer de fechar um arquivo manualmente.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="arquivos" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#modulos"><span class="lbl2">ANTERIOR</span>← 12 · Módulos</a>
+<a class="next" href="#bibliotecas"><span class="lbl2">PRÓXIMO</span>14 · Bibliotecas populares →</a>
+</div>
+</section>
+<!-- 14 BIBLIOTECAS -->
+<section class="topic" data-group="Na prática" data-title="Bibliotecas populares" id="bibliotecas">
+<div class="topic-head"><span class="topic-num">14</span><h2>Bibliotecas populares</h2><button class="topic-star" data-star-target="bibliotecas">★</button></div>
+<p class="dek">O que fazer depois de dominar o básico — a caixa de ferramentas usada no mercado.</p>
+<p>Depois da biblioteca padrão, o próximo passo é instalar bibliotecas externas com o gerenciador de pacotes <code>pip</code> (<code>pip install nome-da-biblioteca</code>). Estas são as mais usadas por área:</p>
+<table>
+<tr><th>Biblioteca</th><th>Para que serve</th></tr>
+<tr><td><code>requests</code></td><td>fazer chamadas a APIs e baixar dados da web</td></tr>
+<tr><td><code>pandas</code></td><td>organizar e analisar dados em tabelas</td></tr>
+<tr><td><code>numpy</code></td><td>cálculos numéricos e matrizes de forma rápida</td></tr>
+<tr><td><code>flask</code> / <code>django</code></td><td>construir sites e APIs</td></tr>
+<tr><td><code>pytest</code></td><td>escrever testes automatizados para o código</td></tr>
+</table>
+<div class="codeblock" data-cbid="cb14">
+<div class="cb-top"><span class="cb-title">exemplo_requests.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-kw">import</span> requests
+
+resposta = requests.get(<span class="tok-str">"https://api.exemplo.com/piadas"</span>)
+dados = resposta.json()
+<span class="tok-fn">print</span>(dados[<span class="tok-str">"piada"</span>])</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA (exemplo ilustrativo)</span>Por que o programador foi ao médico? Porque tinha um bug.</div>
+<div class="callout"><b>Aprofundando:</b> Mesmo sem instalar nada, dá para simular a ideia de "organizar dados em tabela" (como o pandas faz) usando só listas de dicionários — cada dicionário representa uma linha, e cada chave, uma coluna.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-bibliotecas">
+        <div class="cb-top"><span class="cb-title">tabela_sem_pandas.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">pessoas = [
+    {"nome": "Ana", "idade": 28},
+    {"nome": "Bruno", "idade": 34},
+    {"nome": "Clara", "idade": 22},
+]
+
+for pessoa in pessoas:
+    print(f"{pessoa['nome']} tem {pessoa['idade']} anos")
+
+media_idade = sum(p["idade"] for p in pessoas) / len(pessoas)
+print(f"Média de idade: {media_idade:.1f}")</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Dada uma lista de dicionários representando produtos (nome e preço), filtre e imprima apenas os produtos com preço acima de 20.</p>
+        <div class="codeblock" data-cbid="challenge-bibliotecas">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">produtos = [
+    {"nome": "Caderno", "preco": 15},
+    {"nome": "Mochila", "preco": 89},
+    {"nome": "Caneta", "preco": 3},
+    {"nome": "Fone", "preco": 45},
+]
+# filtre e imprima os produtos com preco &gt; 20
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>produtos = [
+    {"nome": "Caderno", "preco": 15},
+    {"nome": "Mochila", "preco": 89},
+    {"nome": "Caneta", "preco": 3},
+    {"nome": "Fone", "preco": 45},
+]
+
+for produto in produtos:
+    if produto["preco"] &gt; 20:
+        print(produto["nome"])</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="bibliotecas">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual comando instala uma biblioteca externa em Python?</p>
+<div class="opts">
+<button class="opt" data-correct="false">python install nome</button>
+<button class="opt" data-correct="true">pip install nome</button>
+<button class="opt" data-correct="false">import nome --install</button>
+</div>
+<button class="hint-btn" type="button" data-hint="É o gerenciador de pacotes que já vem junto com o Python.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Para que serve a biblioteca pandas?</p>
+<div class="opts">
+<button class="opt" data-correct="true">organizar e analisar dados em tabelas</button>
+<button class="opt" data-correct="false">criar sites e APIs</button>
+<button class="opt" data-correct="false">escrever testes automatizados</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Está na tabela do capítulo, ligada à palavra &quot;dados&quot;.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="bibliotecas" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#arquivos"><span class="lbl2">ANTERIOR</span>← 13 · Arquivos</a>
+<a class="next" href="#boas-praticas"><span class="lbl2">PRÓXIMO</span>15 · Boas práticas →</a>
+</div>
+</section>
+<!-- 15 BOAS PRATICAS -->
+<section class="topic" data-group="Na prática" data-title="Boas práticas" id="boas-praticas">
+<div class="topic-head"><span class="topic-num">15</span><h2>Boas práticas</h2><button class="topic-star" data-star-target="boas-praticas">★</button></div>
+<p class="dek">Escrever código que outras pessoas — e você mesmo, no futuro — conseguem entender.</p>
+<ul>
+<li><b>PEP 8</b> é o guia de estilo oficial de Python: nomes de variáveis em <code>snake_case</code>, indentação de 4 espaços, linhas curtas.</li>
+<li>Use <b>ambientes virtuais</b> (<code>python -m venv venv</code>) para isolar as bibliotecas de cada projeto e evitar conflitos.</li>
+<li>Escreva <b>docstrings</b> nas funções explicando o que elas fazem, não como fazem.</li>
+<li>Prefira nomes descritivos: <code>calcular_total</code> é melhor que <code>calc</code> ou <code>x</code>.</li>
+</ul>
+<div class="codeblock" data-cbid="cb15">
+<div class="cb-top"><span class="cb-title">boas_praticas.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false"><span class="tok-kw">def</span> <span class="tok-fn">calcular_total_carrinho</span>(precos):
+    <span class="tok-str">"""Soma o preço de todos os itens do carrinho."""</span>
+    <span class="tok-kw">return</span> <span class="tok-fn">sum</span>(precos)
+
+carrinho = [29.90, 15.50, 8.00]
+<span class="tok-fn">print</span>(calcular_total_carrinho(carrinho))</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>53.4</div>
+<div class="callout"><b>Aprofundando:</b> Ferramentas como <code>black</code> (formatador automático) e <code>flake8</code> (linter) ajudam a manter o código dentro do padrão PEP 8 sem esforço manual — muito usadas em times profissionais para manter um estilo consistente entre todos.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-boas-praticas">
+        <div class="cb-top"><span class="cb-title">nomes_descritivos.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false"># ruim: nomes genéricos, sem explicação
+def calc(x, y):
+    return x * y * 0.1
+
+# melhor: nomes descritivos e uma docstring
+def calcular_comissao(valor_venda, taxa=0.1):
+    """Calcula a comissão de uma venda com base numa taxa."""
+    return valor_venda * taxa
+
+print(calcular_comissao(1000))</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Reescreva a função abaixo trocando os nomes genéricos por nomes descritivos, seguindo o padrão <code>snake_case</code>.</p>
+        <div class="codeblock" data-cbid="challenge-boas-praticas">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">def f(a, b):
+    c = a + b
+    return c / 2
+
+print(f(8, 4))
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>def calcular_media(nota1, nota2):
+    soma = nota1 + nota2
+    return soma / 2
+
+print(calcular_media(8, 4))</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="boas-praticas">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Para que serve um ambiente virtual (<code>venv</code>)?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Isolar as bibliotecas de um projeto para não conflitar com outros</button>
+<button class="opt" data-correct="false">Deixar o código mais rápido</button>
+<button class="opt" data-correct="false">Traduzir o código para outra linguagem</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense em &quot;isolar&quot; as bibliotecas de cada projeto.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual é o guia de estilo oficial da linguagem Python?</p>
+<div class="opts">
+<button class="opt" data-correct="true">PEP 8</button>
+<button class="opt" data-correct="false">PythonDoc</button>
+<button class="opt" data-correct="false">ISO Python</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Foi mencionado logo no início da lista deste capítulo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="boas-praticas" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#bibliotecas"><span class="lbl2">ANTERIOR</span>← 14 · Bibliotecas populares</a>
+<a class="next" href="#projeto"><span class="lbl2">PRÓXIMO</span>16 · Projeto final →</a>
+</div>
+</section>
+<!-- 16 PROJETO -->
+<section class="topic" data-group="Próximos passos" data-title="Projeto final" id="projeto">
+<div class="topic-head"><span class="topic-num">16</span><h2>Projeto final: lista de tarefas</h2><button class="topic-star" data-star-target="projeto">★</button></div>
+<p class="dek">Juntando listas, funções e loops em um programa pequeno e completo.</p>
+<p>Este exemplo combina quase tudo que você viu: uma lista guarda as tarefas, funções organizam as ações, e um laço mantém o programa rodando.</p>
+<div class="codeblock" data-cbid="cb16">
+<div class="cb-top"><span class="cb-title">lista_de_tarefas.py</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">tarefas = []
+
+<span class="tok-kw">def</span> <span class="tok-fn">adicionar</span>(tarefa):
+    tarefas.append(tarefa)
+    <span class="tok-fn">print</span>(<span class="tok-str">f"'{tarefa}' adicionada."</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">listar</span>():
+    <span class="tok-kw">if</span> <span class="tok-kw">not</span> tarefas:
+        <span class="tok-fn">print</span>(<span class="tok-str">"Nenhuma tarefa ainda."</span>)
+        <span class="tok-kw">return</span>
+    <span class="tok-kw">for</span> i, tarefa <span class="tok-kw">in</span> <span class="tok-fn">enumerate</span>(tarefas, 1):
+        <span class="tok-fn">print</span>(<span class="tok-str">f"{i}. {tarefa}"</span>)
+
+adicionar(<span class="tok-str">"Estudar Python"</span>)
+adicionar(<span class="tok-str">"Fazer exercícios"</span>)
+listar()</pre>
+</div>
+<div class="out"><span class="lbl">SAÍDA</span>'Estudar Python' adicionada.
+'Fazer exercícios' adicionada.
+1. Estudar Python
+2. Fazer exercícios</div>
+<div class="callout"><b>Desafio:</b> tente adicionar uma função <code>remover(tarefa)</code> que usa <code>tarefas.remove(tarefa)</code> para tirar um item da lista.</div>
+<div class="callout"><b>Aprofundando:</b> Projetos pequenos como este são a melhor forma de conectar tudo que você aprendeu — listas guardam o estado, funções organizam as ações, e cada função tem uma única responsabilidade clara.</div>
+      <h3 class="extra-h3">Mais um exemplo</h3>
+      <div class="codeblock" data-cbid="extra-projeto">
+        <div class="cb-top"><span class="cb-title">com_remover.py</span>
+          <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+        </div>
+        <pre class="code-editor" contenteditable="true" spellcheck="false">tarefas = []
+
+def adicionar(tarefa):
+    tarefas.append(tarefa)
+    print(f"'{tarefa}' adicionada.")
+
+def remover(tarefa):
+    if tarefa in tarefas:
+        tarefas.remove(tarefa)
+        print(f"'{tarefa}' removida.")
+    else:
+        print(f"'{tarefa}' não encontrada.")
+
+adicionar("Estudar Python")
+adicionar("Fazer exercícios")
+remover("Estudar Python")
+print(tarefas)</pre>
+      </div>
+      <div class="out"></div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Adicione ao programa de lista de tarefas uma função <code>concluir(indice)</code> que marca uma tarefa como concluída, prefixando-a com <code>"[x] "</code> na lista.</p>
+        <div class="codeblock" data-cbid="challenge-projeto">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">tarefas = ["Estudar Python", "Fazer exercícios"]
+
+def concluir(indice):
+    # marque a tarefa na posição indice como concluída
+    pass
+
+concluir(0)
+print(tarefas)
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>tarefas = ["Estudar Python", "Fazer exercícios"]
+
+def concluir(indice):
+    tarefas[indice] = "[x] " + tarefas[indice]
+
+concluir(0)
+print(tarefas)</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="projeto">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">No exemplo, o que <code>enumerate(tarefas, 1)</code> faz?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Percorre a lista dando a cada item um número, começando em 1</button>
+<button class="opt" data-correct="false">Ordena a lista em ordem alfabética</button>
+<button class="opt" data-correct="false">Remove o primeiro item da lista</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense em uma função que numera itens enquanto percorre a lista.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">Qual método remove um item específico de uma lista pelo valor?</p>
+<div class="opts">
+<button class="opt" data-correct="true">.remove(valor)</button>
+<button class="opt" data-correct="false">.delete(valor)</button>
+<button class="opt" data-correct="false">.pop(valor)</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Foi sugerido no desafio deste capítulo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="projeto" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#boas-praticas"><span class="lbl2">ANTERIOR</span>← 15 · Boas práticas</a>
+<a class="next" href="#recursos"><span class="lbl2">PRÓXIMO</span>17 · Para onde ir depois →</a>
+</div>
+</section>
+<!-- 17 RECURSOS -->
+<section class="topic" data-group="Próximos passos" data-title="Para onde ir depois" id="recursos">
+<div class="topic-head"><span class="topic-num">17</span><h2>Para onde ir depois</h2><button class="topic-star" data-star-target="recursos">★</button></div>
+<p class="dek">Ideias de próximos passos para continuar praticando fora deste guia.</p>
+<p>Programação se aprende programando. A partir daqui, o mais importante é escrever código todos os dias, mesmo que pequeno, e resolver problemas reais.</p>
+<ul>
+<li>Refaça o projeto de lista de tarefas guardando os dados em um arquivo, usando o que você viu no capítulo 13.</li>
+<li>Escolha um site de exercícios (como o Codewars ou o HackerRank) e resolva um desafio por dia.</li>
+<li>Construa uma calculadora de IMC, um conversor de moedas ou um jogo de forca — projetos pequenos fixam o conteúdo.</li>
+<li>Leia código de outras pessoas em projetos abertos no GitHub para ver como programadores experientes organizam o código.</li>
+</ul>
+<div class="callout"><b>Aprofundando:</b> Antes de seguir para outros materiais, vale a pena tentar um desafio final que junta praticamente tudo do curso: variáveis, laços, condicionais e funções.</div>
+      <div class="challenge-box">
+        <div class="challenge-head">🧩 Desafio prático</div>
+        <p class="challenge-desc">Desafio final: crie um jogo de adivinhação onde o computador escolhe um número entre 1 e 20 (use <code>random</code>) e o jogador tenta acertar, recebendo dicas de "maior" ou "menor" a cada tentativa.</p>
+        <div class="codeblock" data-cbid="challenge-recursos">
+          <div class="cb-top"><span class="cb-title">seu_codigo.py</span>
+            <div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+          </div>
+          <pre class="code-editor" contenteditable="true" spellcheck="false">import random
+
+numero_secreto = random.randint(1, 20)
+# use um laço com input() para o jogador tentar adivinhar
+</pre>
+        </div>
+        <div class="out"></div>
+        <button class="solution-toggle" type="button">Ver uma solução possível</button>
+        <div class="solution-box" hidden><pre>import random
+
+numero_secreto = random.randint(1, 20)
+tentativas = 0
+
+while True:
+    palpite = int(input("Tente adivinhar (1-20): "))
+    tentativas += 1
+    if palpite == numero_secreto:
+        print(f"Acertou em {tentativas} tentativas!")
+        break
+    elif palpite &lt; numero_secreto:
+        print("Maior que isso...")
+    else:
+        print("Menor que isso...")</pre></div>
+      </div>
+
+      <div class="quiz" data-qtotal="2" data-quiz="recursos">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual é a melhor forma de fixar o que você aprendeu neste guia?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Reler os capítulos sem escrever código</button>
+<button class="opt" data-correct="true">Praticar escrevendo pequenos programas com frequência</button>
+<button class="opt" data-correct="false">Decorar a sintaxe de memória</button>
+</div>
+<button class="hint-btn" type="button" data-hint="Pense no verbo &quot;praticar&quot;, repetido no texto deste capítulo.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden="">
+<p class="q">O que fazer quando o código gera uma mensagem de erro?</p>
+<div class="opts">
+<button class="opt" data-correct="true">ler a mensagem com atenção — ela costuma indicar o problema</button>
+<button class="opt" data-correct="false">ignorar e tentar de novo do zero</button>
+<button class="opt" data-correct="false">apagar todo o código e recomeçar</button>
+</div>
+<button class="hint-btn" type="button" data-hint="O rodapé do curso dá essa dica diretamente.">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden="" type="button">Próxima pergunta →</button>
+</div>
+<label class="marker-done"><input data-mark="recursos" type="checkbox"/> marcar capítulo como concluído</label>
+<div class="chapnav">
+<a class="prev" href="#projeto"><span class="lbl2">ANTERIOR</span>← 16 · Projeto final</a>
+<a class="next" href="#topo"><span class="lbl2">VOLTAR</span>Topo do guia ↑</a>
+</div>
+</section>
+<footer>
+<span class="fmark">&gt;&gt;&gt;</span> Continue praticando: escreva pequenos programas todos os dias, quebre coisas de propósito e leia as mensagens de erro — elas geralmente dizem exatamente o que está errado.
+      <div class="reslist">
+<a href="https://docs.python.org/pt-br/3/tutorial/" rel="noopener" target="_blank">Documentação oficial (pt-BR)</a>
+<a href="https://www.python.org/" rel="noopener" target="_blank">python.org</a>
+</div>
+</footer>
+</main>
+</div>
+<!-- Command palette -->
+<div class="palette-overlay" id="paletteOverlay">
+<div class="palette">
+<div class="palette-input-row">
+<span class="palette-prompt">&gt;&gt;&gt;</span>
+<input autocomplete="off" class="palette-input" id="paletteInput" placeholder="Digite o nome de um capítulo..." type="text"/>
+<span class="palette-esc">esc</span>
+</div>
+<div class="palette-results" id="paletteResults"></div>
+</div>
+</div>
+<div class="toast" id="toast">Progresso salvo</div>
+<div class="modal-overlay" id="achModal">
+<div class="modal-box">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">conquistas.py</span>
+<button class="modal-close" id="achModalClose">✕</button>
+</div>
+<div class="modal-body">
+<h3>🏆 Conquistas</h3>
+<p class="modal-sub" id="achModalSub">&gt;&gt;&gt; 0 de 0 desbloqueadas</p>
+<div class="ach-list" id="achGrid"></div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="statsModal">
+<div class="modal-box">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">estatisticas.py</span>
+<button class="modal-close" id="statsModalClose">✕</button>
+</div>
+<div class="modal-body">
+<h3>📊 Estatísticas</h3>
+<p class="modal-sub">&gt;&gt;&gt; desempenho.resumo()</p>
+<div class="cert-banner" id="certBanner" hidden>
+<span>🎓 Você concluiu os 18 capítulos! Seu certificado está pronto.</span>
+<button id="certOpenBtn">Ver certificado</button>
+</div>
+<div class="term-out" id="statGrid"></div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="certModal">
+<div class="modal-box">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">certificado.py</span>
+<button class="modal-close" id="certModalClose">✕</button>
+</div>
+<div class="modal-body cert-wrap">
+<div class="cert-frame">
+<span class="cert-eyebrow">&gt;&gt;&gt; import aprendizado</span>
+<h3 class="cert-title">Certificado de Conclusão</h3>
+<p class="cert-sub">Curso de Python — 18 capítulos, do zero ao projeto</p>
+<div class="cert-name" id="certName" contenteditable="true" spellcheck="false">Seu nome aqui</div>
+<p class="cert-foot" id="certDate">concluído em --/--/----</p>
+</div>
+<div class="cert-actions">
+<button id="certPrintBtn">🖨 imprimir / salvar em PDF</button>
+</div>
+</div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+  const STORAGE_KEY = 'curso_python_progresso';
+  const FAV_KEY = 'curso_python_favoritos';
+  const COLLAPSE_KEY = 'curso_python_grupos_colapsados';
+  const LAST_KEY = 'curso_python_ultimo_capitulo';
+  const THEME_KEY = 'curso_python_tema';
+  const FONT_KEY = 'curso_python_fonte';
+  const GAME_KEY = 'curso_python_progresso_xp';
+
+  function loadJSON(key){ try{ return JSON.parse(localStorage.getItem(key)) || {}; }catch(e){ return {}; } }
+  function saveJSON(key, data){ try{ localStorage.setItem(key, JSON.stringify(data)); }catch(e){} }
+
+  let progress = loadJSON(STORAGE_KEY);
+  let favorites = loadJSON(FAV_KEY);
+  let collapsed = loadJSON(COLLAPSE_KEY);
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function copyCode(btn){
+    const pre = btn.closest('.codeblock').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'copiado!';
+      setTimeout(() => btn.textContent = old, 1400);
+    });
+  }
+
+  // =========================================================
+  // ===== TEMA (claro / escuro) ================================
+  // =========================================================
+  const themeBtn = document.getElementById('themeBtn');
+  function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    themeBtn.textContent = theme === 'light' ? '🌞 tema' : '🌓 tema';
+  }
+  applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  themeBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  // =========================================================
+  // ===== TAMANHO DA FONTE =====================================
+  // =========================================================
+  const FONT_SIZES = [14, 15, 16, 17, 18, 19, 20];
+  let fontIdx = parseInt(localStorage.getItem(FONT_KEY), 10);
+  if (isNaN(fontIdx) || fontIdx < 0 || fontIdx >= FONT_SIZES.length) fontIdx = 2; // 16px padrão
+  function applyFontSize(){
+    document.documentElement.style.fontSize = FONT_SIZES[fontIdx] + 'px';
+    localStorage.setItem(FONT_KEY, String(fontIdx));
+  }
+  applyFontSize();
+  document.getElementById('fontDecBtn').addEventListener('click', () => { fontIdx = Math.max(0, fontIdx - 1); applyFontSize(); });
+  document.getElementById('fontIncBtn').addEventListener('click', () => { fontIdx = Math.min(FONT_SIZES.length - 1, fontIdx + 1); applyFontSize(); });
+
+  // =========================================================
+  // ===== XP / NÍVEL / SEQUÊNCIA / CONQUISTAS / ESTATÍSTICAS ===
+  // =========================================================
+  const XP_PER_LEVEL = 100;
+  const ACHIEVEMENTS = [
+    { id: 'primeiro_capitulo', icon: '🌱', name: 'Primeiro passo', desc: 'Conclua seu primeiro capítulo', check: g => g.chaptersDone >= 1 },
+    { id: 'meio_caminho', icon: '🏃', name: 'Meio do caminho', desc: 'Conclua 9 capítulos', check: g => g.chaptersDone >= 9 },
+    { id: 'curso_completo', icon: '🎓', name: 'Curso completo', desc: 'Conclua os 18 capítulos', check: g => g.chaptersDone >= 18 },
+    { id: 'dez_acertos', icon: '🎯', name: 'Mira certeira', desc: 'Acerte 10 exercícios', check: g => g.correctAnswers >= 10 },
+    { id: 'todos_acertos', icon: '💯', name: 'Sem erros', desc: 'Acerte 30 exercícios', check: g => g.correctAnswers >= 30 },
+    { id: 'sequencia_3', icon: '🔥', name: 'Constância', desc: 'Estude 3 dias seguidos', check: g => g.streak >= 3 },
+    { id: 'sequencia_7', icon: '🔥', name: 'Uma semana!', desc: 'Estude 7 dias seguidos', check: g => g.streak >= 7 },
+    { id: 'code_runner', icon: '⚡', name: 'Mãos na massa', desc: 'Execute código 5 vezes', check: g => g.codeRuns >= 5 },
+    { id: 'code_runner_20', icon: '🚀', name: 'Programador de verdade', desc: 'Execute código 20 vezes', check: g => g.codeRuns >= 20 },
+    { id: 'nivel_5', icon: '⭐', name: 'Nível 5', desc: 'Alcance o nível 5', check: g => levelFor(g.xp) >= 5 },
+    { id: 'curioso', icon: '🔍', name: 'Curioso', desc: 'Use a busca de capítulos', check: g => g.usedSearch },
+    { id: 'favoritou', icon: '★', name: 'Organizado', desc: 'Marque um capítulo como favorito', check: g => g.usedFavorite },
+  ];
+
+  let game = Object.assign({
+    xp: 0, chaptersDone: 0, correctAnswers: 0, wrongAnswers: 0, codeRuns: 0,
+    streak: 0, lastVisitDate: null, unlocked: [], usedSearch: false, usedFavorite: false
+  }, loadJSON(GAME_KEY));
+
+  function levelFor(xp){ return Math.floor(xp / XP_PER_LEVEL) + 1; }
+
+  function saveGame(){ saveJSON(GAME_KEY, game); }
+
+  function addXP(amount, reason){
+    const beforeLevel = levelFor(game.xp);
+    game.xp += amount;
+    const afterLevel = levelFor(game.xp);
+    saveGame();
+    refreshXPUI();
+    if (afterLevel > beforeLevel){
+      showToast('🎉 Nível ' + afterLevel + ' alcançado!');
+    }
+    checkAchievements();
+  }
+
+  function refreshXPUI(){
+    const level = levelFor(game.xp);
+    document.getElementById('xpVal').textContent = game.xp + ' xp';
+    document.getElementById('levelVal').textContent = 'nível ' + level;
+    const streakEl = document.getElementById('streakVal');
+    streakEl.textContent = '🔥 ' + game.streak + 'd';
+    streakEl.classList.toggle('sl-zero', game.streak === 0);
+    const inLevel = game.xp % XP_PER_LEVEL;
+    document.getElementById('xpBarFill').style.width = inLevel + '%';
+  }
+
+  function checkAchievements(){
+    let newlyUnlocked = null;
+    ACHIEVEMENTS.forEach(a => {
+      if (!game.unlocked.includes(a.id) && a.check(game)){
+        game.unlocked.push(a.id);
+        newlyUnlocked = a;
+      }
+    });
+    if (newlyUnlocked){
+      saveGame();
+      showToast('🏆 Conquista desbloqueada: ' + newlyUnlocked.name);
+    }
+  }
+
+  // ----- streak (sequência diária) -----
+  function todayStr(){ return new Date().toISOString().slice(0, 10); }
+  function updateStreak(){
+    const today = todayStr();
+    if (game.lastVisitDate === today) return; // já contabilizado hoje
+    if (game.lastVisitDate){
+      const last = new Date(game.lastVisitDate + 'T00:00:00');
+      const now = new Date(today + 'T00:00:00');
+      const diffDays = Math.round((now - last) / 86400000);
+      game.streak = diffDays === 1 ? game.streak + 1 : 1;
+    } else {
+      game.streak = 1;
+    }
+    game.lastVisitDate = today;
+    saveGame();
+  }
+  updateStreak();
+  refreshXPUI();
+
+  // ----- modais: conquistas / estatísticas / certificado -----
+  function renderAchievements(){
+    const list = document.getElementById('achGrid');
+    list.innerHTML = ACHIEVEMENTS.map(a => {
+      const unlocked = game.unlocked.includes(a.id);
+      return '<div class="ach-row' + (unlocked ? ' unlocked' : '') + '">' +
+        '<span class="ach-mark">[' + (unlocked ? '✓' : ' ') + ']</span>' +
+        '<span class="ach-icon">' + a.icon + '</span>' +
+        '<span class="ach-text"><span class="ach-name">' + a.name + '</span>' +
+        '<span class="ach-desc">' + a.desc + '</span></span></div>';
+    }).join('');
+    document.getElementById('achModalSub').textContent = '>>> ' + game.unlocked.length + ' de ' + ACHIEVEMENTS.length + ' desbloqueadas';
+  }
+
+  function renderStats(){
+    const totalAnswers = game.correctAnswers + game.wrongAnswers;
+    const accuracy = totalAnswers > 0 ? Math.round(game.correctAnswers / totalAnswers * 100) : 0;
+    const out = document.getElementById('statGrid');
+    const rows = [
+      ['xp_total', game.xp],
+      ['nivel', levelFor(game.xp)],
+      ['sequencia_dias', game.streak],
+      ['capitulos_concluidos', game.chaptersDone + ' / 18'],
+      ['acerto_exercicios', accuracy + '%'],
+      ['codigos_executados', game.codeRuns],
+    ];
+    out.innerHTML = '<div class="to-prompt">&gt;&gt;&gt; {</div>' +
+      rows.map(([k, v]) => '<div class="to-line">&nbsp;&nbsp;<span class="to-key">"' + k + '":</span> <span class="to-val">' + v + '</span></div>').join('') +
+      '<div class="to-prompt">}</div>';
+
+    const banner = document.getElementById('certBanner');
+    banner.hidden = game.chaptersDone < 18;
+  }
+
+  function openModal(id){ document.getElementById(id).classList.add('show'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+  document.getElementById('achBtn').addEventListener('click', () => { renderAchievements(); openModal('achModal'); });
+  document.getElementById('statsBtn').addEventListener('click', () => { renderStats(); openModal('statsModal'); });
+  document.getElementById('achModalClose').addEventListener('click', () => closeModal('achModal'));
+  document.getElementById('statsModalClose').addEventListener('click', () => closeModal('statsModal'));
+  document.getElementById('achModal').addEventListener('click', (e) => { if (e.target.id === 'achModal') closeModal('achModal'); });
+  document.getElementById('statsModal').addEventListener('click', (e) => { if (e.target.id === 'statsModal') closeModal('statsModal'); });
+
+  // ----- certificado -----
+  const CERT_NAME_KEY = 'curso_python_cert_nome';
+  const certName = document.getElementById('certName');
+  const savedCertName = localStorage.getItem(CERT_NAME_KEY);
+  if (savedCertName) certName.textContent = savedCertName;
+  certName.addEventListener('blur', () => localStorage.setItem(CERT_NAME_KEY, certName.textContent.trim() || 'Seu nome aqui'));
+  certName.addEventListener('focus', () => { if (certName.textContent === 'Seu nome aqui') certName.textContent = ''; });
+
+  function openCertificate(){
+    const d = new Date();
+    document.getElementById('certDate').textContent = 'concluído em ' + d.toLocaleDateString('pt-BR');
+    closeModal('statsModal');
+    openModal('certModal');
+  }
+  document.getElementById('certOpenBtn').addEventListener('click', openCertificate);
+  document.getElementById('certModalClose').addEventListener('click', () => closeModal('certModal'));
+  document.getElementById('certModal').addEventListener('click', (e) => { if (e.target.id === 'certModal') closeModal('certModal'); });
+  document.getElementById('certPrintBtn').addEventListener('click', () => window.print());
+
+  // =========================================================
+  // ===== EDITOR DE CÓDIGO REAL (Pyodide) ======================
+  // =========================================================
+  let pyodideInstance = null;
+  let pyodideLoading = null;
+
+  function getPyodide(){
+    if (pyodideInstance) return Promise.resolve(pyodideInstance);
+    if (pyodideLoading) return pyodideLoading;
+    pyodideLoading = loadPyodide().then(py => {
+      pyodideInstance = py;
+      return py;
+    });
+    return pyodideLoading;
+  }
+
+  async function runCode(btn){
+    const block = btn.closest('.codeblock');
+    const pre = block.querySelector('pre.code-editor');
+    const out = block.nextElementSibling;
+    const status = block.querySelector('.cb-status');
+    const code = pre.innerText;
+
+    out.classList.remove('shown', 'err', 'placeholder');
+    out.innerHTML = '<span class="lbl">SAÍDA</span>';
+
+    if (status){ status.textContent = 'Carregando Python no navegador (só na primeira vez)...'; status.classList.add('shown'); }
+    btn.disabled = true;
+    const oldLabel = btn.textContent;
+    btn.textContent = '...';
+
+    try{
+      const py = await getPyodide();
+      if (status){ status.textContent = 'Executando...'; }
+
+      let captured = '';
+      py.setStdout({ batched: (msg) => { captured += msg + '\n'; } });
+      py.setStderr({ batched: (msg) => { captured += msg + '\n'; } });
+
+      py.globals.set('_prompt_fn', (msg) => window.prompt(msg || '') || '');
+      await py.runPythonAsync(
+        "import builtins\n" +
+        "def input(prompt=''):\n" +
+        "    return _prompt_fn(prompt)\n" +
+        "builtins.input = input\n"
+      );
+
+      await py.runPythonAsync(code);
+
+      out.innerHTML = '<span class="lbl">SAÍDA</span>' + (captured.trim() ? escapeHtml(captured.trim()) : '(sem saída)');
+      out.classList.add('shown');
+
+      game.codeRuns += 1;
+      saveGame();
+      addXP(2, 'run');
+      if (status) status.classList.remove('shown');
+    } catch(err){
+      out.classList.add('shown', 'err');
+      out.innerHTML = '<span class="lbl">ERRO</span>' + escapeHtml(String(err.message || err));
+      if (status) status.classList.remove('shown');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = oldLabel;
+    }
+  }
+
+  // deixa o painel de saída sempre visível, como um "Try it Yourself" — com um
+  // placeholder até a primeira execução real, em vez de ficar escondido.
+  document.querySelectorAll('.codeblock').forEach(cb => {
+    const out = cb.nextElementSibling;
+    if (out && out.classList.contains('out')){
+      out.innerHTML = '<span class="lbl">SAÍDA</span><span class="out-placeholder">clique em ▶ executar para ver o resultado real deste código</span>';
+      out.classList.add('shown', 'placeholder');
+    }
+  });
+
+  function escapeHtml(str){
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // =========================================================
+  // ===== QUIZ (com dicas e 2 perguntas por capítulo) ==========
+  // =========================================================
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    const qblocks = Array.from(quiz.querySelectorAll('.qblock'));
+    const nextBtn = quiz.querySelector('.next-q-btn');
+    const counterNow = quiz.querySelector('.qc-now');
+    let current = 0;
+
+    function setupBlock(block){
+      const opts = block.querySelectorAll('.opt');
+      const feedback = block.querySelector('.feedback');
+      const hintBtn = block.querySelector('.hint-btn');
+      const hintText = block.querySelector('.hint-text');
+      let answered = false;
+
+      if (hintBtn){
+        hintBtn.addEventListener('click', () => {
+          hintText.textContent = '💡 ' + hintBtn.dataset.hint;
+          hintText.classList.add('shown');
+          hintBtn.disabled = true;
+        });
+      }
+
+      opts.forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (answered) return;
+          answered = true;
+          const isCorrect = opt.dataset.correct === 'true';
+          opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else if (o === opt) o.classList.add('wrong'); });
+          feedback.style.display = 'block';
+
+          if (isCorrect){
+            game.correctAnswers += 1;
+            feedback.innerHTML = 'Isso mesmo! <span class="xp-pop">+10 XP</span>';
+            addXP(10, 'correct');
+          } else {
+            game.wrongAnswers += 1;
+            saveGame();
+            feedback.textContent = 'Não foi essa — a resposta certa está marcada em verde.';
+          }
+
+          const isLast = (current === qblocks.length - 1);
+          if (!isLast){
+            nextBtn.hidden = false;
+          } else {
+            const section = quiz.closest('section.topic');
+            const box = section.querySelector('.marker-done input');
+            if (box && !box.checked) { box.checked = true; box.dispatchEvent(new Event('change')); }
+          }
+        });
+      });
+    }
+
+    qblocks.forEach(setupBlock);
+
+    if (nextBtn){
+      nextBtn.addEventListener('click', () => {
+        qblocks[current].hidden = true;
+        current += 1;
+        qblocks[current].hidden = false;
+        if (counterNow) counterNow.textContent = String(current + 1);
+        nextBtn.hidden = true;
+      });
+    }
+  });
+
+  // runCode/copyCode are already wired via inline onclick="" attributes on the buttons.
+  // botão "ver uma solução possível" dos desafios práticos
+  document.querySelectorAll('.solution-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const box = btn.nextElementSibling;
+      const isHidden = box.hidden;
+      box.hidden = !isHidden;
+      btn.textContent = isHidden ? 'Ocultar solução' : 'Ver uma solução possível';
+    });
+  });
+  // add a status line under each codeblock for pyodide loading feedback
+  document.querySelectorAll('.codeblock').forEach(cb => {
+    const status = document.createElement('div');
+    status.className = 'cb-status';
+    cb.appendChild(status);
+  });
+
+  // ===== Progress + groups =====
+  const boxes = document.querySelectorAll('.marker-done input');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  const ringFg = document.getElementById('ringFg');
+  const ringPct = document.getElementById('ringPct');
+  const RING_CIRC = 113;
+  const groups = document.querySelectorAll('.navgroup');
+
+  function updateProgress(save){
+    const total = boxes.length;
+    let done = 0;
+    boxes.forEach(b => {
+      const key = b.dataset.mark;
+      const wasDone = !!progress[key];
+      if (save) progress[key] = b.checked;
+      if (progress[key]) { b.checked = true; done++; }
+      if (save && b.checked && !wasDone){
+        game.chaptersDone += 1;
+        addXP(25, 'chapter');
+      }
+      const navlink = document.querySelector('.navlink[data-target="'+key+'"]');
+      if (navlink) navlink.classList.toggle('done', !!progress[key]);
+    });
+    const pct = Math.round(done/total*100);
+    fill.style.width = pct + '%';
+    label.textContent = done + ' de ' + total + ' capítulos concluídos';
+    ringFg.style.strokeDashoffset = RING_CIRC - (RING_CIRC * pct/100);
+    ringPct.textContent = pct + '%';
+
+    groups.forEach(g => {
+      const links = g.querySelectorAll('.navlink');
+      const doneCount = Array.from(links).filter(l => progress[l.dataset.target]).length;
+      g.querySelector('.gcount').textContent = doneCount + '/' + links.length;
+      g.querySelector('.gprogress-fill').style.width = (doneCount/links.length*100) + '%';
+    });
+  }
+  // recompute chaptersDone from stored progress on load (without granting XP again)
+  game.chaptersDone = Object.values(progress).filter(Boolean).length;
+  boxes.forEach(b => b.addEventListener('change', () => { updateProgress(true); saveJSON(STORAGE_KEY, progress); showToast('Progresso salvo'); }));
+  updateProgress(false);
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if(!confirm('Reiniciar todo o progresso salvo?')) return;
+    progress = {};
+    boxes.forEach(b => b.checked = false);
+    saveJSON(STORAGE_KEY, progress);
+    updateProgress(false);
+    showToast('Progresso reiniciado');
+  });
+
+  // ===== Favorites =====
+  function applyFavorites(){
+    document.querySelectorAll('.star[data-star]').forEach(s => s.classList.toggle('on', !!favorites[s.dataset.star]));
+    document.querySelectorAll('.topic-star[data-star-target]').forEach(s => s.classList.toggle('on', !!favorites[s.dataset.starTarget]));
+  }
+  function toggleFavorite(key){
+    favorites[key] = !favorites[key];
+    saveJSON(FAV_KEY, favorites);
+    applyFavorites();
+    game.usedFavorite = true;
+    saveGame();
+    checkAchievements();
+  }
+  document.querySelectorAll('.star[data-star]').forEach(s => {
+    s.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(s.dataset.star); });
+  });
+  document.querySelectorAll('.topic-star[data-star-target]').forEach(s => {
+    s.addEventListener('click', () => toggleFavorite(s.dataset.starTarget));
+  });
+  applyFavorites();
+
+  let favOnly = false;
+  document.getElementById('favBtn').addEventListener('click', function(){
+    favOnly = !favOnly;
+    this.classList.toggle('active', favOnly);
+    document.querySelectorAll('.navlink').forEach(l => {
+      const key = l.dataset.target;
+      l.classList.toggle('hidden', favOnly && !favorites[key]);
+    });
+    groups.forEach(g => {
+      const visible = g.querySelectorAll('.navlink:not(.hidden)').length;
+      g.classList.toggle('hidden', favOnly && visible === 0);
+      if (favOnly) g.classList.remove('collapsed');
+    });
+  });
+
+  // ===== Collapsible groups =====
+  groups.forEach(g => {
+    const key = g.dataset.group;
+    if (collapsed[key]) g.classList.add('collapsed');
+    g.querySelector('.navgroup-head').addEventListener('click', () => {
+      g.classList.toggle('collapsed');
+      collapsed[key] = g.classList.contains('collapsed');
+      saveJSON(COLLAPSE_KEY, collapsed);
+    });
+  });
+
+  // ===== Active link / breadcrumb / last visited =====
+  const links = document.querySelectorAll('.navlink');
+  const sections = document.querySelectorAll('section.topic');
+  const crumbGroup = document.getElementById('crumbGroup');
+  const crumbChap = document.getElementById('crumbChap');
+  const continueBtn = document.getElementById('continueBtn');
+  const continueChap = document.getElementById('continueChap');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        const id = entry.target.id;
+        links.forEach(l => l.classList.toggle('active', l.dataset.target === id));
+        crumbGroup.textContent = entry.target.dataset.group;
+        crumbChap.textContent = entry.target.dataset.title;
+        saveJSON(LAST_KEY, { id: id, title: entry.target.dataset.title });
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  const lastVisited = loadJSON(LAST_KEY);
+  if (lastVisited && lastVisited.id){
+    continueChap.textContent = lastVisited.title;
+    continueBtn.classList.add('show');
+    continueBtn.addEventListener('click', () => { window.location.hash = lastVisited.id; });
+  }
+
+  // ===== Search filter (sidebar) =====
+  const searchbox = document.getElementById('searchbox');
+  searchbox.addEventListener('input', () => {
+    const q = searchbox.value.trim().toLowerCase();
+    if (q.length > 0 && !game.usedSearch){ game.usedSearch = true; saveGame(); checkAchievements(); }
+    links.forEach(l => {
+      const text = l.textContent.toLowerCase();
+      const passFav = !favOnly || favorites[l.dataset.target];
+      l.classList.toggle('hidden', (q.length > 0 && !text.includes(q)) || !passFav);
+    });
+    groups.forEach(g => {
+      const visible = g.querySelectorAll('.navlink:not(.hidden)').length;
+      g.classList.toggle('hidden', visible === 0);
+      if (q.length > 0) g.classList.remove('collapsed');
+    });
+  });
+
+  // ===== Command palette =====
+  const allChapters = Array.from(sections).map(s => ({ id: s.id, title: s.dataset.title, group: s.dataset.group }));
+  const paletteOverlay = document.getElementById('paletteOverlay');
+  const paletteInput = document.getElementById('paletteInput');
+  const paletteResults = document.getElementById('paletteResults');
+  let paletteSel = 0;
+  let paletteFiltered = allChapters;
+
+  function renderPalette(){
+    const q = paletteInput.value.trim().toLowerCase();
+    paletteFiltered = allChapters.filter(c => c.title.toLowerCase().includes(q) || c.group.toLowerCase().includes(q));
+    if (paletteFiltered.length === 0){
+      paletteResults.innerHTML = '<div class="palette-empty">Nenhum capítulo encontrado.</div>';
+      return;
+    }
+    paletteSel = Math.min(paletteSel, paletteFiltered.length - 1);
+    paletteResults.innerHTML = paletteFiltered.map((c, i) => {
+      const idx = allChapters.indexOf(c);
+      const num = String(idx).padStart(2,'0');
+      return '<div class="palette-item'+(i===paletteSel?' sel':'')+'" data-id="'+c.id+'" data-i="'+i+'"><span class="pi-idx">'+num+'</span><span>'+c.title+'</span><span class="pi-group">'+c.group+'</span></div>';
+    }).join('');
+  }
+
+  function openPalette(){
+    paletteOverlay.classList.add('show');
+    paletteInput.value = '';
+    paletteSel = 0;
+    renderPalette();
+    setTimeout(() => paletteInput.focus(), 30);
+  }
+  function closePalette(){ paletteOverlay.classList.remove('show'); }
+  function goToChapter(id){ window.location.hash = id; closePalette(); }
+
+  document.getElementById('paletteBtn').addEventListener('click', openPalette);
+  document.getElementById('paletteBtnHero').addEventListener('click', openPalette);
+  document.getElementById('paletteBtnMobile').addEventListener('click', openPalette);
+  paletteOverlay.addEventListener('click', (e) => { if (e.target === paletteOverlay) closePalette(); });
+  paletteInput.addEventListener('input', renderPalette);
+  paletteResults.addEventListener('click', (e) => {
+    const item = e.target.closest('.palette-item');
+    if (item) goToChapter(item.dataset.id);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      paletteOverlay.classList.contains('show') ? closePalette() : openPalette();
+      return;
+    }
+    if (e.key === 'Escape'){
+      closeModal('achModal'); closeModal('statsModal'); closeModal('certModal');
+    }
+    if (paletteOverlay.classList.contains('show')){
+      if (e.key === 'Escape'){ closePalette(); }
+      else if (e.key === 'ArrowDown'){ e.preventDefault(); paletteSel = Math.min(paletteSel+1, paletteFiltered.length-1); renderPalette(); }
+      else if (e.key === 'ArrowUp'){ e.preventDefault(); paletteSel = Math.max(paletteSel-1, 0); renderPalette(); }
+      else if (e.key === 'Enter'){ e.preventDefault(); if (paletteFiltered[paletteSel]) goToChapter(paletteFiltered[paletteSel].id); }
+      return;
+    }
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT'){
+      e.preventDefault(); searchbox.focus();
+    }
+  });
+
+  // ===== Mobile menu =====
+  const hamburger = document.getElementById('hamburger');
+  const sidenav = document.getElementById('sidenav');
+  const overlay = document.getElementById('overlay');
+  function closeMenu(){ sidenav.classList.remove('open'); overlay.classList.remove('show'); }
+  hamburger.addEventListener('click', () => { sidenav.classList.toggle('open'); overlay.classList.toggle('show'); });
+  overlay.addEventListener('click', closeMenu);
+  links.forEach(l => l.addEventListener('click', closeMenu));
+
+  // ===== Top scroll progress bar =====
+  const scrollbar = document.getElementById('scrollbar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    scrollbar.style.width = scrolled + '%';
+  });
+</script>
+
+</body>
+</html>
