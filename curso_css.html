@@ -1,0 +1,3189 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aprenda CSS — do zero ao layout bonito</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+  :root{
+    --bg: #090b10;
+    --bg-2: #0c0f15;
+    --panel: #10141b;
+    --panel-2: #161c26;
+    --panel-3: #1d2531;
+    --line: #262f3d;
+    --line-soft: #1c232e;
+    --text: #e9ecf1;
+    --muted: #8b93a3;
+    --blue: #4B8BBE;
+    --blue-bright: #7bb9ea;
+    --blue-dim: #2f4f6b;
+    --yellow: #FFD43B;
+    --yellow-soft: #f0dd8f;
+    --green: #7ec699;
+    --red: #e8837a;
+    --radius: 5px;
+    --sidew: 300px;
+    --topbarh: 52px;
+    --crumbh: 42px;
+    --group-fundamentos: #7bb9ea;
+    --group-controle: #f0c15c;
+    --group-estruturas: #8fd6ac;
+    --group-organizando: #c79bf0;
+    --group-pratica: #f0a05c;
+    --group-proximos: #ffd43b;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(760px 420px at 88% -6%, rgba(75,139,190,0.10), transparent 60%),
+      radial-gradient(620px 360px at 6% 8%, rgba(255,212,59,0.045), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    line-height: 1.6;
+  }
+
+  h1,h2,h3, .disp{ font-family: 'Space Grotesk', sans-serif; color: #fdfdfe; margin: 0; letter-spacing: -0.012em; }
+  ::selection{ background: rgba(255,212,59,0.28); color: #fff; }
+  :focus-visible{ outline: 2px solid var(--blue-bright); outline-offset: 2px; }
+  code, pre, .mono{ font-family: 'JetBrains Mono', monospace; }
+  a{ color: var(--blue-bright); }
+  button{ font-family: inherit; }
+  svg{ display:block; }
+
+  /* ===== TOP SCROLL PROGRESS ===== */
+  .scrollbar{ position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--blue), var(--yellow)); width: 0%; z-index: 100; transition: width .08s linear; }
+
+  /* ===== TOPBAR (mobile) ===== */
+  .topbar{
+    display: none; position: sticky; top: 0; z-index: 40; height: var(--topbarh);
+    background: var(--panel); border-bottom: 1px solid var(--line);
+    align-items: center; justify-content: space-between; padding: 0 14px;
+  }
+  .topbar .tmark{ font-family:'JetBrains Mono', monospace; color: var(--yellow); font-size: 13px; }
+  .topbar .tbtns{ display:flex; gap: 8px; }
+  .iconbtn{
+    width: 32px; height: 32px; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius);
+    color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px;
+  }
+  .iconbtn:hover{ border-color: var(--blue-bright); }
+
+  /* ===== LAYOUT ===== */
+  .shell{ display: grid; grid-template-columns: var(--sidew) 1fr; min-height: 100vh; }
+
+  nav.side{
+    background: var(--panel); border-right: 1px solid var(--line);
+    padding: 0 0 30px 0; position: sticky; top: 0; height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  .side-head{ padding: 24px 20px 18px 20px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, rgba(75,139,190,0.05), transparent 70%); }
+  .side-head-row{ display: flex; align-items: center; gap: 14px; }
+  .ringwrap{ position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+  .ringwrap svg{ transform: rotate(-90deg); }
+  .ring-bg{ fill: none; stroke: var(--panel-3); stroke-width: 4; }
+  .ring-fg{ fill: none; stroke: url(#ringGrad); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset .5s cubic-bezier(.2,.8,.2,1); }
+  .ring-pct{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--text); font-weight: 600; }
+
+  .brand .mark{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--yellow); display:block; margin-bottom: 4px; letter-spacing: .01em; }
+  .brand h1{ font-size: 18.5px; font-weight: 700; }
+  .brand p{ color: var(--muted); font-size: 12px; margin-top: 3px; }
+
+  .quickrow{ display: flex; gap: 8px; margin-top: 14px; }
+  .qbtn{
+    flex: 1; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius);
+    color: var(--muted); font-size: 11.5px; font-family:'JetBrains Mono', monospace; padding: 7px 8px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: border-color .15s ease, color .15s ease, transform .1s ease;
+  }
+  .qbtn:hover{ color: var(--text); border-color: var(--blue-bright); }
+  .qbtn:active{ transform: scale(.97); }
+  .qbtn .kbd{ background: var(--panel-3); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; font-size: 10px; color: var(--muted); }
+  .qbtn.active{ color: var(--yellow); border-color: var(--yellow); }
+
+  .searchwrap{ padding: 14px 20px 6px 20px; }
+  .searchbox{ width: 100%; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); padding: 8px 10px; font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+  .searchbox::placeholder{ color: var(--muted); }
+  .searchbox:focus{ outline: none; border-color: var(--blue-bright); }
+
+  .navscroll{ flex: 1; overflow-y: auto; padding-top: 4px; }
+
+  .navgroup{ border-bottom: 1px solid rgba(38,46,58,0.5); }
+  .navgroup-head{
+    width: 100%; display: flex; align-items: center; gap: 10px; padding: 11px 20px;
+    background: none; border: none; color: var(--text); cursor: pointer; text-align: left;
+  }
+  .navgroup-head:hover{ background: var(--panel-2); }
+  .navgroup-head .chev{ font-size: 10px; color: var(--muted); transition: transform .18s ease; width: 10px; }
+  .navgroup.collapsed .chev{ transform: rotate(-90deg); }
+  .navgroup-head .glabel{ font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .03em; color: var(--muted); flex: 1; }
+  .navgroup-head .gcount{ font-family:'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); }
+  .gprogress{ height: 3px; background: var(--panel-3); margin: 0 20px 8px 20px; border-radius: 2px; overflow: hidden; }
+  .gprogress-fill{ height: 100%; background: var(--blue-bright); width: 0%; transition: width .3s ease; }
+  .navgroup-body{ overflow: hidden; max-height: 800px; transition: max-height .25s ease; }
+  .navgroup.collapsed .navgroup-body{ max-height: 0; }
+  .navgroup.collapsed .gprogress{ display: none; }
+
+  .navlink{
+    display: flex; align-items: center; gap: 9px; padding: 7px 20px 7px 20px; color: var(--muted);
+    text-decoration: none; font-size: 13.5px; border-left: 2px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .navlink .idx{ font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--blue-bright); width: 18px; flex-shrink:0; }
+  .navlink .lbl{ flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .navlink .star{ opacity: .25; font-size: 12px; cursor: pointer; padding: 2px; }
+  .navlink .star:hover{ opacity: .8; }
+  .navlink .star.on{ opacity: 1; color: var(--yellow); }
+  .navlink .check{ font-size: 11px; color: var(--green); opacity: 0; width: 12px; }
+  .navlink.done .check{ opacity: 1; }
+  .navlink:hover{ color: var(--text); background: var(--panel-2); }
+  .navlink.active{ color: #fff; border-left-color: var(--yellow); background: var(--panel-2); }
+  .navlink.hidden{ display: none; }
+  .navgroup.hidden{ display: none; }
+
+  /* ----- cor de destaque por trilha (facilita a orientação visual) ----- */
+  .navgroup[data-group="fundamentos"] .gprogress-fill{ background: var(--group-fundamentos); }
+  .navgroup[data-group="controle"] .gprogress-fill{ background: var(--group-controle); }
+  .navgroup[data-group="estruturas"] .gprogress-fill{ background: var(--group-estruturas); }
+  .navgroup[data-group="organizando"] .gprogress-fill{ background: var(--group-organizando); }
+  .navgroup[data-group="pratica"] .gprogress-fill{ background: var(--group-pratica); }
+  .navgroup[data-group="proximos"] .gprogress-fill{ background: var(--group-proximos); }
+  .navgroup[data-group="fundamentos"] .navlink .idx{ color: var(--group-fundamentos); }
+  .navgroup[data-group="controle"] .navlink .idx{ color: var(--group-controle); }
+  .navgroup[data-group="estruturas"] .navlink .idx{ color: var(--group-estruturas); }
+  .navgroup[data-group="organizando"] .navlink .idx{ color: var(--group-organizando); }
+  .navgroup[data-group="pratica"] .navlink .idx{ color: var(--group-pratica); }
+  .navgroup[data-group="proximos"] .navlink .idx{ color: var(--group-proximos); }
+  .navgroup[data-group="fundamentos"] .navlink.active{ border-left-color: var(--group-fundamentos); }
+  .navgroup[data-group="controle"] .navlink.active{ border-left-color: var(--group-controle); }
+  .navgroup[data-group="estruturas"] .navlink.active{ border-left-color: var(--group-estruturas); }
+  .navgroup[data-group="organizando"] .navlink.active{ border-left-color: var(--group-organizando); }
+  .navgroup[data-group="pratica"] .navlink.active{ border-left-color: var(--group-pratica); }
+  .navgroup[data-group="proximos"] .navlink.active{ border-left-color: var(--group-proximos); }
+
+  .side-foot{ padding: 12px 20px 0 20px; border-top: 1px solid var(--line); }
+  .continue-btn{
+    display: none; width: 100%; text-align: left; background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 10px 12px; color: var(--text); cursor: pointer; margin-top: 12px;
+  }
+  .continue-btn.show{ display: block; }
+  .continue-btn .cb-lbl{ font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); display:block; margin-bottom: 3px; }
+  .continue-btn .cb-chap{ font-size: 13px; color: var(--blue-bright); }
+  .continue-btn:hover{ border-color: var(--blue-bright); }
+
+  /* ===== COMMAND PALETTE ===== */
+  .palette-overlay{
+    display: none; position: fixed; inset: 0; background: rgba(6,8,11,0.72); z-index: 90;
+    align-items: flex-start; justify-content: center; padding-top: 12vh;
+  }
+  .palette-overlay.show{ display: flex; }
+  .palette{
+    width: 560px; max-width: 90vw; background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5); overflow: hidden;
+  }
+  .palette-input-row{ display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .palette-prompt{ font-family:'JetBrains Mono', monospace; color: var(--yellow); font-size: 15px; }
+  .palette-input{ flex: 1; background: none; border: none; color: var(--text); font-size: 15px; font-family:'JetBrains Mono', monospace; }
+  .palette-input:focus{ outline: none; }
+  .palette-esc{ font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 2px 5px; }
+  .palette-results{ max-height: 340px; overflow-y: auto; padding: 6px; }
+  .palette-item{
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius);
+    cursor: pointer; color: var(--text); font-size: 14px;
+  }
+  .palette-item .pi-idx{ font-family:'JetBrains Mono', monospace; color: var(--blue-bright); font-size: 11.5px; width: 22px; }
+  .palette-item .pi-group{ margin-left: auto; font-family:'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); }
+  .palette-item.sel{ background: var(--panel-2); }
+  .palette-item.sel .pi-group{ color: var(--yellow); }
+  .palette-empty{ padding: 24px; text-align: center; color: var(--muted); font-size: 13.5px; }
+
+  main{ padding: 0; max-width: 880px; }
+
+  /* Breadcrumb */
+  .crumbbar{
+    position: sticky; top: 0; z-index: 20; height: var(--crumbh); background: rgba(14,17,22,0.92);
+    backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); display: flex; align-items: center;
+    padding: 0 56px; gap: 8px; font-family:'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);
+  }
+  .crumbbar .cg{ color: var(--muted); }
+  .crumbbar .cc{ color: var(--text); }
+  .crumbbar .sep{ color: var(--line); }
+
+  .hero{ padding: 64px 56px 54px 56px; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0,1fr) 380px; gap: 48px; align-items: center; }
+  .hero-inner{ position: relative; z-index: 1; }
+  .hero .kicker{ font-family: 'JetBrains Mono', monospace; color: var(--muted); font-style: italic; font-size: 13px; margin-bottom: 16px; display: block; }
+  .hero .kicker::before{ content: "# "; color: var(--green); font-style: normal; }
+  .hero h1{ font-size: 42px; line-height: 1.15; max-width: 600px; }
+  .hero p.lead{ color: var(--muted); font-size: 16px; max-width: 520px; margin-top: 18px; }
+  .hero .startbtn{ display: inline-block; margin-top: 26px; background: linear-gradient(120deg, var(--yellow), var(--yellow-soft)); color: #14181f; font-weight: 600; padding: 12px 22px; border-radius: var(--radius); text-decoration: none; font-size: 14px; box-shadow: 0 8px 24px -10px rgba(255,212,59,0.45); transition: transform .15s ease, box-shadow .15s ease; }
+  .hero .startbtn:hover{ transform: translateY(-1px); box-shadow: 0 10px 28px -8px rgba(255,212,59,0.55); }
+  .hero .paletteopen{ display: inline-flex; align-items:center; gap: 8px; margin-top: 26px; margin-left: 10px; background: none; border: 1px solid var(--line); color: var(--muted); padding: 11px 16px; border-radius: var(--radius); font-size: 13px; cursor: pointer; transition: border-color .15s ease, color .15s ease; }
+  .hero .paletteopen:hover{ border-color: var(--blue-bright); color: var(--text); }
+  .hero .paletteopen .kbd{ background: var(--panel-3); border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px; font-family:'JetBrains Mono', monospace; font-size: 10.5px; }
+
+  /* ----- painel decorativo do hero: terminal com código real do curso ----- */
+  .hero-term{ background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; box-shadow: 0 30px 70px -30px rgba(0,0,0,.7); overflow: hidden; position: relative; z-index: 1; }
+  .hero-term .modal-termbar{ background: #12161e; }
+  .hero-term pre{ margin: 0; padding: 20px 20px 22px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.95; color: #cfe3d8; }
+  .hero-term .ht-line{ opacity: 0; transform: translateY(4px); animation: htIn .5s ease forwards; display:block; }
+  .hero-term .ht-line:nth-child(1){ animation-delay: .15s; }
+  .hero-term .ht-line:nth-child(2){ animation-delay: .55s; }
+  .hero-term .ht-line:nth-child(3){ animation-delay: .95s; }
+  .hero-term .ht-line:nth-child(4){ animation-delay: 1.35s; }
+  .hero-term .ht-line:nth-child(5){ animation-delay: 1.75s; }
+  .hero-term .ht-out{ color: var(--green); }
+  .hero-term .ht-cursor{ display:inline-block; width: 7px; height: 15px; background: var(--yellow); vertical-align: -2px; animation: htBlink 1s steps(1) infinite; opacity: 0; animation: htBlink 1s steps(1) infinite, htIn .3s ease 2.1s forwards; }
+  @keyframes htIn{ to{ opacity: 1; transform: translateY(0); } }
+  @keyframes htBlink{ 0%, 49%{ opacity: 1; } 50%, 100%{ opacity: 0; } }
+  @media (prefers-reduced-motion: reduce){
+    .hero-term .ht-line, .hero-term .ht-cursor{ animation: none; opacity: 1; transform: none; }
+  }
+  @media (max-width: 1080px){
+    .hero{ grid-template-columns: 1fr; }
+    .hero-term{ max-width: 480px; }
+  }
+
+  .progress-wrap{ margin-top: 30px; max-width: 480px; }
+  .progress-bar{ height: 6px; background: var(--panel-2); border-radius: 3px; overflow: hidden; }
+  .progress-fill{ height: 100%; background: linear-gradient(90deg, var(--blue), var(--yellow)); width: 0%; transition: width .4s ease; }
+  .progress-label{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 8px; display:flex; justify-content:space-between; align-items:center; gap: 10px;}
+  .progress-label .reset{ background:none; border:1px solid var(--line); color: var(--muted); border-radius: 3px; padding: 3px 9px; cursor: pointer; font-family:'JetBrains Mono', monospace; font-size: 11px;}
+  .progress-label .reset:hover{ color: var(--red); border-color: var(--red); }
+
+  section.topic{ padding: 50px 56px; border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--crumbh) + 16px); }
+  .topic-head{ display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .topic-num{ font-family: 'JetBrains Mono', monospace; color: var(--blue-bright); font-size: 15px; }
+  .topic h2{ font-size: 25px; flex: 1; }
+  .topic-star{ background: none; border: 1px solid var(--line); border-radius: var(--radius); width: 30px; height: 30px; color: var(--muted); cursor: pointer; font-size: 14px; }
+  .topic-star:hover{ border-color: var(--yellow); }
+  .topic-star.on{ color: var(--yellow); border-color: var(--yellow); }
+  .topic .dek{ color: var(--muted); font-size: 15px; max-width: 640px; margin: 10px 0 22px 0; }
+
+  section.topic[data-group="Fundamentos"] .topic-num{ color: var(--group-fundamentos); }
+  section.topic[data-group="Controle de fluxo"] .topic-num{ color: var(--group-controle); }
+  section.topic[data-group="Estruturas de dados"] .topic-num{ color: var(--group-estruturas); }
+  section.topic[data-group="Organizando código"] .topic-num{ color: var(--group-organizando); }
+  section.topic[data-group="Na prática"] .topic-num{ color: var(--group-pratica); }
+  section.topic[data-group="Próximos passos"] .topic-num{ color: var(--group-proximos); }
+
+  .topic p{ max-width: 660px; color: #c7ccd6; font-size: 15.5px; }
+  .topic ul{ max-width: 640px; color: #c7ccd6; font-size: 15.5px; padding-left: 20px; }
+  .topic li{ margin-bottom: 6px; }
+  .topic table{ border-collapse: collapse; max-width: 660px; margin: 16px 0; font-size: 14px; }
+  .topic th, .topic td{ border: 1px solid var(--line); padding: 8px 12px; text-align: left; color: #c7ccd6; }
+  .topic th{ color: var(--text); background: var(--panel-2); font-family:'JetBrains Mono', monospace; font-size: 12.5px; }
+
+  .codeblock{ background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; margin: 20px 0 14px 0; overflow: hidden; max-width: 660px; box-shadow: 0 14px 32px -20px rgba(0,0,0,.55); }
+  .codeblock .cb-top{ display: flex; align-items: center; padding: 9px 14px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+  .codeblock .cb-top::before{ content:""; width:8px; height:8px; border-radius:50%; background:#e0716b; box-shadow: 13px 0 0 #e6b95c, 26px 0 0 #7ec699; margin-right: 36px; flex-shrink:0; }
+  .codeblock .cb-title{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); flex: 1; }
+  .cb-actions{ display: flex; gap: 8px; }
+  .cb-btn{ font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--blue-bright); background: none; border: 1px solid var(--line); border-radius: 3px; padding: 3px 9px; cursor: pointer; }
+  .cb-btn:hover{ border-color: var(--blue-bright); }
+  .cb-btn.run{ color: var(--green); }
+  .cb-btn.run:hover{ border-color: var(--green); }
+  .codeblock pre{ margin: 0; padding: 16px 18px; font-size: 13.5px; overflow-x: auto; color: #cfe3d8; }
+  .tok-kw{ color: var(--blue-bright); }
+  .tok-str{ color: var(--yellow); }
+  .tok-com{ color: var(--muted); font-style: italic; }
+  .tok-fn{ color: #a3d9ff; }
+
+  .out{ max-width: 660px; background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--green); margin-bottom: 24px; white-space: pre-wrap; }
+  .out.shown{ animation: outFade .3s ease; }
+  .out .lbl{ color: var(--muted); display:block; font-size: 11px; margin-bottom: 6px; }
+  .out-placeholder{ color: var(--muted); font-style: italic; font-size: 12.5px; }
+  .out.placeholder{ border-style: dashed; }
+  @keyframes outFade{ from{ opacity: .3; } to{ opacity: 1; } }
+  @media (prefers-reduced-motion: reduce){ .out.shown{ animation: none; } }
+
+  .callout{ max-width: 640px; border-left: 3px solid var(--yellow); background: linear-gradient(90deg, rgba(255,212,59,0.07), transparent 60%); padding: 13px 16px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 14px; color: #d7dbe2; margin: 20px 0; }
+  .callout.warn{ border-left-color: var(--red); background: linear-gradient(90deg, rgba(232,131,122,0.08), transparent 60%); }
+  .callout b{ color: var(--yellow); }
+  .callout.warn b{ color: var(--red); }
+
+  .quiz{ max-width: 640px; background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 22px 24px; margin-top: 26px; }
+  .quiz .qtitle{ font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--blue-bright); margin-bottom: 12px; }
+  .quiz p.q{ font-size: 15px; color: var(--text); margin-bottom: 14px; }
+  .quiz .opts{ display: flex; flex-direction: column; gap: 8px; counter-reset: optletter; }
+  .quiz .opt{ position: relative; text-align: left; background: var(--panel-2); border: 1px solid var(--line); color: var(--text); padding: 11px 14px 11px 46px; border-radius: var(--radius); cursor: pointer; font-size: 14px; transition: border-color .12s ease, transform .08s ease; counter-increment: optletter; }
+  .quiz .opt::before{
+    content: counter(optletter, upper-alpha); position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%; background: var(--panel-3); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; transition: background .12s ease, color .12s ease;
+  }
+  .quiz .opt:hover{ border-color: var(--blue-bright); transform: translateX(1px); }
+  .quiz .opt:hover::before{ color: var(--blue-bright); }
+  .quiz .opt.correct{ border-color: var(--green); background: rgba(126,198,153,0.12); color: var(--green); }
+  .quiz .opt.correct::before{ background: var(--green); color: #0b0d12; content: "✓"; }
+  .quiz .opt.wrong{ border-color: var(--red); background: rgba(224,122,122,0.12); color: var(--red); }
+  .quiz .opt.wrong::before{ background: var(--red); color: #0b0d12; content: "✕"; }
+  .quiz .feedback{ margin-top: 12px; font-size: 13.5px; color: var(--muted); display:none; }
+
+  .chapnav{ display: flex; justify-content: space-between; align-items: center; max-width: 660px; margin-top: 36px; gap: 12px; }
+  .chapnav a{ flex: 1; display: block; border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 16px; text-decoration: none; color: var(--text); background: var(--panel-2); font-size: 13.5px; transition: border-color .15s ease, transform .1s ease; }
+  .chapnav a:hover{ border-color: var(--blue-bright); transform: translateY(-1px); }
+  .chapnav a.next{ text-align: right; }
+  .chapnav .lbl2{ display:block; font-family:'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); margin-bottom: 3px; }
+
+  .marker-done{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 24px; cursor: pointer; }
+  .marker-done input{ accent-color: var(--yellow); width: 14px; height: 14px; }
+
+  /* ===== Exemplo extra + desafio prático ===== */
+  .extra-h3{ font-family: 'Space Grotesk', sans-serif; font-size: 16.5px; color: var(--text); margin: 30px 0 4px 0; }
+  .challenge-box{ max-width: 660px; margin-top: 28px; border: 1px solid var(--blue-dim); border-radius: 8px; padding: 20px 22px 22px 22px; background: linear-gradient(180deg, rgba(75,139,190,0.06), transparent 60%); }
+  .challenge-head{ font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--blue-bright); letter-spacing: .02em; margin-bottom: 8px; }
+  .challenge-desc{ font-size: 14.5px; color: #d7dbe2; margin-bottom: 4px; }
+  .solution-toggle{ margin-top: 4px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: var(--radius); padding: 8px 14px; font-size: 12.5px; font-family: 'JetBrains Mono', monospace; cursor: pointer; }
+  .solution-toggle:hover{ border-color: var(--yellow); color: var(--yellow); }
+  .solution-box{ margin-top: 12px; }
+  .solution-box pre{ margin: 0; background: #0b0d12; border: 1px solid var(--line); border-radius: 7px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cfe3d8; overflow-x: auto; white-space: pre-wrap; }
+
+  footer{ padding: 50px 56px 100px 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); background: linear-gradient(180deg, rgba(75,139,190,0.04), transparent 40%); }
+  footer .fmark{ font-family: 'JetBrains Mono', monospace; color: var(--yellow); }
+  footer .reslist{ margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 640px; }
+  footer .reslist a{ display:block; border: 1px solid var(--line); border-radius: var(--radius); padding: 11px 14px; font-size: 13.5px; transition: border-color .15s ease, transform .1s ease; }
+  footer .reslist a:hover{ border-color: var(--blue-bright); transform: translateY(-1px); }
+
+  .toast{ position: fixed; bottom: 22px; right: 22px; background: var(--panel-2); border: 1px solid var(--green); color: var(--green); padding: 10px 16px; border-radius: var(--radius); font-family:'JetBrains Mono', monospace; font-size: 13px; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; z-index: 60; pointer-events:none; box-shadow: 0 12px 30px -10px rgba(0,0,0,.5); }
+  .toast.show{ opacity: 1; transform: translateY(0); }
+
+  ::-webkit-scrollbar{ width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track{ background: transparent; }
+  ::-webkit-scrollbar-thumb{ background: var(--panel-3); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--line); }
+
+  @media (max-width: 900px){
+    .topbar{ display: flex; }
+    .shell{ grid-template-columns: 1fr; }
+    nav.side{ position: fixed; left: 0; top: var(--topbarh); height: calc(100vh - var(--topbarh)); width: 88%; max-width: 340px; transform: translateX(-100%); transition: transform .25s ease; z-index: 50; box-shadow: 4px 0 24px rgba(0,0,0,.4); }
+    nav.side.open{ transform: translateX(0); }
+    .overlay{ display:none; position: fixed; inset: 0; top: var(--topbarh); background: rgba(0,0,0,.5); z-index: 45; }
+    .overlay.show{ display: block; }
+    .crumbbar{ padding: 0 22px; }
+    .hero{ padding: 40px 22px 32px 22px; }
+    .hero h1{ font-size: 28px; }
+    .hero-term{ display: none; }
+    section.topic{ padding: 32px 22px; }
+    footer{ padding: 40px 22px 70px 22px; }
+    footer .reslist{ grid-template-columns: 1fr; }
+    .palette{ width: 92vw; }
+  }
+
+  /* ===== LIGHT THEME ===== */
+  html[data-theme="light"]{
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --panel-2: #eef0f3;
+    --panel-3: #e2e5ea;
+    --line: #d9dce2;
+    --text: #1b2027;
+    --muted: #5b6472;
+  }
+  html[data-theme="light"] h1, html[data-theme="light"] h2, html[data-theme="light"] h3, html[data-theme="light"] .disp{ color: #14181f; }
+  html[data-theme="light"] .topic p, html[data-theme="light"] .topic ul, html[data-theme="light"] .topic th, html[data-theme="light"] .topic td{ color: #333b46; }
+  html[data-theme="light"] .codeblock, html[data-theme="light"] .out, html[data-theme="light"] .term-out{ background: #10151c; }
+  html[data-theme="light"] .codeblock pre{ color: #cfe3d8; }
+  html[data-theme="light"] .startbtn{ color: #14181f; }
+
+  /* ===== FONT SIZE STEP ===== */
+  .fontbtn{ width: 30px; }
+
+  /* ===== STATUS LINE (xp / level / streak) ===== */
+  .statusline{
+    margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line);
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted);
+    display: flex; align-items: baseline; justify-content: space-between; gap: 6px;
+  }
+  .statusline b{ color: var(--yellow); font-weight: 600; }
+  .statusline .sl-streak{ color: #ff9d5c; }
+  .statusline .sl-streak.sl-zero{ color: var(--muted); }
+  .xpbar{ height: 3px; background: var(--panel-3); border-radius: 2px; overflow:hidden; margin-top: 7px; }
+  .xpbar-fill{ height:100%; background: linear-gradient(90deg, var(--blue), var(--yellow)); width:0%; transition: width .5s cubic-bezier(.2,.8,.2,1); }
+
+  /* ===== HINTS (estilo comentário de código) ===== */
+  .quiz .qcounter{ float:right; color: var(--muted); font-size: 11px; font-weight: 400; }
+  .hint-btn{ margin-top: 6px; background:none; border: none; color: var(--muted); padding: 2px 0; font-size: 12.5px; font-family:'JetBrains Mono', monospace; font-style: italic; cursor:pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .hint-btn:hover{ color: var(--yellow); }
+  .hint-btn:disabled{ cursor: default; text-decoration: none; opacity: .6; }
+  .hint-text{ display:none; margin-top: 6px; font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-style: italic; }
+  .hint-text.shown{ display:block; }
+  .hint-text.shown::before{ content: "# "; color: var(--green); font-style: normal; }
+  .next-q-btn{ margin-top: 16px; background: none; border: none; color: var(--blue-bright); padding: 4px 0; font-size: 13.5px; font-family:'JetBrains Mono', monospace; cursor:pointer; }
+  .next-q-btn::after{ content: " →"; }
+  .next-q-btn:hover{ text-decoration: underline; }
+  .xp-pop{ display:inline-block; color: var(--green); font-family:'JetBrains Mono', monospace; font-size: 12px; margin-left: 8px; animation: xpFloat 1.1s ease forwards; }
+  @keyframes xpFloat{ 0%{ opacity: 0; transform: translateY(2px); } 20%{ opacity: 1; transform: translateY(0); } 100%{ opacity: 1; transform: translateY(-3px); } }
+  @media (prefers-reduced-motion: reduce){ .xp-pop{ animation: none; } }
+
+  /* ===== CODE EDITOR ===== */
+  .code-editor{ outline: none; white-space: pre-wrap; word-break: break-word; }
+  .code-editor:focus{ background: rgba(75,139,190,0.06); }
+  .cb-status{ font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); padding: 0 14px 8px 14px; display:none; }
+  .cb-status.shown{ display:block; }
+  .cb-status::before{ content: "$ "; color: var(--blue-bright); }
+  .out.err{ color: var(--red); border-color: var(--red); }
+  .html-preview{ width: 100%; min-height: 160px; border: 1px solid var(--line); border-radius: 5px; background: #fff; display: block; }
+
+  /* ===== MODALS: terminal-window chrome ===== */
+  .modal-overlay{ display:none; position: fixed; inset: 0; background: rgba(6,8,11,0.78); z-index: 90; align-items: center; justify-content: center; padding: 24px; }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{ width: 640px; max-width: 100%; max-height: 84vh; display:flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,.55); overflow: hidden; }
+  .modal-termbar{ display:flex; align-items:center; gap: 10px; padding: 10px 14px; background: var(--panel-2); border-bottom: 1px solid var(--line); flex-shrink: 0; }
+  .modal-dots{ display:flex; gap: 6px; }
+  .modal-dots span{ width: 10px; height: 10px; border-radius: 50%; display:block; }
+  .modal-dots span:nth-child(1){ background: #e0716b; }
+  .modal-dots span:nth-child(2){ background: #e6b95c; }
+  .modal-dots span:nth-child(3){ background: #7ec699; }
+  .modal-termbar .modal-path{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); flex: 1; text-align: center; }
+  .modal-close{ background:none; border:none; color: var(--muted); width:22px; height:22px; cursor:pointer; font-size: 14px; line-height:1; }
+  .modal-close:hover{ color: var(--red); }
+  .modal-body{ padding: 22px 26px 26px 26px; overflow-y: auto; }
+  .modal-box h3{ font-size: 18px; margin-bottom: 4px; }
+  .modal-box .modal-sub{ color: var(--muted); font-size: 13px; margin-bottom: 18px; font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== Achievements: terminal-style checklist ===== */
+  .ach-list{ display:flex; flex-direction: column; gap: 2px; }
+  .ach-row{ display:flex; align-items:flex-start; gap: 12px; padding: 10px 8px; border-left: 2px solid transparent; opacity: .45; }
+  .ach-row.unlocked{ opacity: 1; border-left-color: var(--yellow); background: var(--panel-2); }
+  .ach-row .ach-mark{ font-family:'JetBrains Mono', monospace; color: var(--muted); font-size: 13px; flex-shrink:0; margin-top: 1px; }
+  .ach-row.unlocked .ach-mark{ color: var(--green); }
+  .ach-row .ach-icon{ font-size: 17px; flex-shrink: 0; }
+  .ach-row .ach-text{ flex: 1; }
+  .ach-row .ach-name{ font-size: 13.5px; color: var(--text); display:block; }
+  .ach-row .ach-desc{ font-size: 12px; color: var(--muted); margin-top: 1px; display:block; }
+
+  /* ===== Estatísticas: saída de terminal ===== */
+  .term-out{ background: #0b0d12; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.85; }
+  .term-out .to-prompt{ color: var(--blue-bright); }
+  .term-out .to-line{ display:flex; justify-content: space-between; gap: 12px; color: #cfe3d8; }
+  .term-out .to-key{ color: var(--muted); }
+  .term-out .to-val{ color: var(--green); }
+  .cert-banner{ margin-bottom: 18px; padding: 12px 14px; border: 1px dashed var(--yellow); border-radius: var(--radius); background: rgba(255,212,59,0.06); font-size: 13px; color: var(--text); display:flex; align-items:center; justify-content:space-between; gap: 12px; flex-wrap: wrap; }
+  .cert-banner button{ background: var(--yellow); color: #14181f; border:none; border-radius: var(--radius); padding: 7px 14px; font-size: 12.5px; font-weight: 600; cursor:pointer; font-family: inherit; }
+
+  /* ===== Certificado ===== */
+  .cert-wrap{ padding: 30px 26px; }
+  .cert-frame{ border: 2px solid var(--yellow); border-radius: 4px; padding: 34px 30px; text-align:center; position: relative; }
+  .cert-frame::before, .cert-frame::after{ content:""; position:absolute; inset: 7px; border: 1px solid var(--line); border-radius: 2px; pointer-events:none; }
+  .cert-eyebrow{ font-family:'JetBrains Mono', monospace; color: var(--blue-bright); font-size: 12px; letter-spacing: .04em; }
+  .cert-title{ font-size: 24px; margin: 10px 0 4px 0; }
+  .cert-sub{ color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+  .cert-name{ font-family: 'Space Grotesk', sans-serif; font-size: 26px; color: var(--yellow); border-bottom: 1px solid var(--line); display:inline-block; padding: 4px 10px 8px 10px; min-width: 240px; background: transparent; text-align:center; }
+  .cert-name:focus{ outline: none; border-color: var(--blue-bright); }
+  .cert-foot{ margin-top: 22px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); }
+  .cert-actions{ margin-top: 20px; text-align:center; }
+  .cert-actions button{ background: var(--yellow); color: #14181f; border:none; border-radius: var(--radius); padding: 9px 18px; font-size: 13px; font-weight: 600; cursor:pointer; font-family: inherit; }
+  @media print{
+    body *{ visibility: hidden; }
+    #certModal, #certModal *{ visibility: visible; }
+    #certModal{ position: fixed; inset: 0; background: #fff; display:flex !important; align-items:center; justify-content:center; padding:0; }
+    #certModal .modal-termbar, #certModal .cert-actions, #certModal .modal-close{ display:none !important; }
+    #certModal .modal-box{ box-shadow:none; border:none; width: 100%; }
+    #certModal .cert-frame{ border-color:#333; }
+    #certModal .cert-frame::before, #certModal .cert-frame::after{ border-color:#999; }
+  }
+
+  @media (max-width: 640px){
+    .modal-box{ max-height: 90vh; }
+    .cert-name{ min-width: 160px; font-size: 20px; }
+  }
+
+
+  /* ===== Menu de troca de curso ===== */
+  .course-switcher{ background: var(--panel); border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .cs-inner{ display:flex; align-items:center; gap:6px; padding: 8px 16px; white-space:nowrap; }
+  .cs-label{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-right:4px; }
+  .cs-item{ font-family:'JetBrains Mono',monospace; font-size:12.5px; padding:5px 10px; border-radius: var(--radius); color:var(--muted); text-decoration:none; border:1px solid transparent; display:inline-flex; align-items:center; gap:5px; }
+  .cs-item:hover{ color:var(--text); border-color: var(--line); }
+  .cs-item.active{ color:#14181f; background: var(--yellow); font-weight:600; }
+  .cs-item.cs-soon{ opacity:.5; cursor:default; }
+  .cs-soon-tag{ font-size:9.5px; color:var(--muted); }
+  .cs-item.active .cs-soon-tag{ color:#14181f; }
+
+</style>
+</head>
+<body>
+<div class="course-switcher"><div class="cs-inner"><span class="cs-label">cursos:</span><a class="cs-item" href="curso_python.html">🐍 Python</a><a class="cs-item" href="curso_html.html">&lt;/&gt; HTML</a><a class="cs-item active" href="curso_css.html">{ } CSS</a><span class="cs-item cs-soon" title="Em breve">⚡ JavaScript <span class="cs-soon-tag">em breve</span></span><span class="cs-item cs-soon" title="Em breve">☕ Java <span class="cs-soon-tag">em breve</span></span></div></div>
+<div class="scrollbar" id="scrollbar"></div>
+<div class="topbar">
+<span class="tmark">{ } curso_css</span>
+<div class="tbtns">
+<button aria-label="Buscar" class="iconbtn" id="paletteBtnMobile">⌕</button>
+<button aria-label="Abrir menu" class="iconbtn" id="hamburger">☰</button>
+</div>
+</div>
+<div class="overlay" id="overlay"></div>
+<div class="shell">
+<nav class="side" id="sidenav">
+<div class="side-head">
+<div class="side-head-row">
+<div class="ringwrap">
+<svg height="44" viewbox="0 0 44 44" width="44">
+<defs>
+<linearGradient id="ringGrad" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="var(--blue-bright)"></stop>
+<stop offset="100%" stop-color="var(--yellow)"></stop>
+</linearGradient>
+</defs>
+<circle class="ring-bg" cx="22" cy="22" r="18"></circle>
+<circle class="ring-fg" cx="22" cy="22" id="ringFg" r="18" stroke-dasharray="113" stroke-dashoffset="113"></circle>
+</svg>
+<div class="ring-pct" id="ringPct">0%</div>
+</div>
+<div class="brand">
+<span class="mark">{ } estilizando a web</span>
+<h1>Curso de CSS</h1>
+<p>18 capítulos · do zero ao layout bonito</p>
+</div>
+</div>
+<div class="quickrow">
+<button class="qbtn" id="paletteBtn">⌕ buscar <span class="kbd">⌘K</span></button>
+<button class="qbtn" id="favBtn">★ favoritos</button>
+</div>
+<div class="quickrow">
+<button class="qbtn" id="themeBtn" title="Alternar tema claro/escuro">🌓 tema</button>
+<button class="qbtn fontbtn" id="fontDecBtn" title="Diminuir fonte">A-</button>
+<button class="qbtn fontbtn" id="fontIncBtn" title="Aumentar fonte">A+</button>
+</div>
+<div class="statusline">
+<span><b id="levelVal">1</b> · <span id="xpVal">0 XP</span></span>
+<span class="sl-streak sl-zero" id="streakVal">🔥 0d</span>
+</div>
+<div class="xpbar"><div class="xpbar-fill" id="xpBarFill"></div></div>
+</div>
+<div class="searchwrap">
+<input class="searchbox" id="searchbox" placeholder="Filtrar capítulos..." type="text"/>
+</div>
+<div class="navscroll" id="navscroll">
+<div class="navgroup" data-group="fundamentos">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">FUNDAMENTOS</span><span class="gcount">0/4</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="intro" href="#intro"><span class="idx">00</span><span class="lbl">Introdução ao CSS</span><span class="check">✓</span><span class="star" data-star="intro">★</span></a><a class="navlink" data-target="seletores" href="#seletores"><span class="idx">01</span><span class="lbl">Seletores</span><span class="check">✓</span><span class="star" data-star="seletores">★</span></a><a class="navlink" data-target="cores-unidades" href="#cores-unidades"><span class="idx">02</span><span class="lbl">Cores e unidades</span><span class="check">✓</span><span class="star" data-star="cores-unidades">★</span></a><a class="navlink" data-target="texto-fontes" href="#texto-fontes"><span class="idx">03</span><span class="lbl">Texto e fontes</span><span class="check">✓</span><span class="star" data-star="texto-fontes">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="layout-basico">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">MODELO DE CAIXA</span><span class="gcount">0/2</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="box-model" href="#box-model"><span class="idx">04</span><span class="lbl">Box model (modelo de caixa)</span><span class="check">✓</span><span class="star" data-star="box-model">★</span></a><a class="navlink" data-target="display" href="#display"><span class="idx">05</span><span class="lbl">Display (block, inline, none)</span><span class="check">✓</span><span class="star" data-star="display">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="posicionamento">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">VISUAL E POSICIONAMENTO</span><span class="gcount">0/3</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="backgrounds-bordas" href="#backgrounds-bordas"><span class="idx">06</span><span class="lbl">Backgrounds e bordas</span><span class="check">✓</span><span class="star" data-star="backgrounds-bordas">★</span></a><a class="navlink" data-target="posicionamento" href="#posicionamento"><span class="idx">07</span><span class="lbl">Posicionamento (position)</span><span class="check">✓</span><span class="star" data-star="posicionamento">★</span></a><a class="navlink" data-target="pseudo-classes" href="#pseudo-classes"><span class="idx">08</span><span class="lbl">Pseudo-classes e pseudo-elementos</span><span class="check">✓</span><span class="star" data-star="pseudo-classes">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="layouts-modernos">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">LAYOUTS MODERNOS</span><span class="gcount">0/4</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="flexbox" href="#flexbox"><span class="idx">09</span><span class="lbl">Flexbox</span><span class="check">✓</span><span class="star" data-star="flexbox">★</span></a><a class="navlink" data-target="grid" href="#grid"><span class="idx">10</span><span class="lbl">CSS Grid</span><span class="check">✓</span><span class="star" data-star="grid">★</span></a><a class="navlink" data-target="responsivo" href="#responsivo"><span class="idx">11</span><span class="lbl">Design responsivo (media queries)</span><span class="check">✓</span><span class="star" data-star="responsivo">★</span></a><a class="navlink" data-target="variaveis-css" href="#variaveis-css"><span class="idx">12</span><span class="lbl">Variáveis CSS</span><span class="check">✓</span><span class="star" data-star="variaveis-css">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="poli-avancado">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">EFEITOS E CASCATA</span><span class="gcount">0/3</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="transicoes-animacoes" href="#transicoes-animacoes"><span class="idx">13</span><span class="lbl">Transições e animações</span><span class="check">✓</span><span class="star" data-star="transicoes-animacoes">★</span></a><a class="navlink" data-target="especificidade-cascata" href="#especificidade-cascata"><span class="idx">14</span><span class="lbl">Especificidade e cascata</span><span class="check">✓</span><span class="star" data-star="especificidade-cascata">★</span></a><a class="navlink" data-target="boas-praticas" href="#boas-praticas"><span class="idx">15</span><span class="lbl">Boas práticas em CSS</span><span class="check">✓</span><span class="star" data-star="boas-praticas">★</span></a>
+</div>
+</div>
+<div class="navgroup" data-group="proximos">
+<button class="navgroup-head"><span class="chev">▾</span><span class="glabel">PRÓXIMOS PASSOS</span><span class="gcount">0/2</span></button>
+<div class="gprogress"><div class="gprogress-fill"></div></div>
+<div class="navgroup-body">
+<a class="navlink" data-target="projeto" href="#projeto"><span class="idx">16</span><span class="lbl">Projeto final: card de perfil estilizado</span><span class="check">✓</span><span class="star" data-star="projeto">★</span></a><a class="navlink" data-target="recursos" href="#recursos"><span class="idx">17</span><span class="lbl">Para onde ir depois</span><span class="check">✓</span><span class="star" data-star="recursos">★</span></a>
+</div>
+</div>
+</div>
+<div class="side-foot">
+<div class="quickrow" style="margin-top:0;">
+<button class="qbtn" id="achBtn">🏆 conquistas</button>
+<button class="qbtn" id="statsBtn">📊 estatísticas</button>
+</div>
+<button class="continue-btn" id="continueBtn">
+<span class="cb-lbl">CONTINUAR DE ONDE PAROU</span>
+<span class="cb-chap" id="continueChap">—</span>
+</button>
+</div>
+</nav>
+<main>
+<div class="crumbbar" id="crumbbar">
+<span class="cg" id="crumbGroup">Início</span><span class="sep">/</span><span class="cc" id="crumbChap">visão geral</span>
+</div>
+<div class="hero" id="topo">
+<div class="hero-inner">
+<span class="kicker">guia interativo, 18 capítulos</span>
+<h1>Aprenda CSS estilizando páginas de verdade, capítulo a capítulo.</h1>
+<p class="lead">Cada capítulo tem uma explicação curta, um exemplo com botão "Executar" que renderiza o resultado ao vivo no navegador, e um exercício de múltipla escolha. Use <span class="kbd" style="font-family:'JetBrains Mono',monospace;background:var(--panel-3);border:1px solid var(--line);border-radius:3px;padding:1px 5px;font-size:12px;">⌘K</span> a qualquer momento para pular direto para um capítulo.</p>
+<a class="startbtn" href="#intro" id="startBtn">Começar pelo capítulo 00 →</a>
+<button class="paletteopen" id="paletteBtnHero">Ir para um capítulo <span class="kbd">⌘K</span></button>
+<div class="progress-wrap">
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-label">
+<span id="progressLabel">0 de 18 capítulos concluídos</span>
+<button class="reset" id="resetBtn">reiniciar progresso</button>
+</div>
+</div>
+</div>
+<div class="hero-term" aria-hidden="true">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">boas_vindas.css</span>
+</div>
+<pre><span class="ht-line">h1 {</span>
+<span class="ht-line">&nbsp;&nbsp;color: #4B8BBE;</span>
+<span class="ht-line">&nbsp;&nbsp;font-size: 32px;</span>
+<span class="ht-line">}<span class="ht-cursor"></span></span></pre>
+</div>
+</div>
+
+<section class="topic" data-group="FUNDAMENTOS" data-title="Introdução ao CSS" id="intro">
+<div class="topic-head"><span class="topic-num">00</span><h2>Introdução ao CSS</h2><button class="topic-star" data-star-target="intro">★</button></div>
+<p class="dek">Como dar estilo ao que o HTML estrutura.</p>
+<p>CSS significa <b>Cascading Style Sheets</b> (folhas de estilo em cascata). Enquanto o HTML estrutura o conteúdo, o CSS define a aparência: cores, tamanhos, espaçamentos, layout. Uma regra CSS tem um <b>seletor</b> (o que estilizar) e uma <b>declaração</b> entre chaves (como estilizar).</p>
+<div class="codeblock" data-cbid="intro">
+<div class="cb-top"><span class="cb-title">primeiro_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  h1 {
+    color: #4B8BBE;
+    font-size: 32px;
+  }
+&lt;/style&gt;
+
+&lt;h1&gt;Olá, CSS!&lt;/h1&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> Você pode colocar CSS dentro de uma tag <code>&lt;style&gt;</code> no <code>&lt;head&gt;</code> (como nos exemplos deste curso), ou em um arquivo <code>.css</code> separado, ligado com <code>&lt;link&gt;</code> — o mais comum em projetos reais.</div>
+<div class="callout"><b>Aprofundando:</b> A palavra "cascata" no nome CSS vem do fato de que várias regras podem se aplicar ao mesmo elemento — e existem regras claras (que você vai ver no capítulo de especificidade) para decidir qual estilo vence quando há conflito.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-intro">
+<div class="cb-top"><span class="cb-title">css_externo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;!-- em um projeto real, o mais comum é: --&gt;
+&lt;link rel="stylesheet" href="estilo.css"&gt;
+
+&lt;!-- e num arquivo estilo.css separado: --&gt;
+&lt;!-- h1 { color: #4B8BBE; } --&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="intro">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que uma regra CSS precisa ter, no mínimo?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Um seletor e uma declaração entre chaves</button>
+<button class="opt" data-correct="false">Um link para uma imagem</button>
+<button class="opt" data-correct="false">Uma tag &lt;div&gt;</button>
+</div>
+<button class="hint-btn" data-hint="Pense em &quot;o que estilizar&quot; e &quot;como estilizar&quot;." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Onde você pode escrever CSS?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Só dentro de um arquivo .css separado</button>
+<button class="opt" data-correct="true">Dentro de uma tag &lt;style&gt; ou em um arquivo .css separado</button>
+<button class="opt" data-correct="false">Só dentro da tag &lt;body&gt;</button>
+</div>
+<button class="hint-btn" data-hint="O exemplo deste capítulo usou uma das duas formas." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie um <code>&lt;h1&gt;</code> com o texto "Minha página" e use CSS para deixá-lo na cor verde.</p>
+<div class="codeblock" data-cbid="challenge-intro">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* escreva sua regra CSS aqui */
+&lt;/style&gt;
+
+&lt;h1&gt;Minha página&lt;/h1&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  h1 {
+    color: green;
+  }
+&lt;/style&gt;
+
+&lt;h1&gt;Minha página&lt;/h1&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="intro" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="next" href="#seletores"><span class="lbl2">PRÓXIMO</span>01 · Seletores →</a></div>
+</section>
+
+<section class="topic" data-group="FUNDAMENTOS" data-title="Seletores" id="seletores">
+<div class="topic-head"><span class="topic-num">01</span><h2>Seletores</h2><button class="topic-star" data-star-target="seletores">★</button></div>
+<p class="dek">Escolhendo exatamente quais elementos estilizar.</p>
+<p>Seletores decidem o alvo do estilo: pelo nome da tag (<code>p</code>), por classe (<code>.aviso</code>, com ponto), por id (<code>#topo</code>, com cardinal), ou combinações, como <code>p.aviso</code> (parágrafos com a classe "aviso").</p>
+<div class="codeblock" data-cbid="seletores">
+<div class="cb-top"><span class="cb-title">seletores.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  p { color: gray; }
+  .destaque { color: orange; font-weight: bold; }
+  #titulo-principal { font-size: 28px; }
+&lt;/style&gt;
+
+&lt;h1 id="titulo-principal"&gt;Título&lt;/h1&gt;
+&lt;p&gt;Parágrafo normal.&lt;/p&gt;
+&lt;p class="destaque"&gt;Parágrafo em destaque.&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> Classes (<code>.nome</code>) podem se repetir em vários elementos; ids (<code>#nome</code>) devem ser únicos na página — a mesma regra que você já viu no HTML.</div>
+<div class="callout"><b>Aprofundando:</b> Também é possível selecionar por múltiplas classes ao mesmo tempo (<code>.card.destaque</code>, sem espaço, seleciona elementos com as duas classes), e usar vírgula para aplicar o mesmo estilo a vários seletores de uma vez.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-seletores">
+<div class="cb-top"><span class="cb-title">multiplos_seletores.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  h1, h2, h3 {
+    font-family: sans-serif;
+  }
+  .card.destaque {
+    border: 2px solid orange;
+  }
+&lt;/style&gt;
+
+&lt;h1&gt;Título&lt;/h1&gt;
+&lt;div class="card destaque"&gt;Card destacado&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="seletores">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual seletor é usado para uma classe chamada "aviso"?</p>
+<div class="opts">
+<button class="opt" data-correct="false">#aviso</button>
+<button class="opt" data-correct="true">.aviso</button>
+<button class="opt" data-correct="false">*aviso</button>
+</div>
+<button class="hint-btn" data-hint="Pense no símbolo usado para classe no CSS, diferente do usado para id." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Um id pode ser usado em mais de um elemento na mesma página?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Sim, sem restrição</button>
+<button class="opt" data-correct="true">Não, deve ser único</button>
+<button class="opt" data-correct="false">Só se estiverem em seções diferentes</button>
+</div>
+<button class="hint-btn" data-hint="A mesma regra vista no capítulo de atributos do HTML se aplica aqui." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Estilize todos os parágrafos com a classe "aviso" para ficarem vermelhos e em negrito.</p>
+<div class="codeblock" data-cbid="challenge-seletores">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* escreva o seletor e o estilo aqui */
+&lt;/style&gt;
+
+&lt;p class="aviso"&gt;Atenção: leia com cuidado.&lt;/p&gt;
+&lt;p&gt;Parágrafo comum.&lt;/p&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .aviso {
+    color: red;
+    font-weight: bold;
+  }
+&lt;/style&gt;
+
+&lt;p class="aviso"&gt;Atenção: leia com cuidado.&lt;/p&gt;
+&lt;p&gt;Parágrafo comum.&lt;/p&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="seletores" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#intro"><span class="lbl2">ANTERIOR</span>← 00 · Introdução ao CSS</a><a class="next" href="#cores-unidades"><span class="lbl2">PRÓXIMO</span>02 · Cores e unidades →</a></div>
+</section>
+
+<section class="topic" data-group="FUNDAMENTOS" data-title="Cores e unidades" id="cores-unidades">
+<div class="topic-head"><span class="topic-num">02</span><h2>Cores e unidades</h2><button class="topic-star" data-star-target="cores-unidades">★</button></div>
+<p class="dek">As diferentes formas de definir cor e tamanho em CSS.</p>
+<p>Cores podem ser escritas por nome (<code>red</code>), em hexadecimal (<code>#FF0000</code>) ou com <code>rgb(255, 0, 0)</code>. Tamanhos usam unidades: <code>px</code> (pixels, fixo), <code>%</code> (relativo ao elemento pai), <code>em</code>/<code>rem</code> (relativo ao tamanho da fonte).</p>
+<div class="codeblock" data-cbid="cores-unidades">
+<div class="cb-top"><span class="cb-title">cores_unidades.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .caixa1 { background: #FFD43B; padding: 16px; }
+  .caixa2 { background: rgb(75, 139, 190); padding: 1em; color: white; }
+&lt;/style&gt;
+
+&lt;div class="caixa1"&gt;Caixa com cor hexadecimal&lt;/div&gt;
+&lt;div class="caixa2"&gt;Caixa com cor RGB e padding em em&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> <code>rem</code> é relativo ao tamanho de fonte da página inteira (não do elemento pai), o que torna o cálculo mais previsível — muito usado para definir tamanhos de forma consistente.</div>
+<div class="callout"><b>Aprofundando:</b> Também existe <code>rgba()</code> e <code>hsl()</code>, que permitem definir transparência com um quarto valor (alpha) entre 0 (invisível) e 1 (opaco) — útil para sobreposições e efeitos suaves.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-cores-unidades">
+<div class="cb-top"><span class="cb-title">transparencia.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .fundo {
+    background: rgba(75, 139, 190, 0.3);
+    padding: 20px;
+  }
+&lt;/style&gt;
+
+&lt;div class="fundo"&gt;Fundo semi-transparente&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="cores-unidades">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual unidade é fixa, sempre do mesmo tamanho visual?</p>
+<div class="opts">
+<button class="opt" data-correct="false">%</button>
+<button class="opt" data-correct="true">px</button>
+<button class="opt" data-correct="false">em</button>
+</div>
+<button class="hint-btn" data-hint="&quot;Pixel&quot; não muda de tamanho dependendo de outro elemento." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">O que o quarto valor em rgba() controla?</p>
+<div class="opts">
+<button class="opt" data-correct="false">O brilho da cor</button>
+<button class="opt" data-correct="true">A transparência (alpha)</button>
+<button class="opt" data-correct="false">A rotação do elemento</button>
+</div>
+<button class="hint-btn" data-hint="&quot;a&quot; de rgba vem dessa palavra em inglês." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie uma div com fundo azul semi-transparente (use rgba) e algum texto dentro.</p>
+<div class="codeblock" data-cbid="challenge-cores-unidades">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* defina o fundo aqui */
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Texto de exemplo&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .caixa {
+    background: rgba(0, 0, 255, 0.25);
+    padding: 16px;
+  }
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Texto de exemplo&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="cores-unidades" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#seletores"><span class="lbl2">ANTERIOR</span>← 01 · Seletores</a><a class="next" href="#texto-fontes"><span class="lbl2">PRÓXIMO</span>03 · Texto e fontes →</a></div>
+</section>
+
+<section class="topic" data-group="FUNDAMENTOS" data-title="Texto e fontes" id="texto-fontes">
+<div class="topic-head"><span class="topic-num">03</span><h2>Texto e fontes</h2><button class="topic-star" data-star-target="texto-fontes">★</button></div>
+<p class="dek">Controlando a tipografia da página.</p>
+<p>Propriedades como <code>font-family</code> (fonte), <code>font-size</code> (tamanho), <code>font-weight</code> (peso/negrito), <code>text-align</code> (alinhamento) e <code>line-height</code> (espaçamento entre linhas) controlam como o texto aparece.</p>
+<div class="codeblock" data-cbid="texto-fontes">
+<div class="cb-top"><span class="cb-title">tipografia.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  p {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    line-height: 1.6;
+    text-align: justify;
+  }
+  .titulo {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+&lt;/style&gt;
+
+&lt;p class="titulo"&gt;aviso importante&lt;/p&gt;
+&lt;p&gt;Este parágrafo tem uma fonte serifada, tamanho maior e linhas mais espaçadas, o que facilita a leitura de textos longos.&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> <code>font-family</code> geralmente lista várias fontes separadas por vírgula — se a primeira não estiver disponível no computador da pessoa, o navegador tenta a próxima da lista.</div>
+<div class="callout"><b>Aprofundando:</b> Fontes personalizadas (como as do Google Fonts) podem ser importadas com <code>@import</code> ou uma tag <code>&lt;link&gt;</code> no <code>&lt;head&gt;</code>, permitindo usar tipografias que não vêm instaladas no computador da pessoa.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-texto-fontes">
+<div class="cb-top"><span class="cb-title">google_fonts.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  @import url('https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap');
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+&lt;/style&gt;
+
+&lt;p&gt;Este texto usa a fonte Roboto, importada da web.&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="texto-fontes">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual propriedade deixa o texto em maiúsculas automaticamente, sem mudar o HTML?</p>
+<div class="opts">
+<button class="opt" data-correct="false">font-weight</button>
+<button class="opt" data-correct="true">text-transform</button>
+<button class="opt" data-correct="false">text-align</button>
+</div>
+<button class="hint-btn" data-hint="Pense em &quot;transformar&quot; a aparência do texto." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Para que serve listar várias fontes em font-family, separadas por vírgula?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Para aplicar todas ao mesmo tempo, misturadas</button>
+<button class="opt" data-correct="true">Como alternativas, caso a primeira não esteja disponível</button>
+<button class="opt" data-correct="false">Não tem função real, é só estético</button>
+</div>
+<button class="hint-btn" data-hint="Pense em um &quot;plano B&quot; para fontes." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Estilize um parágrafo para usar uma fonte sem serifa (sans-serif), tamanho 20px, e alinhamento centralizado.</p>
+<div class="codeblock" data-cbid="challenge-texto-fontes">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* estilize o parágrafo aqui */
+&lt;/style&gt;
+
+&lt;p&gt;Texto de exemplo para estilizar.&lt;/p&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  p {
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    text-align: center;
+  }
+&lt;/style&gt;
+
+&lt;p&gt;Texto de exemplo para estilizar.&lt;/p&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="texto-fontes" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#cores-unidades"><span class="lbl2">ANTERIOR</span>← 02 · Cores e unidades</a><a class="next" href="#box-model"><span class="lbl2">PRÓXIMO</span>04 · Box model (modelo de caixa) →</a></div>
+</section>
+
+<section class="topic" data-group="MODELO DE CAIXA" data-title="Box model (modelo de caixa)" id="box-model">
+<div class="topic-head"><span class="topic-num">04</span><h2>Box model (modelo de caixa)</h2><button class="topic-star" data-star-target="box-model">★</button></div>
+<p class="dek">Todo elemento HTML é, na verdade, uma caixa retangular.</p>
+<p>Todo elemento tem: <code>content</code> (o conteúdo), <code>padding</code> (espaço interno, entre o conteúdo e a borda), <code>border</code> (a borda em si) e <code>margin</code> (espaço externo, entre esse elemento e os vizinhos). Entender essas quatro camadas é a base de praticamente todo layout em CSS.</p>
+<div class="codeblock" data-cbid="box-model">
+<div class="cb-top"><span class="cb-title">box_model.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .caixa {
+    width: 200px;
+    padding: 20px;
+    border: 4px solid #4B8BBE;
+    margin: 30px;
+    background: #FFD43B;
+  }
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Conteúdo da caixa&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> Por padrão, <code>width</code> define só a largura do conteúdo — padding e border são somados a ela. A propriedade <code>box-sizing: border-box</code> muda isso, fazendo width incluir padding e border, o que costuma ser mais previsível.</div>
+<div class="callout"><b>Aprofundando:</b> É comum ver, no topo de folhas de estilo profissionais, uma regra como <code>* { box-sizing: border-box; }</code> — ela aplica esse comportamento mais previsível a todos os elementos da página de uma vez.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-box-model">
+<div class="cb-top"><span class="cb-title">border_box.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  * {
+    box-sizing: border-box;
+  }
+  .caixa {
+    width: 200px;
+    padding: 20px;
+    border: 4px solid #4B8BBE;
+  }
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Agora a largura total é exatamente 200px.&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="box-model">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual camada fica entre o conteúdo e a borda de um elemento?</p>
+<div class="opts">
+<button class="opt" data-correct="false">margin</button>
+<button class="opt" data-correct="true">padding</button>
+<button class="opt" data-correct="false">outline</button>
+</div>
+<button class="hint-btn" data-hint="Pense no espaço &quot;interno&quot; da caixa." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">O que box-sizing: border-box muda no cálculo da largura?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Nada, é só decorativo</button>
+<button class="opt" data-correct="true">Faz width incluir padding e border, não só o conteúdo</button>
+<button class="opt" data-correct="false">Remove a margem do elemento</button>
+</div>
+<button class="hint-btn" data-hint="Pense em qual medida passa a ser &quot;o total&quot; da caixa." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie uma caixa com largura 150px, padding de 10px, borda azul de 2px e margem de 20px.</p>
+<div class="codeblock" data-cbid="challenge-box-model">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* estilize a caixa aqui */
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Minha caixa&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .caixa {
+    width: 150px;
+    padding: 10px;
+    border: 2px solid blue;
+    margin: 20px;
+  }
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Minha caixa&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="box-model" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#texto-fontes"><span class="lbl2">ANTERIOR</span>← 03 · Texto e fontes</a><a class="next" href="#display"><span class="lbl2">PRÓXIMO</span>05 · Display (block, inline, none) →</a></div>
+</section>
+
+<section class="topic" data-group="MODELO DE CAIXA" data-title="Display (block, inline, none)" id="display">
+<div class="topic-head"><span class="topic-num">05</span><h2>Display (block, inline, none)</h2><button class="topic-star" data-star-target="display">★</button></div>
+<p class="dek">Como cada elemento se comporta no fluxo da página.</p>
+<p>A propriedade <code>display</code> controla o comportamento do elemento: <code>block</code> ocupa a linha inteira (como <code>&lt;div&gt;</code> e <code>&lt;p&gt;</code> por padrão); <code>inline</code> fica no meio do texto, sem quebrar linha (como <code>&lt;span&gt;</code>); <code>none</code> esconde o elemento completamente, como se ele não existisse.</p>
+<div class="codeblock" data-cbid="display">
+<div class="cb-top"><span class="cb-title">display.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .inline-exemplo { display: inline; background: yellow; }
+  .block-exemplo { display: block; background: lightblue; }
+  .escondido { display: none; }
+&lt;/style&gt;
+
+&lt;span class="inline-exemplo"&gt;Eu fico na linha&lt;/span&gt;
+&lt;span class="block-exemplo"&gt;Eu quebro a linha&lt;/span&gt;
+&lt;p class="escondido"&gt;Você nunca vai me ver.&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout warn"><b>Cuidado:</b> <code>display: none</code> remove o elemento completamente do layout (nem o espaço dele fica reservado) — é diferente de só deixar invisível, que existe com outra propriedade (<code>visibility: hidden</code>).</div>
+<div class="callout"><b>Aprofundando:</b> Existe também <code>display: inline-block</code>, um meio-termo: o elemento fica na linha como um inline, mas aceita <code>width</code>, <code>height</code> e margens verticais como um block — muito usado antes do flexbox se popularizar.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-display">
+<div class="cb-top"><span class="cb-title">inline_block.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .botao {
+    display: inline-block;
+    width: 120px;
+    padding: 10px;
+    background: #4B8BBE;
+    color: white;
+    text-align: center;
+  }
+&lt;/style&gt;
+
+&lt;a class="botao" href="#"&gt;Botão 1&lt;/a&gt;
+&lt;a class="botao" href="#"&gt;Botão 2&lt;/a&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="display">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que display: none faz com o elemento?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Deixa ele transparente, mas ocupando espaço</button>
+<button class="opt" data-correct="true">Remove ele completamente do layout, sem ocupar espaço</button>
+<button class="opt" data-correct="false">Só muda a cor de fundo</button>
+</div>
+<button class="hint-btn" data-hint="Pense em &quot;como se o elemento não existisse&quot;." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Qual valor de display faz o elemento ficar na linha, mas aceitar width e height?</p>
+<div class="opts">
+<button class="opt" data-correct="false">inline</button>
+<button class="opt" data-correct="true">inline-block</button>
+<button class="opt" data-correct="false">block</button>
+</div>
+<button class="hint-btn" data-hint="É uma combinação dos dois nomes." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Esconda um parágrafo de aviso usando display: none.</p>
+<div class="codeblock" data-cbid="challenge-display">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* esconda o aviso aqui */
+&lt;/style&gt;
+
+&lt;p class="aviso"&gt;Este aviso não deveria aparecer.&lt;/p&gt;
+&lt;p&gt;Este parágrafo normal deve continuar visível.&lt;/p&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .aviso {
+    display: none;
+  }
+&lt;/style&gt;
+
+&lt;p class="aviso"&gt;Este aviso não deveria aparecer.&lt;/p&gt;
+&lt;p&gt;Este parágrafo normal deve continuar visível.&lt;/p&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="display" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#box-model"><span class="lbl2">ANTERIOR</span>← 04 · Box model (modelo de caixa)</a><a class="next" href="#backgrounds-bordas"><span class="lbl2">PRÓXIMO</span>06 · Backgrounds e bordas →</a></div>
+</section>
+
+<section class="topic" data-group="VISUAL E POSICIONAMENTO" data-title="Backgrounds e bordas" id="backgrounds-bordas">
+<div class="topic-head"><span class="topic-num">06</span><h2>Backgrounds e bordas</h2><button class="topic-star" data-star-target="backgrounds-bordas">★</button></div>
+<p class="dek">Deixando caixas mais bonitas com cor, imagem e cantos arredondados.</p>
+<p>Além de cor sólida, <code>background</code> aceita imagens (<code>background-image</code>) e gradientes. <code>border-radius</code> arredonda os cantos de uma caixa — um valor alto (como 50%) transforma um quadrado em círculo.</p>
+<div class="codeblock" data-cbid="backgrounds-bordas">
+<div class="cb-top"><span class="cb-title">backgrounds.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .gradiente {
+    background: linear-gradient(90deg, #4B8BBE, #FFD43B);
+    padding: 30px;
+    border-radius: 12px;
+    color: white;
+  }
+  .circulo {
+    width: 60px;
+    height: 60px;
+    background: #4B8BBE;
+    border-radius: 50%;
+  }
+&lt;/style&gt;
+
+&lt;div class="gradiente"&gt;Caixa com gradiente e cantos arredondados&lt;/div&gt;
+&lt;div class="circulo"&gt;&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> <code>box-shadow</code> adiciona uma sombra à caixa, dando sensação de profundidade — muito usado em cards e botões para destacá-los do fundo.</div>
+<div class="callout"><b>Aprofundando:</b> É possível combinar várias propriedades de sombra e borda para criar efeitos de "cartão" (card) bastante comuns em sites modernos, como um leve relevo ao redor de uma caixa de conteúdo.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-backgrounds-bordas">
+<div class="cb-top"><span class="cb-title">card_com_sombra.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    color: #333;
+  }
+&lt;/style&gt;
+
+&lt;div class="card"&gt;Este card tem uma sombra suave ao redor.&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="backgrounds-bordas">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual valor de border-radius transforma uma caixa quadrada em um círculo?</p>
+<div class="opts">
+<button class="opt" data-correct="false">0</button>
+<button class="opt" data-correct="true">50%</button>
+<button class="opt" data-correct="false">100px sempre</button>
+</div>
+<button class="hint-btn" data-hint="Pense em arredondar os quatro cantos até se encontrarem no meio." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Para que serve box-shadow?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Arredondar os cantos da caixa</button>
+<button class="opt" data-correct="true">Adicionar uma sombra ao redor da caixa</button>
+<button class="opt" data-correct="false">Definir a cor de fundo</button>
+</div>
+<button class="hint-btn" data-hint="O nome já entrega bastante a resposta." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie uma caixa com fundo em gradiente (das cores que quiser) e cantos arredondados de 10px.</p>
+<div class="codeblock" data-cbid="challenge-backgrounds-bordas">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* estilize a caixa aqui */
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Minha caixa estilizada&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .caixa {
+    background: linear-gradient(45deg, orange, red);
+    border-radius: 10px;
+    padding: 24px;
+    color: white;
+  }
+&lt;/style&gt;
+
+&lt;div class="caixa"&gt;Minha caixa estilizada&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="backgrounds-bordas" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#display"><span class="lbl2">ANTERIOR</span>← 05 · Display (block, inline, none)</a><a class="next" href="#posicionamento"><span class="lbl2">PRÓXIMO</span>07 · Posicionamento (position) →</a></div>
+</section>
+
+<section class="topic" data-group="VISUAL E POSICIONAMENTO" data-title="Posicionamento (position)" id="posicionamento">
+<div class="topic-head"><span class="topic-num">07</span><h2>Posicionamento (position)</h2><button class="topic-star" data-star-target="posicionamento">★</button></div>
+<p class="dek">Tirando elementos do fluxo normal da página quando necessário.</p>
+<p>A propriedade <code>position</code> tem valores como <code>static</code> (padrão, segue o fluxo normal), <code>relative</code> (desloca o elemento em relação a onde ele estaria), <code>absolute</code> (posiciona em relação ao ancestral posicionado mais próximo) e <code>fixed</code> (fica fixo na tela mesmo ao rolar a página).</p>
+<div class="codeblock" data-cbid="posicionamento">
+<div class="cb-top"><span class="cb-title">posicionamento.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    position: relative;
+    height: 100px;
+    background: #eee;
+  }
+  .caixa-absoluta {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #4B8BBE;
+    color: white;
+    padding: 8px;
+  }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="caixa-absoluta"&gt;Canto superior direito&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> Para <code>position: absolute</code> funcionar de forma previsível, o elemento "pai" geralmente precisa ter <code>position: relative</code> — assim o absoluto se posiciona em relação a ele, não à página inteira.</div>
+<div class="callout"><b>Aprofundando:</b> <code>position: fixed</code> é o que permite criar, por exemplo, um menu que continua visível no topo da tela mesmo quando você rola a página inteira para baixo — muito usado em barras de navegação.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-posicionamento">
+<div class="cb-top"><span class="cb-title">menu_fixo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .menu-fixo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #14181f;
+    color: white;
+    padding: 10px;
+  }
+&lt;/style&gt;
+
+&lt;div class="menu-fixo"&gt;Menu sempre visível no topo&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="posicionamento">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual valor de position mantém o elemento fixo na tela mesmo rolando a página?</p>
+<div class="opts">
+<button class="opt" data-correct="false">relative</button>
+<button class="opt" data-correct="true">fixed</button>
+<button class="opt" data-correct="false">static</button>
+</div>
+<button class="hint-btn" data-hint="O próprio nome do valor já descreve o comportamento." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Para position: absolute funcionar de forma previsível, o que o elemento pai geralmente precisa ter?</p>
+<div class="opts">
+<button class="opt" data-correct="false">display: none</button>
+<button class="opt" data-correct="true">position: relative (ou outro valor diferente de static)</button>
+<button class="opt" data-correct="false">Uma borda definida</button>
+</div>
+<button class="hint-btn" data-hint="Pense em qual elemento serve de &quot;referência&quot; para o posicionamento absoluto." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie um container com um selo ("Novo!") posicionado no canto superior direito usando position absolute.</p>
+<div class="codeblock" data-cbid="challenge-posicionamento">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    position: relative;
+    height: 80px;
+    background: #eee;
+  }
+  /* posicione o selo aqui */
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;span class="selo"&gt;Novo!&lt;/span&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .container {
+    position: relative;
+    height: 80px;
+    background: #eee;
+  }
+  .selo {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: red;
+    color: white;
+    padding: 4px 8px;
+  }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;span class="selo"&gt;Novo!&lt;/span&gt;
+&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="posicionamento" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#backgrounds-bordas"><span class="lbl2">ANTERIOR</span>← 06 · Backgrounds e bordas</a><a class="next" href="#pseudo-classes"><span class="lbl2">PRÓXIMO</span>08 · Pseudo-classes e pseudo-elementos →</a></div>
+</section>
+
+<section class="topic" data-group="VISUAL E POSICIONAMENTO" data-title="Pseudo-classes e pseudo-elementos" id="pseudo-classes">
+<div class="topic-head"><span class="topic-num">08</span><h2>Pseudo-classes e pseudo-elementos</h2><button class="topic-star" data-star-target="pseudo-classes">★</button></div>
+<p class="dek">Estilizando estados e partes específicas de um elemento.</p>
+<p>Pseudo-classes como <code>:hover</code> (quando o mouse passa por cima) e <code>:first-child</code> (o primeiro filho) estilizam um <b>estado</b> ou <b>posição</b> do elemento. Pseudo-elementos como <code>::before</code> e <code>::after</code> permitem inserir conteúdo antes ou depois do elemento, via CSS.</p>
+<div class="codeblock" data-cbid="pseudo-classes">
+<div class="cb-top"><span class="cb-title">pseudo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .botao {
+    background: #4B8BBE;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+  }
+  .botao:hover {
+    background: #FFD43B;
+    color: #14181f;
+  }
+&lt;/style&gt;
+
+&lt;button class="botao"&gt;Passe o mouse aqui&lt;/button&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> <code>:hover</code> só funciona de forma útil com o mouse — em telas de toque, ele costuma ser ativado só brevemente ao tocar, então não conte só com ele para informações essenciais.</div>
+<div class="callout"><b>Aprofundando:</b> <code>::before</code> e <code>::after</code> exigem uma propriedade <code>content</code> para aparecerem (mesmo vazia, <code>content: "";</code>) — são muito usados para adicionar ícones decorativos ou pequenos detalhes visuais sem precisar de HTML extra.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-pseudo-classes">
+<div class="cb-top"><span class="cb-title">before_after.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .aviso::before {
+    content: "⚠️ ";
+  }
+&lt;/style&gt;
+
+&lt;p class="aviso"&gt;Isso é um aviso importante.&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="pseudo-classes">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Quando o estilo definido em :hover é aplicado?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Sempre, desde o carregamento da página</button>
+<button class="opt" data-correct="true">Quando o mouse está sobre o elemento</button>
+<button class="opt" data-correct="false">Só depois de clicar no elemento</button>
+</div>
+<button class="hint-btn" data-hint="Pense no significado da palavra em inglês &quot;hover&quot; (pairar por cima)." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">O que é obrigatório para ::before ou ::after aparecerem na tela?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Uma propriedade content definida</button>
+<button class="opt" data-correct="false">Uma imagem de fundo</button>
+<button class="opt" data-correct="false">A classe .before ou .after no HTML</button>
+</div>
+<button class="hint-btn" data-hint="Sem essa propriedade, o pseudo-elemento simplesmente não é criado." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Faça um botão mudar de cor de fundo para verde quando o mouse passar por cima dele.</p>
+<div class="codeblock" data-cbid="challenge-pseudo-classes">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .botao {
+    background: gray;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+  }
+  /* adicione o estado :hover aqui */
+&lt;/style&gt;
+
+&lt;button class="botao"&gt;Passe o mouse&lt;/button&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .botao {
+    background: gray;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+  }
+  .botao:hover {
+    background: green;
+  }
+&lt;/style&gt;
+
+&lt;button class="botao"&gt;Passe o mouse&lt;/button&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="pseudo-classes" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#posicionamento"><span class="lbl2">ANTERIOR</span>← 07 · Posicionamento (position)</a><a class="next" href="#flexbox"><span class="lbl2">PRÓXIMO</span>09 · Flexbox →</a></div>
+</section>
+
+<section class="topic" data-group="LAYOUTS MODERNOS" data-title="Flexbox" id="flexbox">
+<div class="topic-head"><span class="topic-num">09</span><h2>Flexbox</h2><button class="topic-star" data-star-target="flexbox">★</button></div>
+<p class="dek">Alinhando e distribuindo elementos em uma linha ou coluna.</p>
+<p>Flexbox organiza os filhos de um container em uma linha (padrão) ou coluna. Ative com <code>display: flex</code> no elemento pai; depois use <code>justify-content</code> (alinhamento no eixo principal) e <code>align-items</code> (alinhamento no eixo transversal) para posicionar os filhos.</p>
+<div class="codeblock" data-cbid="flexbox">
+<div class="cb-top"><span class="cb-title">flexbox.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #eee;
+    padding: 10px;
+  }
+  .item {
+    background: #4B8BBE;
+    color: white;
+    padding: 12px;
+  }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;1&lt;/div&gt;
+  &lt;div class="item"&gt;2&lt;/div&gt;
+  &lt;div class="item"&gt;3&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> <code>gap</code> adiciona espaço entre os itens flex sem precisar de margens manuais em cada um — funciona tanto em flexbox quanto em grid.</div>
+<div class="callout"><b>Aprofundando:</b> Cada item dentro de um flex container também pode ter sua própria propriedade <code>flex-grow</code>, controlando o quanto ele deve "crescer" para preencher o espaço disponível em relação aos outros itens.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-flexbox">
+<div class="cb-top"><span class="cb-title">flex_grow.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container { display: flex; gap: 10px; }
+  .item1 { flex-grow: 1; background: #4B8BBE; color: white; padding: 10px; }
+  .item2 { flex-grow: 2; background: #FFD43B; padding: 10px; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item1"&gt;Cresce 1x&lt;/div&gt;
+  &lt;div class="item2"&gt;Cresce 2x&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="flexbox">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual propriedade ativa o flexbox em um elemento?</p>
+<div class="opts">
+<button class="opt" data-correct="true">display: flex</button>
+<button class="opt" data-correct="false">position: flex</button>
+<button class="opt" data-correct="false">flex: true</button>
+</div>
+<button class="hint-btn" data-hint="É um valor da mesma propriedade usada para block, inline, none..." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">O que justify-content controla?</p>
+<div class="opts">
+<button class="opt" data-correct="true">O alinhamento no eixo principal (geralmente horizontal)</button>
+<button class="opt" data-correct="false">A cor de fundo dos itens</button>
+<button class="opt" data-correct="false">O tamanho da fonte</button>
+</div>
+<button class="hint-btn" data-hint="Pense na direção em que os itens normalmente ficam lado a lado." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie um container flex com 3 itens, centralizados tanto horizontal quanto verticalmente.</p>
+<div class="codeblock" data-cbid="challenge-flexbox">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    display: flex;
+    height: 100px;
+    background: #eee;
+    /* centralize os itens aqui */
+  }
+  .item { background: #4B8BBE; color: white; padding: 10px; margin: 4px; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;A&lt;/div&gt;
+  &lt;div class="item"&gt;B&lt;/div&gt;
+  &lt;div class="item"&gt;C&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .container {
+    display: flex;
+    height: 100px;
+    background: #eee;
+    justify-content: center;
+    align-items: center;
+  }
+  .item { background: #4B8BBE; color: white; padding: 10px; margin: 4px; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;A&lt;/div&gt;
+  &lt;div class="item"&gt;B&lt;/div&gt;
+  &lt;div class="item"&gt;C&lt;/div&gt;
+&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="flexbox" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#pseudo-classes"><span class="lbl2">ANTERIOR</span>← 08 · Pseudo-classes e pseudo-elementos</a><a class="next" href="#grid"><span class="lbl2">PRÓXIMO</span>10 · CSS Grid →</a></div>
+</section>
+
+<section class="topic" data-group="LAYOUTS MODERNOS" data-title="CSS Grid" id="grid">
+<div class="topic-head"><span class="topic-num">10</span><h2>CSS Grid</h2><button class="topic-star" data-star-target="grid">★</button></div>
+<p class="dek">Layouts de duas dimensões, com linhas e colunas ao mesmo tempo.</p>
+<p>Enquanto flexbox é ótimo para uma dimensão (linha OU coluna), <code>display: grid</code> organiza os filhos em linhas E colunas simultaneamente. <code>grid-template-columns</code> define quantas colunas existem e o tamanho de cada uma.</p>
+<div class="codeblock" data-cbid="grid">
+<div class="cb-top"><span class="cb-title">grid.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .item {
+    background: #4B8BBE;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;1&lt;/div&gt;
+  &lt;div class="item"&gt;2&lt;/div&gt;
+  &lt;div class="item"&gt;3&lt;/div&gt;
+  &lt;div class="item"&gt;4&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> A unidade <code>fr</code> (fração) divide o espaço disponível proporcionalmente — <code>1fr 1fr 1fr</code> cria três colunas de largura igual, sem precisar calcular porcentagens.</div>
+<div class="callout"><b>Aprofundando:</b> A função <code>repeat()</code> evita repetir a mesma medida várias vezes: <code>grid-template-columns: repeat(3, 1fr)</code> é idêntico a <code>1fr 1fr 1fr</code>, mas mais fácil de ajustar quando o número de colunas muda.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-grid">
+<div class="cb-top"><span class="cb-title">grid_repeat.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .item { background: #FFD43B; padding: 16px; text-align: center; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;1&lt;/div&gt;
+  &lt;div class="item"&gt;2&lt;/div&gt;
+  &lt;div class="item"&gt;3&lt;/div&gt;
+  &lt;div class="item"&gt;4&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="grid">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual unidade CSS divide o espaço disponível em frações proporcionais, muito usada em grid?</p>
+<div class="opts">
+<button class="opt" data-correct="false">px</button>
+<button class="opt" data-correct="true">fr</button>
+<button class="opt" data-correct="false">vh</button>
+</div>
+<button class="hint-btn" data-hint="É uma abreviação de &quot;fração&quot;, em inglês." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">O que repeat(3, 1fr) em grid-template-columns faz?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Cria 3 colunas de largura igual</button>
+<button class="opt" data-correct="false">Repete o conteúdo 3 vezes</button>
+<button class="opt" data-correct="false">Cria 1 coluna com 3 linhas</button>
+</div>
+<button class="hint-btn" data-hint="Pense no equivalente a escrever &quot;1fr 1fr 1fr&quot;." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie um grid com 2 colunas de largura igual e 4 itens dentro.</p>
+<div class="codeblock" data-cbid="challenge-grid">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    display: grid;
+    /* defina as colunas aqui */
+    gap: 8px;
+  }
+  .item { background: #4B8BBE; color: white; padding: 16px; text-align: center; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;A&lt;/div&gt;
+  &lt;div class="item"&gt;B&lt;/div&gt;
+  &lt;div class="item"&gt;C&lt;/div&gt;
+  &lt;div class="item"&gt;D&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .item { background: #4B8BBE; color: white; padding: 16px; text-align: center; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;A&lt;/div&gt;
+  &lt;div class="item"&gt;B&lt;/div&gt;
+  &lt;div class="item"&gt;C&lt;/div&gt;
+  &lt;div class="item"&gt;D&lt;/div&gt;
+&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="grid" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#flexbox"><span class="lbl2">ANTERIOR</span>← 09 · Flexbox</a><a class="next" href="#responsivo"><span class="lbl2">PRÓXIMO</span>11 · Design responsivo (media queries) →</a></div>
+</section>
+
+<section class="topic" data-group="LAYOUTS MODERNOS" data-title="Design responsivo (media queries)" id="responsivo">
+<div class="topic-head"><span class="topic-num">11</span><h2>Design responsivo (media queries)</h2><button class="topic-star" data-star-target="responsivo">★</button></div>
+<p class="dek">Fazendo o layout se adaptar a telas de tamanhos diferentes.</p>
+<p>Media queries aplicam regras CSS só quando certas condições são verdadeiras — o mais comum é o tamanho da tela: <code>@media (max-width: 600px) { ... }</code> aplica estilos só quando a largura da tela é 600px ou menos, como em celulares.</p>
+<div class="codeblock" data-cbid="responsivo">
+<div class="cb-top"><span class="cb-title">responsivo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    display: flex;
+    gap: 10px;
+  }
+  @media (max-width: 500px) {
+    .container {
+      flex-direction: column;
+    }
+  }
+  .item { background: #4B8BBE; color: white; padding: 16px; flex: 1; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;Redimensione o preview para ver o efeito&lt;/div&gt;
+  &lt;div class="item"&gt;Item 2&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> É comum escrever CSS pensando primeiro no celular ("mobile-first") e depois usar media queries para adicionar estilos extras em telas maiores, em vez do contrário.</div>
+<div class="callout"><b>Aprofundando:</b> Além de largura da tela, media queries também podem verificar orientação (<code>orientation: portrait</code>) ou preferências do usuário, como <code>prefers-color-scheme: dark</code>, usada para aplicar automaticamente um tema escuro.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-responsivo">
+<div class="cb-top"><span class="cb-title">tema_escuro_auto.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  body {
+    background: white;
+    color: black;
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: #14181f;
+      color: white;
+    }
+  }
+&lt;/style&gt;
+
+&lt;p&gt;O fundo desta página respeita o tema do seu sistema.&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="responsivo">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que @media (max-width: 600px) faz?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Aplica o estilo só quando a tela tem 600px de largura ou menos</button>
+<button class="opt" data-correct="false">Limita a largura máxima de qualquer elemento a 600px</button>
+<button class="opt" data-correct="false">Define o tamanho da fonte em 600px</button>
+</div>
+<button class="hint-btn" data-hint="Pense em uma &quot;pergunta&quot; sobre o tamanho da tela." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">O que significa a abordagem "mobile-first" no CSS?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Escrever o CSS pensando primeiro em telas pequenas, depois ajustar para as maiores</button>
+<button class="opt" data-correct="false">Só oferecer o site para celulares</button>
+<button class="opt" data-correct="false">Não usar media queries</button>
+</div>
+<button class="hint-btn" data-hint="Pense na ordem em que você projeta o layout: qual tela vem primeiro?" type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Faça um container flex mudar de linha para coluna quando a tela for menor que 700px.</p>
+<div class="codeblock" data-cbid="challenge-responsivo">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .container {
+    display: flex;
+    gap: 8px;
+  }
+  /* adicione a media query aqui */
+  .item { background: #4B8BBE; color: white; padding: 16px; flex: 1; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;1&lt;/div&gt;
+  &lt;div class="item"&gt;2&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .container {
+    display: flex;
+    gap: 8px;
+  }
+  @media (max-width: 700px) {
+    .container {
+      flex-direction: column;
+    }
+  }
+  .item { background: #4B8BBE; color: white; padding: 16px; flex: 1; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;1&lt;/div&gt;
+  &lt;div class="item"&gt;2&lt;/div&gt;
+&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="responsivo" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#grid"><span class="lbl2">ANTERIOR</span>← 10 · CSS Grid</a><a class="next" href="#variaveis-css"><span class="lbl2">PRÓXIMO</span>12 · Variáveis CSS →</a></div>
+</section>
+
+<section class="topic" data-group="LAYOUTS MODERNOS" data-title="Variáveis CSS" id="variaveis-css">
+<div class="topic-head"><span class="topic-num">12</span><h2>Variáveis CSS</h2><button class="topic-star" data-star-target="variaveis-css">★</button></div>
+<p class="dek">Reaproveitando valores em toda a folha de estilo.</p>
+<p>Variáveis CSS (também chamadas de custom properties) são definidas com dois traços (<code>--cor-principal: #4B8BBE;</code>) e usadas com <code>var(--cor-principal)</code>. Elas evitam repetir o mesmo valor várias vezes e facilitam trocar tudo de uma vez só.</p>
+<div class="codeblock" data-cbid="variaveis-css">
+<div class="cb-top"><span class="cb-title">variaveis.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  :root {
+    --cor-principal: #4B8BBE;
+    --espaco: 16px;
+  }
+  .botao {
+    background: var(--cor-principal);
+    color: white;
+    padding: var(--espaco);
+  }
+  .titulo {
+    color: var(--cor-principal);
+  }
+&lt;/style&gt;
+
+&lt;h2 class="titulo"&gt;Título com a cor principal&lt;/h2&gt;
+&lt;button class="botao"&gt;Botão com a mesma cor&lt;/button&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> <code>:root</code> é um seletor que representa o elemento raiz da página — variáveis definidas ali ficam disponíveis em toda a folha de estilo.</div>
+<div class="callout"><b>Aprofundando:</b> Trocar o valor de uma única variável (por exemplo, <code>--cor-principal</code>) atualiza automaticamente todos os lugares que usam <code>var(--cor-principal)</code> — é exatamente esse princípio que torna trocar de tema (claro/escuro) muito mais simples de manter.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-variaveis-css">
+<div class="cb-top"><span class="cb-title">tema_com_variaveis.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  :root {
+    --bg: white;
+    --texto: black;
+  }
+  body {
+    background: var(--bg);
+    color: var(--texto);
+  }
+&lt;/style&gt;
+
+&lt;p&gt;Trocando só duas variáveis, o tema inteiro muda.&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="variaveis-css">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Como uma variável CSS é definida?</p>
+<div class="opts">
+<button class="opt" data-correct="false">$cor-principal: azul;</button>
+<button class="opt" data-correct="true">--cor-principal: azul;</button>
+<button class="opt" data-correct="false">var cor-principal = azul;</button>
+</div>
+<button class="hint-btn" data-hint="Repare nos dois traços antes do nome no exemplo." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Como você usa o valor de uma variável CSS chamada --espaco?</p>
+<div class="opts">
+<button class="opt" data-correct="false">get(--espaco)</button>
+<button class="opt" data-correct="true">var(--espaco)</button>
+<button class="opt" data-correct="false">--espaco()</button>
+</div>
+<button class="hint-btn" data-hint="É uma função com um nome bem direto: &quot;variável&quot;, em inglês." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Crie uma variável --cor-destaque e use-a para colorir tanto o texto de um título quanto o fundo de um botão.</p>
+<div class="codeblock" data-cbid="challenge-variaveis-css">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  :root {
+    /* defina sua variável aqui */
+  }
+  .titulo { /* use a variável aqui */ }
+  .botao { /* use a variável aqui */ color: white; padding: 10px; }
+&lt;/style&gt;
+
+&lt;h2 class="titulo"&gt;Título&lt;/h2&gt;
+&lt;button class="botao"&gt;Botão&lt;/button&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  :root {
+    --cor-destaque: #e67e22;
+  }
+  .titulo { color: var(--cor-destaque); }
+  .botao { background: var(--cor-destaque); color: white; padding: 10px; }
+&lt;/style&gt;
+
+&lt;h2 class="titulo"&gt;Título&lt;/h2&gt;
+&lt;button class="botao"&gt;Botão&lt;/button&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="variaveis-css" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#responsivo"><span class="lbl2">ANTERIOR</span>← 11 · Design responsivo (media queries)</a><a class="next" href="#transicoes-animacoes"><span class="lbl2">PRÓXIMO</span>13 · Transições e animações →</a></div>
+</section>
+
+<section class="topic" data-group="EFEITOS E CASCATA" data-title="Transições e animações" id="transicoes-animacoes">
+<div class="topic-head"><span class="topic-num">13</span><h2>Transições e animações</h2><button class="topic-star" data-star-target="transicoes-animacoes">★</button></div>
+<p class="dek">Dando vida a mudanças de estilo, em vez de trocas bruscas.</p>
+<p><code>transition</code> anima suavemente a mudança de uma propriedade (como em um <code>:hover</code>). Para animações mais elaboradas e repetíveis, use <code>@keyframes</code> junto com <code>animation</code>.</p>
+<div class="codeblock" data-cbid="transicoes-animacoes">
+<div class="cb-top"><span class="cb-title">transicao.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .botao {
+    background: #4B8BBE;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  .botao:hover {
+    background: #FFD43B;
+    color: #14181f;
+    transform: translateY(-2px);
+  }
+&lt;/style&gt;
+
+&lt;button class="botao"&gt;Passe o mouse suavemente&lt;/button&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> Sem <code>transition</code>, qualquer mudança de estilo (como em um <code>:hover</code>) acontece instantaneamente — a propriedade transition é o que cria a sensação de suavidade.</div>
+<div class="callout"><b>Aprofundando:</b> <code>@keyframes</code> define uma sequência de estados ao longo do tempo (0% ao 100%), e <code>animation</code> aplica essa sequência a um elemento, podendo repetir infinitamente com <code>animation-iteration-count: infinite</code>.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-transicoes-animacoes">
+<div class="cb-top"><span class="cb-title">keyframes.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  @keyframes pulsar {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  .circulo {
+    width: 50px;
+    height: 50px;
+    background: #4B8BBE;
+    border-radius: 50%;
+    animation: pulsar 1.5s ease infinite;
+  }
+&lt;/style&gt;
+
+&lt;div class="circulo"&gt;&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="transicoes-animacoes">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">O que a propriedade transition faz sozinha, sem @keyframes?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Cria animações infinitas complexas</button>
+<button class="opt" data-correct="true">Anima suavemente a mudança de uma propriedade entre dois estados</button>
+<button class="opt" data-correct="false">Só funciona em imagens</button>
+</div>
+<button class="hint-btn" data-hint="Pense em algo simples: cor mudando devagar em vez de instantaneamente." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Para que serve @keyframes?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Definir uma sequência de estados ao longo de uma animação</button>
+<button class="opt" data-correct="false">Substituir a propriedade transition sempre</button>
+<button class="opt" data-correct="false">Só funciona em textos</button>
+</div>
+<button class="hint-btn" data-hint="Pense em &quot;quadros-chave&quot; de uma animação, do 0% ao 100%." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Faça um botão crescer levemente (scale) quando o mouse passar por cima, com uma transição suave de 0.2s.</p>
+<div class="codeblock" data-cbid="challenge-transicoes-animacoes">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .botao {
+    background: #4B8BBE;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    /* adicione a transition aqui */
+  }
+  /* adicione o :hover com transform: scale aqui */
+&lt;/style&gt;
+
+&lt;button class="botao"&gt;Passe o mouse&lt;/button&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .botao {
+    background: #4B8BBE;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    transition: transform 0.2s ease;
+  }
+  .botao:hover {
+    transform: scale(1.1);
+  }
+&lt;/style&gt;
+
+&lt;button class="botao"&gt;Passe o mouse&lt;/button&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="transicoes-animacoes" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#variaveis-css"><span class="lbl2">ANTERIOR</span>← 12 · Variáveis CSS</a><a class="next" href="#especificidade-cascata"><span class="lbl2">PRÓXIMO</span>14 · Especificidade e cascata →</a></div>
+</section>
+
+<section class="topic" data-group="EFEITOS E CASCATA" data-title="Especificidade e cascata" id="especificidade-cascata">
+<div class="topic-head"><span class="topic-num">14</span><h2>Especificidade e cascata</h2><button class="topic-star" data-star-target="especificidade-cascata">★</button></div>
+<p class="dek">Como o navegador decide qual regra vence quando há conflito.</p>
+<p>Quando duas regras miram o mesmo elemento, vence a mais <b>específica</b>: ids (mais específico) &gt; classes &gt; tags (menos específico). Entre regras de mesma especificidade, vence a que aparece <b>por último</b> no CSS — é a "cascata" do nome CSS.</p>
+<div class="codeblock" data-cbid="especificidade-cascata">
+<div class="cb-top"><span class="cb-title">especificidade.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  p { color: black; }
+  .aviso { color: orange; }
+  #critico { color: red; }
+&lt;/style&gt;
+
+&lt;p&gt;Texto normal (preto)&lt;/p&gt;
+&lt;p class="aviso"&gt;Texto de aviso (laranja, classe vence tag)&lt;/p&gt;
+&lt;p class="aviso" id="critico"&gt;Texto crítico (vermelho, id vence classe)&lt;/p&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout warn"><b>Cuidado:</b> <code>!important</code> força uma regra a vencer quase qualquer outra — mas é considerado uma prática arriscada, porque dificulta descobrir por que um estilo não está sendo aplicado depois.</div>
+<div class="callout"><b>Aprofundando:</b> Uma forma prática de pensar na especificidade: conte quantos ids, classes e tags aparecem no seletor — quanto mais ids, mais forte a regra. Ferramentas de inspeção do navegador (botão direito → Inspecionar) mostram exatamente qual regra está vencendo e por quê.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-especificidade-cascata">
+<div class="cb-top"><span class="cb-title">ordem_importa.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .botao { background: blue; }
+  .botao { background: green; } /* esta vence, por vir depois */
+&lt;/style&gt;
+
+&lt;button class="botao"&gt;Este botão fica verde&lt;/button&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="especificidade-cascata">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Entre um seletor de id e um de classe mirando o mesmo elemento, qual vence?</p>
+<div class="opts">
+<button class="opt" data-correct="false">A classe, sempre</button>
+<button class="opt" data-correct="true">O id, por ser mais específico</button>
+<button class="opt" data-correct="false">Depende só da ordem no arquivo</button>
+</div>
+<button class="hint-btn" data-hint="Pense na hierarquia: id é mais específico que classe." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Entre duas regras de mesma especificidade, qual vence?</p>
+<div class="opts">
+<button class="opt" data-correct="false">A primeira que aparece no CSS</button>
+<button class="opt" data-correct="true">A que aparece por último no CSS</button>
+<button class="opt" data-correct="false">As duas se anulam</button>
+</div>
+<button class="hint-btn" data-hint="Pense na palavra &quot;cascata&quot; — a água desce, a regra mais recente &quot;cai por cima&quot;." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Dado o CSS abaixo, adicione uma nova regra para que o parágrafo com id "especial" fique com o texto azul, respeitando a especificidade.</p>
+<div class="codeblock" data-cbid="challenge-especificidade-cascata">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  p { color: black; }
+  .aviso { color: orange; }
+  /* adicione a regra para #especial aqui */
+&lt;/style&gt;
+
+&lt;p class="aviso" id="especial"&gt;Este parágrafo deveria ficar azul.&lt;/p&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  p { color: black; }
+  .aviso { color: orange; }
+  #especial { color: blue; }
+&lt;/style&gt;
+
+&lt;p class="aviso" id="especial"&gt;Este parágrafo deveria ficar azul.&lt;/p&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="especificidade-cascata" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#transicoes-animacoes"><span class="lbl2">ANTERIOR</span>← 13 · Transições e animações</a><a class="next" href="#boas-praticas"><span class="lbl2">PRÓXIMO</span>15 · Boas práticas em CSS →</a></div>
+</section>
+
+<section class="topic" data-group="EFEITOS E CASCATA" data-title="Boas práticas em CSS" id="boas-praticas">
+<div class="topic-head"><span class="topic-num">15</span><h2>Boas práticas em CSS</h2><button class="topic-star" data-star-target="boas-praticas">★</button></div>
+<p class="dek">Escrevendo estilos organizados e fáceis de manter.</p>
+<p>Boas práticas comuns: prefira classes a ids para estilo (ids ficam reservados para JavaScript ou âncoras); evite <code>!important</code>; use nomes de classe descritivos (<code>.cartao-produto</code>, não <code>.c1</code>); e agrupe propriedades relacionadas visualmente no código.</p>
+<div class="codeblock" data-cbid="boas-praticas">
+<div class="cb-top"><span class="cb-title">boas_praticas.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* ruim: nome genérico, difícil de entender depois */
+  .c1 { background: #f5f5f5; padding: 16px; }
+
+  /* melhor: nome descritivo do papel do elemento */
+  .cartao-produto {
+    background: #f5f5f5;
+    padding: 16px;
+    border-radius: 8px;
+  }
+&lt;/style&gt;
+
+&lt;div class="cartao-produto"&gt;Produto em destaque&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Dica:</b> Organize seu CSS em seções com comentários (<code>/* Botões */</code>, <code>/* Layout */</code>) — em arquivos grandes, isso facilita muito encontrar o que você precisa editar.</div>
+<div class="callout"><b>Aprofundando:</b> Uma metodologia popular para nomear classes é o <b>BEM</b> (Block, Element, Modifier), como <code>.cartao__titulo--destaque</code> — não é obrigatório usá-la, mas conhecer o conceito ajuda a entender código de outros times.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-boas-praticas">
+<div class="cb-top"><span class="cb-title">nomes_consistentes.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* padrão simples e consistente */
+  .cartao { padding: 16px; }
+  .cartao-titulo { font-weight: bold; }
+  .cartao-preco { color: green; }
+&lt;/style&gt;
+
+&lt;div class="cartao"&gt;
+  &lt;p class="cartao-titulo"&gt;Tênis esportivo&lt;/p&gt;
+  &lt;p class="cartao-preco"&gt;R$ 199,90&lt;/p&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="boas-praticas">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Por que evitar nomes de classe genéricos, como .c1 ou .x?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Porque o navegador não aceita esses nomes</button>
+<button class="opt" data-correct="true">Porque dificultam entender o propósito da classe depois</button>
+<button class="opt" data-correct="false">Porque deixam o CSS mais lento</button>
+</div>
+<button class="hint-btn" data-hint="Pense em você mesmo revendo esse código daqui a 6 meses." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Por que evitar !important sempre que possível?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Porque não funciona na maioria dos navegadores</button>
+<button class="opt" data-correct="true">Porque dificulta descobrir por que um estilo não está sendo aplicado</button>
+<button class="opt" data-correct="false">Porque deixa o site mais lento</button>
+</div>
+<button class="hint-btn" data-hint="Pense em como seria depurar um estilo que &quot;nada&quot; consegue sobrescrever." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Renomeie a classe genérica ".x" abaixo para um nome descritivo, mantendo o mesmo estilo.</p>
+<div class="codeblock" data-cbid="challenge-boas-praticas">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .x {
+    background: #eee;
+    padding: 12px;
+    border-left: 4px solid orange;
+  }
+&lt;/style&gt;
+
+&lt;div class="x"&gt;Aviso importante para o usuário.&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .caixa-aviso {
+    background: #eee;
+    padding: 12px;
+    border-left: 4px solid orange;
+  }
+&lt;/style&gt;
+
+&lt;div class="caixa-aviso"&gt;Aviso importante para o usuário.&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="boas-praticas" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#especificidade-cascata"><span class="lbl2">ANTERIOR</span>← 14 · Especificidade e cascata</a><a class="next" href="#projeto"><span class="lbl2">PRÓXIMO</span>16 · Projeto final: card de perfil estilizado →</a></div>
+</section>
+
+<section class="topic" data-group="PRÓXIMOS PASSOS" data-title="Projeto final: card de perfil estilizado" id="projeto">
+<div class="topic-head"><span class="topic-num">16</span><h2>Projeto final: card de perfil estilizado</h2><button class="topic-star" data-star-target="projeto">★</button></div>
+<p class="dek">Juntando box model, flexbox, cores e sombra em um componente completo.</p>
+<p>Este projeto reúne várias técnicas do curso: um card com sombra e cantos arredondados (box model + backgrounds), texto organizado com flexbox, e um botão com efeito ao passar o mouse (transições) — o tipo de componente que aparece em praticamente todo site moderno.</p>
+<div class="codeblock" data-cbid="projeto">
+<div class="cb-top"><span class="cb-title">card_perfil.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .card {
+    max-width: 260px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    padding: 20px;
+    text-align: center;
+    font-family: sans-serif;
+  }
+  .card img {
+    border-radius: 50%;
+    width: 80px;
+  }
+  .card h3 { margin: 12px 0 4px 0; }
+  .card p { color: #666; margin: 0 0 16px 0; }
+  .card button {
+    background: #4B8BBE;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+  }
+  .card button:hover {
+    background: #FFD43B;
+    color: #14181f;
+  }
+&lt;/style&gt;
+
+&lt;div class="card"&gt;
+  &lt;img src="https://picsum.photos/seed/perfil/100/100" alt="Foto de perfil"&gt;
+  &lt;h3&gt;Ana Souza&lt;/h3&gt;
+  &lt;p&gt;Desenvolvedora front-end&lt;/p&gt;
+  &lt;button&gt;Seguir&lt;/button&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="callout"><b>Desafio:</b> Tente adicionar mais uma linha de "estatísticas" no card (como "120 seguidores") usando flexbox para colocar os números lado a lado.</div>
+<div class="callout"><b>Aprofundando:</b> Repare como o card combina box-shadow + border-radius (visual), flexbox implícito no alinhamento centralizado do texto, e transition no botão — nenhuma dessas técnicas é complexa sozinha, mas juntas criam um componente que parece profissional.</div>
+<h3 class="extra-h3">Mais um exemplo</h3>
+<div class="codeblock" data-cbid="extra-projeto">
+<div class="cb-top"><span class="cb-title">card_com_estatisticas.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 12px;
+  }
+  .stats div { text-align: center; }
+  .stats strong { display: block; font-size: 18px; }
+&lt;/style&gt;
+
+&lt;div class="stats"&gt;
+  &lt;div&gt;&lt;strong&gt;120&lt;/strong&gt;seguidores&lt;/div&gt;
+  &lt;div&gt;&lt;strong&gt;45&lt;/strong&gt;posts&lt;/div&gt;
+&lt;/div&gt;</pre>
+</div>
+<div class="out"></div>
+<div class="quiz" data-qtotal="2" data-quiz="projeto">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual propriedade do card cria o efeito de sombra suave ao redor dele?</p>
+<div class="opts">
+<button class="opt" data-correct="false">border-radius</button>
+<button class="opt" data-correct="true">box-shadow</button>
+<button class="opt" data-correct="false">text-align</button>
+</div>
+<button class="hint-btn" data-hint="Você já viu essa propriedade no capítulo de backgrounds e bordas." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">O que transition: background 0.2s ease no botão do card faz?</p>
+<div class="opts">
+<button class="opt" data-correct="true">Anima a mudança de cor de fundo suavemente em 0.2 segundos</button>
+<button class="opt" data-correct="false">Faz o botão desaparecer depois de 0.2s</button>
+<button class="opt" data-correct="false">Aumenta o tamanho do botão permanentemente</button>
+</div>
+<button class="hint-btn" data-hint="Pense no efeito que você já viu no capítulo de transições e animações." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Adicione ao card um segundo botão "Mensagem", ao lado do botão "Seguir", usando flexbox para colocá-los lado a lado com espaço entre eles.</p>
+<div class="codeblock" data-cbid="challenge-projeto">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  .card { max-width: 260px; background: white; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); padding: 20px; text-align: center; font-family: sans-serif; }
+  .botoes {
+    /* organize os botões lado a lado aqui */
+  }
+&lt;/style&gt;
+
+&lt;div class="card"&gt;
+  &lt;h3&gt;Ana Souza&lt;/h3&gt;
+  &lt;div class="botoes"&gt;
+    &lt;button&gt;Seguir&lt;/button&gt;
+    &lt;button&gt;Mensagem&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  .card { max-width: 260px; background: white; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); padding: 20px; text-align: center; font-family: sans-serif; }
+  .botoes {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+&lt;/style&gt;
+
+&lt;div class="card"&gt;
+  &lt;h3&gt;Ana Souza&lt;/h3&gt;
+  &lt;div class="botoes"&gt;
+    &lt;button&gt;Seguir&lt;/button&gt;
+    &lt;button&gt;Mensagem&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="projeto" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#boas-praticas"><span class="lbl2">ANTERIOR</span>← 15 · Boas práticas em CSS</a><a class="next" href="#recursos"><span class="lbl2">PRÓXIMO</span>17 · Para onde ir depois →</a></div>
+</section>
+
+<section class="topic" data-group="PRÓXIMOS PASSOS" data-title="Para onde ir depois" id="recursos">
+<div class="topic-head"><span class="topic-num">17</span><h2>Para onde ir depois</h2><button class="topic-star" data-star-target="recursos">★</button></div>
+<p class="dek">Ideias de próximos passos para continuar praticando fora deste guia.</p>
+<p>Com HTML e CSS, você já consegue construir páginas completas e bonitas. O próximo passo natural é o JavaScript, que adiciona interatividade real — como reagir a cliques, validar formulários e atualizar a página sem recarregar.</p>
+<div class="callout"><b>Dica:</b> Ferramentas como o <a href="https://caniuse.com" target="_blank">caniuse.com</a> mostram quais propriedades CSS funcionam em quais navegadores — útil quando algo funciona no seu navegador mas não em outro.</div>
+<div class="quiz" data-qtotal="2" data-quiz="recursos">
+<div class="qtitle">TESTE RÁPIDO <span class="qcounter"><span class="qc-now">1</span>/<span class="qc-total">2</span></span></div>
+<div class="qblock" data-qindex="0">
+<p class="q">Qual é o próximo passo natural depois de HTML e CSS?</p>
+<div class="opts">
+<button class="opt" data-correct="true">JavaScript, para adicionar interatividade</button>
+<button class="opt" data-correct="false">Voltar para HTML puro, sem CSS</button>
+<button class="opt" data-correct="false">Não existe próximo passo necessário</button>
+</div>
+<button class="hint-btn" data-hint="Pense na divisão clássica: estrutura, estilo e comportamento." type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<div class="qblock" data-qindex="1" hidden>
+<p class="q">Para que serve uma ferramenta como o caniuse.com?</p>
+<div class="opts">
+<button class="opt" data-correct="false">Gerar CSS automaticamente</button>
+<button class="opt" data-correct="true">Mostrar em quais navegadores uma propriedade CSS funciona</button>
+<button class="opt" data-correct="false">Validar HTML</button>
+</div>
+<button class="hint-btn" data-hint="Pense no nome do site: &quot;posso usar [isso]?&quot;" type="button">💡 dica</button>
+<p class="hint-text"></p>
+<p class="feedback"></p>
+</div>
+<button class="next-q-btn" hidden type="button">Próxima pergunta →</button>
+</div>
+<div class="challenge-box">
+<div class="challenge-head">🧩 Desafio prático</div>
+<p class="challenge-desc">Desafio final: estilize uma pequena seção "Sobre mim" combinando pelo menos: uma variável CSS, flexbox e um efeito de hover em um link ou botão.</p>
+<div class="codeblock" data-cbid="challenge-recursos">
+<div class="cb-top"><span class="cb-title">seu_estilo.html</span>
+<div class="cb-actions"><button class="cb-btn run" onclick="runCode(this)">▶ executar</button><button class="cb-btn" onclick="copyCode(this)">copiar</button></div>
+</div>
+<pre class="code-editor" contenteditable="true" spellcheck="false">&lt;style&gt;
+  /* combine variável CSS + flexbox + hover aqui */
+&lt;/style&gt;
+
+&lt;div class="sobre"&gt;
+  &lt;h2&gt;Sobre mim&lt;/h2&gt;
+  &lt;p&gt;Adoro aprender coisas novas.&lt;/p&gt;
+  &lt;a href="#" class="link"&gt;Ver mais&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div class="out"></div>
+<button class="solution-toggle" type="button">Ver uma solução possível</button>
+<div class="solution-box" hidden><pre>&lt;style&gt;
+  :root {
+    --cor-principal: #4B8BBE;
+  }
+  .sobre {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border-left: 4px solid var(--cor-principal);
+  }
+  .link {
+    color: var(--cor-principal);
+    transition: color 0.2s ease;
+  }
+  .link:hover {
+    color: #FFD43B;
+  }
+&lt;/style&gt;
+
+&lt;div class="sobre"&gt;
+  &lt;h2&gt;Sobre mim&lt;/h2&gt;
+  &lt;p&gt;Adoro aprender coisas novas.&lt;/p&gt;
+  &lt;a href="#" class="link"&gt;Ver mais&lt;/a&gt;
+&lt;/div&gt;</pre></div>
+</div>
+<label class="marker-done"><input data-mark="recursos" type="checkbox"> marcar capítulo como concluído</label>
+<div class="chapnav"><a class="prev" href="#projeto"><span class="lbl2">ANTERIOR</span>← 16 · Projeto final: card de perfil estilizado</a><a class="next" href="#topo"><span class="lbl2">VOLTAR</span>Topo do guia ↑</a></div>
+</section>
+
+<footer>
+<span class="fmark">&gt;&gt;&gt;</span> Continue praticando: estilize páginas pequenas, experimente cores e layouts diferentes, e use o inspecionar elemento do navegador para aprender com outros sites.
+<div class="reslist">
+<a href="https://developer.mozilla.org/pt-BR/docs/Web/CSS" rel="noopener" target="_blank">Documentação MDN (pt-BR)</a>
+<a href="https://caniuse.com" rel="noopener" target="_blank">Compatibilidade entre navegadores</a>
+</div>
+</footer>
+</main>
+</div>
+<!-- Command palette -->
+<div class="palette-overlay" id="paletteOverlay">
+<div class="palette">
+<div class="palette-input-row">
+<span class="palette-prompt">&gt;&gt;&gt;</span>
+<input autocomplete="off" class="palette-input" id="paletteInput" placeholder="Digite o nome de um capítulo..." type="text"/>
+<span class="palette-esc">esc</span>
+</div>
+<div class="palette-results" id="paletteResults"></div>
+</div>
+</div>
+<div class="toast" id="toast">Progresso salvo</div>
+<div class="modal-overlay" id="achModal">
+<div class="modal-box">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">conquistas.py</span>
+<button class="modal-close" id="achModalClose">✕</button>
+</div>
+<div class="modal-body">
+<h3>🏆 Conquistas</h3>
+<p class="modal-sub" id="achModalSub">&gt;&gt;&gt; 0 de 0 desbloqueadas</p>
+<div class="ach-list" id="achGrid"></div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="statsModal">
+<div class="modal-box">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">estatisticas.py</span>
+<button class="modal-close" id="statsModalClose">✕</button>
+</div>
+<div class="modal-body">
+<h3>📊 Estatísticas</h3>
+<p class="modal-sub">&gt;&gt;&gt; desempenho.resumo()</p>
+<div class="cert-banner" id="certBanner" hidden>
+<span>🎓 Você concluiu os 18 capítulos! Seu certificado está pronto.</span>
+<button id="certOpenBtn">Ver certificado</button>
+</div>
+<div class="term-out" id="statGrid"></div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="certModal">
+<div class="modal-box">
+<div class="modal-termbar">
+<span class="modal-dots"><span></span><span></span><span></span></span>
+<span class="modal-path">certificado.py</span>
+<button class="modal-close" id="certModalClose">✕</button>
+</div>
+<div class="modal-body cert-wrap">
+<div class="cert-frame">
+<span class="cert-eyebrow">&gt;&gt;&gt; import aprendizado</span>
+<h3 class="cert-title">Certificado de Conclusão</h3>
+<p class="cert-sub">Curso de CSS — 18 capítulos, do zero ao layout bonito</p>
+<div class="cert-name" id="certName" contenteditable="true" spellcheck="false">Seu nome aqui</div>
+<p class="cert-foot" id="certDate">concluído em --/--/----</p>
+</div>
+<div class="cert-actions">
+<button id="certPrintBtn">🖨 imprimir / salvar em PDF</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  const STORAGE_KEY = 'curso_css_progresso';
+  const FAV_KEY = 'curso_css_favoritos';
+  const COLLAPSE_KEY = 'curso_css_grupos_colapsados';
+  const LAST_KEY = 'curso_css_ultimo_capitulo';
+  const THEME_KEY = 'curso_css_tema';
+  const FONT_KEY = 'curso_css_fonte';
+  const GAME_KEY = 'curso_css_progresso_xp';
+
+  function loadJSON(key){ try{ return JSON.parse(localStorage.getItem(key)) || {}; }catch(e){ return {}; } }
+  function saveJSON(key, data){ try{ localStorage.setItem(key, JSON.stringify(data)); }catch(e){} }
+
+  let progress = loadJSON(STORAGE_KEY);
+  let favorites = loadJSON(FAV_KEY);
+  let collapsed = loadJSON(COLLAPSE_KEY);
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function copyCode(btn){
+    const pre = btn.closest('.codeblock').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'copiado!';
+      setTimeout(() => btn.textContent = old, 1400);
+    });
+  }
+
+  // =========================================================
+  // ===== TEMA (claro / escuro) ================================
+  // =========================================================
+  const themeBtn = document.getElementById('themeBtn');
+  function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    themeBtn.textContent = theme === 'light' ? '🌞 tema' : '🌓 tema';
+  }
+  applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  themeBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  // =========================================================
+  // ===== TAMANHO DA FONTE =====================================
+  // =========================================================
+  const FONT_SIZES = [14, 15, 16, 17, 18, 19, 20];
+  let fontIdx = parseInt(localStorage.getItem(FONT_KEY), 10);
+  if (isNaN(fontIdx) || fontIdx < 0 || fontIdx >= FONT_SIZES.length) fontIdx = 2; // 16px padrão
+  function applyFontSize(){
+    document.documentElement.style.fontSize = FONT_SIZES[fontIdx] + 'px';
+    localStorage.setItem(FONT_KEY, String(fontIdx));
+  }
+  applyFontSize();
+  document.getElementById('fontDecBtn').addEventListener('click', () => { fontIdx = Math.max(0, fontIdx - 1); applyFontSize(); });
+  document.getElementById('fontIncBtn').addEventListener('click', () => { fontIdx = Math.min(FONT_SIZES.length - 1, fontIdx + 1); applyFontSize(); });
+
+  // =========================================================
+  // ===== XP / NÍVEL / SEQUÊNCIA / CONQUISTAS / ESTATÍSTICAS ===
+  // =========================================================
+  const XP_PER_LEVEL = 100;
+  const ACHIEVEMENTS = [
+    { id: 'primeiro_capitulo', icon: '🌱', name: 'Primeiro passo', desc: 'Conclua seu primeiro capítulo', check: g => g.chaptersDone >= 1 },
+    { id: 'meio_caminho', icon: '🏃', name: 'Meio do caminho', desc: 'Conclua 9 capítulos', check: g => g.chaptersDone >= 9 },
+    { id: 'curso_completo', icon: '🎓', name: 'Curso completo', desc: 'Conclua os 18 capítulos', check: g => g.chaptersDone >= 18 },
+    { id: 'dez_acertos', icon: '🎯', name: 'Mira certeira', desc: 'Acerte 10 exercícios', check: g => g.correctAnswers >= 10 },
+    { id: 'todos_acertos', icon: '💯', name: 'Sem erros', desc: 'Acerte 30 exercícios', check: g => g.correctAnswers >= 30 },
+    { id: 'sequencia_3', icon: '🔥', name: 'Constância', desc: 'Estude 3 dias seguidos', check: g => g.streak >= 3 },
+    { id: 'sequencia_7', icon: '🔥', name: 'Uma semana!', desc: 'Estude 7 dias seguidos', check: g => g.streak >= 7 },
+    { id: 'code_runner', icon: '⚡', name: 'Mãos na massa', desc: 'Execute código 5 vezes', check: g => g.codeRuns >= 5 },
+    { id: 'code_runner_20', icon: '🚀', name: 'Programador de verdade', desc: 'Execute código 20 vezes', check: g => g.codeRuns >= 20 },
+    { id: 'nivel_5', icon: '⭐', name: 'Nível 5', desc: 'Alcance o nível 5', check: g => levelFor(g.xp) >= 5 },
+    { id: 'curioso', icon: '🔍', name: 'Curioso', desc: 'Use a busca de capítulos', check: g => g.usedSearch },
+    { id: 'favoritou', icon: '★', name: 'Organizado', desc: 'Marque um capítulo como favorito', check: g => g.usedFavorite },
+  ];
+
+  let game = Object.assign({
+    xp: 0, chaptersDone: 0, correctAnswers: 0, wrongAnswers: 0, codeRuns: 0,
+    streak: 0, lastVisitDate: null, unlocked: [], usedSearch: false, usedFavorite: false
+  }, loadJSON(GAME_KEY));
+
+  function levelFor(xp){ return Math.floor(xp / XP_PER_LEVEL) + 1; }
+
+  function saveGame(){ saveJSON(GAME_KEY, game); }
+
+  function addXP(amount, reason){
+    const beforeLevel = levelFor(game.xp);
+    game.xp += amount;
+    const afterLevel = levelFor(game.xp);
+    saveGame();
+    refreshXPUI();
+    if (afterLevel > beforeLevel){
+      showToast('🎉 Nível ' + afterLevel + ' alcançado!');
+    }
+    checkAchievements();
+  }
+
+  function refreshXPUI(){
+    const level = levelFor(game.xp);
+    document.getElementById('xpVal').textContent = game.xp + ' xp';
+    document.getElementById('levelVal').textContent = 'nível ' + level;
+    const streakEl = document.getElementById('streakVal');
+    streakEl.textContent = '🔥 ' + game.streak + 'd';
+    streakEl.classList.toggle('sl-zero', game.streak === 0);
+    const inLevel = game.xp % XP_PER_LEVEL;
+    document.getElementById('xpBarFill').style.width = inLevel + '%';
+  }
+
+  function checkAchievements(){
+    let newlyUnlocked = null;
+    ACHIEVEMENTS.forEach(a => {
+      if (!game.unlocked.includes(a.id) && a.check(game)){
+        game.unlocked.push(a.id);
+        newlyUnlocked = a;
+      }
+    });
+    if (newlyUnlocked){
+      saveGame();
+      showToast('🏆 Conquista desbloqueada: ' + newlyUnlocked.name);
+    }
+  }
+
+  // ----- streak (sequência diária) -----
+  function todayStr(){ return new Date().toISOString().slice(0, 10); }
+  function updateStreak(){
+    const today = todayStr();
+    if (game.lastVisitDate === today) return; // já contabilizado hoje
+    if (game.lastVisitDate){
+      const last = new Date(game.lastVisitDate + 'T00:00:00');
+      const now = new Date(today + 'T00:00:00');
+      const diffDays = Math.round((now - last) / 86400000);
+      game.streak = diffDays === 1 ? game.streak + 1 : 1;
+    } else {
+      game.streak = 1;
+    }
+    game.lastVisitDate = today;
+    saveGame();
+  }
+  updateStreak();
+  refreshXPUI();
+
+  // ----- modais: conquistas / estatísticas / certificado -----
+  function renderAchievements(){
+    const list = document.getElementById('achGrid');
+    list.innerHTML = ACHIEVEMENTS.map(a => {
+      const unlocked = game.unlocked.includes(a.id);
+      return '<div class="ach-row' + (unlocked ? ' unlocked' : '') + '">' +
+        '<span class="ach-mark">[' + (unlocked ? '✓' : ' ') + ']</span>' +
+        '<span class="ach-icon">' + a.icon + '</span>' +
+        '<span class="ach-text"><span class="ach-name">' + a.name + '</span>' +
+        '<span class="ach-desc">' + a.desc + '</span></span></div>';
+    }).join('');
+    document.getElementById('achModalSub').textContent = '>>> ' + game.unlocked.length + ' de ' + ACHIEVEMENTS.length + ' desbloqueadas';
+  }
+
+  function renderStats(){
+    const totalAnswers = game.correctAnswers + game.wrongAnswers;
+    const accuracy = totalAnswers > 0 ? Math.round(game.correctAnswers / totalAnswers * 100) : 0;
+    const out = document.getElementById('statGrid');
+    const rows = [
+      ['xp_total', game.xp],
+      ['nivel', levelFor(game.xp)],
+      ['sequencia_dias', game.streak],
+      ['capitulos_concluidos', game.chaptersDone + ' / 18'],
+      ['acerto_exercicios', accuracy + '%'],
+      ['codigos_executados', game.codeRuns],
+    ];
+    out.innerHTML = '<div class="to-prompt">&gt;&gt;&gt; {</div>' +
+      rows.map(([k, v]) => '<div class="to-line">&nbsp;&nbsp;<span class="to-key">"' + k + '":</span> <span class="to-val">' + v + '</span></div>').join('') +
+      '<div class="to-prompt">}</div>';
+
+    const banner = document.getElementById('certBanner');
+    banner.hidden = game.chaptersDone < 18;
+  }
+
+  function openModal(id){ document.getElementById(id).classList.add('show'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+  document.getElementById('achBtn').addEventListener('click', () => { renderAchievements(); openModal('achModal'); });
+  document.getElementById('statsBtn').addEventListener('click', () => { renderStats(); openModal('statsModal'); });
+  document.getElementById('achModalClose').addEventListener('click', () => closeModal('achModal'));
+  document.getElementById('statsModalClose').addEventListener('click', () => closeModal('statsModal'));
+  document.getElementById('achModal').addEventListener('click', (e) => { if (e.target.id === 'achModal') closeModal('achModal'); });
+  document.getElementById('statsModal').addEventListener('click', (e) => { if (e.target.id === 'statsModal') closeModal('statsModal'); });
+
+  // ----- certificado -----
+  const CERT_NAME_KEY = 'curso_css_cert_nome';
+  const certName = document.getElementById('certName');
+  const savedCertName = localStorage.getItem(CERT_NAME_KEY);
+  if (savedCertName) certName.textContent = savedCertName;
+  certName.addEventListener('blur', () => localStorage.setItem(CERT_NAME_KEY, certName.textContent.trim() || 'Seu nome aqui'));
+  certName.addEventListener('focus', () => { if (certName.textContent === 'Seu nome aqui') certName.textContent = ''; });
+
+  function openCertificate(){
+    const d = new Date();
+    document.getElementById('certDate').textContent = 'concluído em ' + d.toLocaleDateString('pt-BR');
+    closeModal('statsModal');
+    openModal('certModal');
+  }
+  document.getElementById('certOpenBtn').addEventListener('click', openCertificate);
+  document.getElementById('certModalClose').addEventListener('click', () => closeModal('certModal'));
+  document.getElementById('certModal').addEventListener('click', (e) => { if (e.target.id === 'certModal') closeModal('certModal'); });
+  document.getElementById('certPrintBtn').addEventListener('click', () => window.print());
+
+  // =========================================================
+  // ===== EDITOR DE CÓDIGO REAL (preview HTML/CSS ao vivo) =====
+  // =========================================================
+  function runCode(btn){
+    const block = btn.closest('.codeblock');
+    const pre = block.querySelector('pre.code-editor');
+    const out = block.nextElementSibling;
+    const code = pre.innerText;
+
+    out.classList.remove('placeholder', 'err');
+    out.innerHTML = '<span class="lbl">RESULTADO (renderizado pelo navegador)</span>' +
+      '<iframe class="html-preview" sandbox="allow-same-origin" title="Pré-visualização"></iframe>';
+    const iframe = out.querySelector('iframe');
+    iframe.srcdoc = code;
+    out.classList.add('shown');
+
+    game.codeRuns += 1;
+    saveGame();
+    addXP(2, 'run');
+  }
+
+  // deixa o painel de saída sempre visível, como um "Try it Yourself" — com um
+  // placeholder até a primeira execução real, em vez de ficar escondido.
+  document.querySelectorAll('.codeblock').forEach(cb => {
+    const out = cb.nextElementSibling;
+    if (out && out.classList.contains('out')){
+      out.innerHTML = '<span class="lbl">SAÍDA</span><span class="out-placeholder">clique em ▶ executar para ver o resultado real deste código</span>';
+      out.classList.add('shown', 'placeholder');
+    }
+  });
+
+  // =========================================================
+  // ===== QUIZ (com dicas e 2 perguntas por capítulo) ==========
+  // =========================================================
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    const qblocks = Array.from(quiz.querySelectorAll('.qblock'));
+    const nextBtn = quiz.querySelector('.next-q-btn');
+    const counterNow = quiz.querySelector('.qc-now');
+    let current = 0;
+
+    function setupBlock(block){
+      const opts = block.querySelectorAll('.opt');
+      const feedback = block.querySelector('.feedback');
+      const hintBtn = block.querySelector('.hint-btn');
+      const hintText = block.querySelector('.hint-text');
+      let answered = false;
+
+      if (hintBtn){
+        hintBtn.addEventListener('click', () => {
+          hintText.textContent = '💡 ' + hintBtn.dataset.hint;
+          hintText.classList.add('shown');
+          hintBtn.disabled = true;
+        });
+      }
+
+      opts.forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (answered) return;
+          answered = true;
+          const isCorrect = opt.dataset.correct === 'true';
+          opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else if (o === opt) o.classList.add('wrong'); });
+          feedback.style.display = 'block';
+
+          if (isCorrect){
+            game.correctAnswers += 1;
+            feedback.innerHTML = 'Isso mesmo! <span class="xp-pop">+10 XP</span>';
+            addXP(10, 'correct');
+          } else {
+            game.wrongAnswers += 1;
+            saveGame();
+            feedback.textContent = 'Não foi essa — a resposta certa está marcada em verde.';
+          }
+
+          const isLast = (current === qblocks.length - 1);
+          if (!isLast){
+            nextBtn.hidden = false;
+          } else {
+            const section = quiz.closest('section.topic');
+            const box = section.querySelector('.marker-done input');
+            if (box && !box.checked) { box.checked = true; box.dispatchEvent(new Event('change')); }
+          }
+        });
+      });
+    }
+
+    qblocks.forEach(setupBlock);
+
+    if (nextBtn){
+      nextBtn.addEventListener('click', () => {
+        qblocks[current].hidden = true;
+        current += 1;
+        qblocks[current].hidden = false;
+        if (counterNow) counterNow.textContent = String(current + 1);
+        nextBtn.hidden = true;
+      });
+    }
+  });
+
+  // runCode/copyCode are already wired via inline onclick="" attributes on the buttons.
+  // botão "ver uma solução possível" dos desafios práticos
+  document.querySelectorAll('.solution-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const box = btn.nextElementSibling;
+      const isHidden = box.hidden;
+      box.hidden = !isHidden;
+      btn.textContent = isHidden ? 'Ocultar solução' : 'Ver uma solução possível';
+    });
+  });
+  // add a status line under each codeblock for pyodide loading feedback
+  document.querySelectorAll('.codeblock').forEach(cb => {
+    const status = document.createElement('div');
+    status.className = 'cb-status';
+    cb.appendChild(status);
+  });
+
+  // ===== Progress + groups =====
+  const boxes = document.querySelectorAll('.marker-done input');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  const ringFg = document.getElementById('ringFg');
+  const ringPct = document.getElementById('ringPct');
+  const RING_CIRC = 113;
+  const groups = document.querySelectorAll('.navgroup');
+
+  function updateProgress(save){
+    const total = boxes.length;
+    let done = 0;
+    boxes.forEach(b => {
+      const key = b.dataset.mark;
+      const wasDone = !!progress[key];
+      if (save) progress[key] = b.checked;
+      if (progress[key]) { b.checked = true; done++; }
+      if (save && b.checked && !wasDone){
+        game.chaptersDone += 1;
+        addXP(25, 'chapter');
+      }
+      const navlink = document.querySelector('.navlink[data-target="'+key+'"]');
+      if (navlink) navlink.classList.toggle('done', !!progress[key]);
+    });
+    const pct = Math.round(done/total*100);
+    fill.style.width = pct + '%';
+    label.textContent = done + ' de ' + total + ' capítulos concluídos';
+    ringFg.style.strokeDashoffset = RING_CIRC - (RING_CIRC * pct/100);
+    ringPct.textContent = pct + '%';
+
+    groups.forEach(g => {
+      const links = g.querySelectorAll('.navlink');
+      const doneCount = Array.from(links).filter(l => progress[l.dataset.target]).length;
+      g.querySelector('.gcount').textContent = doneCount + '/' + links.length;
+      g.querySelector('.gprogress-fill').style.width = (doneCount/links.length*100) + '%';
+    });
+  }
+  // recompute chaptersDone from stored progress on load (without granting XP again)
+  game.chaptersDone = Object.values(progress).filter(Boolean).length;
+  boxes.forEach(b => b.addEventListener('change', () => { updateProgress(true); saveJSON(STORAGE_KEY, progress); showToast('Progresso salvo'); }));
+  updateProgress(false);
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if(!confirm('Reiniciar todo o progresso salvo?')) return;
+    progress = {};
+    boxes.forEach(b => b.checked = false);
+    saveJSON(STORAGE_KEY, progress);
+    updateProgress(false);
+    showToast('Progresso reiniciado');
+  });
+
+  // ===== Favorites =====
+  function applyFavorites(){
+    document.querySelectorAll('.star[data-star]').forEach(s => s.classList.toggle('on', !!favorites[s.dataset.star]));
+    document.querySelectorAll('.topic-star[data-star-target]').forEach(s => s.classList.toggle('on', !!favorites[s.dataset.starTarget]));
+  }
+  function toggleFavorite(key){
+    favorites[key] = !favorites[key];
+    saveJSON(FAV_KEY, favorites);
+    applyFavorites();
+    game.usedFavorite = true;
+    saveGame();
+    checkAchievements();
+  }
+  document.querySelectorAll('.star[data-star]').forEach(s => {
+    s.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(s.dataset.star); });
+  });
+  document.querySelectorAll('.topic-star[data-star-target]').forEach(s => {
+    s.addEventListener('click', () => toggleFavorite(s.dataset.starTarget));
+  });
+  applyFavorites();
+
+  let favOnly = false;
+  document.getElementById('favBtn').addEventListener('click', function(){
+    favOnly = !favOnly;
+    this.classList.toggle('active', favOnly);
+    document.querySelectorAll('.navlink').forEach(l => {
+      const key = l.dataset.target;
+      l.classList.toggle('hidden', favOnly && !favorites[key]);
+    });
+    groups.forEach(g => {
+      const visible = g.querySelectorAll('.navlink:not(.hidden)').length;
+      g.classList.toggle('hidden', favOnly && visible === 0);
+      if (favOnly) g.classList.remove('collapsed');
+    });
+  });
+
+  // ===== Collapsible groups =====
+  groups.forEach(g => {
+    const key = g.dataset.group;
+    if (collapsed[key]) g.classList.add('collapsed');
+    g.querySelector('.navgroup-head').addEventListener('click', () => {
+      g.classList.toggle('collapsed');
+      collapsed[key] = g.classList.contains('collapsed');
+      saveJSON(COLLAPSE_KEY, collapsed);
+    });
+  });
+
+  // ===== Active link / breadcrumb / last visited =====
+  const links = document.querySelectorAll('.navlink');
+  const sections = document.querySelectorAll('section.topic');
+  const crumbGroup = document.getElementById('crumbGroup');
+  const crumbChap = document.getElementById('crumbChap');
+  const continueBtn = document.getElementById('continueBtn');
+  const continueChap = document.getElementById('continueChap');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        const id = entry.target.id;
+        links.forEach(l => l.classList.toggle('active', l.dataset.target === id));
+        crumbGroup.textContent = entry.target.dataset.group;
+        crumbChap.textContent = entry.target.dataset.title;
+        saveJSON(LAST_KEY, { id: id, title: entry.target.dataset.title });
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  const lastVisited = loadJSON(LAST_KEY);
+  if (lastVisited && lastVisited.id){
+    continueChap.textContent = lastVisited.title;
+    continueBtn.classList.add('show');
+    continueBtn.addEventListener('click', () => { window.location.hash = lastVisited.id; });
+  }
+
+  // ===== Search filter (sidebar) =====
+  const searchbox = document.getElementById('searchbox');
+  searchbox.addEventListener('input', () => {
+    const q = searchbox.value.trim().toLowerCase();
+    if (q.length > 0 && !game.usedSearch){ game.usedSearch = true; saveGame(); checkAchievements(); }
+    links.forEach(l => {
+      const text = l.textContent.toLowerCase();
+      const passFav = !favOnly || favorites[l.dataset.target];
+      l.classList.toggle('hidden', (q.length > 0 && !text.includes(q)) || !passFav);
+    });
+    groups.forEach(g => {
+      const visible = g.querySelectorAll('.navlink:not(.hidden)').length;
+      g.classList.toggle('hidden', visible === 0);
+      if (q.length > 0) g.classList.remove('collapsed');
+    });
+  });
+
+  // ===== Command palette =====
+  const allChapters = Array.from(sections).map(s => ({ id: s.id, title: s.dataset.title, group: s.dataset.group }));
+  const paletteOverlay = document.getElementById('paletteOverlay');
+  const paletteInput = document.getElementById('paletteInput');
+  const paletteResults = document.getElementById('paletteResults');
+  let paletteSel = 0;
+  let paletteFiltered = allChapters;
+
+  function renderPalette(){
+    const q = paletteInput.value.trim().toLowerCase();
+    paletteFiltered = allChapters.filter(c => c.title.toLowerCase().includes(q) || c.group.toLowerCase().includes(q));
+    if (paletteFiltered.length === 0){
+      paletteResults.innerHTML = '<div class="palette-empty">Nenhum capítulo encontrado.</div>';
+      return;
+    }
+    paletteSel = Math.min(paletteSel, paletteFiltered.length - 1);
+    paletteResults.innerHTML = paletteFiltered.map((c, i) => {
+      const idx = allChapters.indexOf(c);
+      const num = String(idx).padStart(2,'0');
+      return '<div class="palette-item'+(i===paletteSel?' sel':'')+'" data-id="'+c.id+'" data-i="'+i+'"><span class="pi-idx">'+num+'</span><span>'+c.title+'</span><span class="pi-group">'+c.group+'</span></div>';
+    }).join('');
+  }
+
+  function openPalette(){
+    paletteOverlay.classList.add('show');
+    paletteInput.value = '';
+    paletteSel = 0;
+    renderPalette();
+    setTimeout(() => paletteInput.focus(), 30);
+  }
+  function closePalette(){ paletteOverlay.classList.remove('show'); }
+  function goToChapter(id){ window.location.hash = id; closePalette(); }
+
+  document.getElementById('paletteBtn').addEventListener('click', openPalette);
+  document.getElementById('paletteBtnHero').addEventListener('click', openPalette);
+  document.getElementById('paletteBtnMobile').addEventListener('click', openPalette);
+  paletteOverlay.addEventListener('click', (e) => { if (e.target === paletteOverlay) closePalette(); });
+  paletteInput.addEventListener('input', renderPalette);
+  paletteResults.addEventListener('click', (e) => {
+    const item = e.target.closest('.palette-item');
+    if (item) goToChapter(item.dataset.id);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      paletteOverlay.classList.contains('show') ? closePalette() : openPalette();
+      return;
+    }
+    if (e.key === 'Escape'){
+      closeModal('achModal'); closeModal('statsModal'); closeModal('certModal');
+    }
+    if (paletteOverlay.classList.contains('show')){
+      if (e.key === 'Escape'){ closePalette(); }
+      else if (e.key === 'ArrowDown'){ e.preventDefault(); paletteSel = Math.min(paletteSel+1, paletteFiltered.length-1); renderPalette(); }
+      else if (e.key === 'ArrowUp'){ e.preventDefault(); paletteSel = Math.max(paletteSel-1, 0); renderPalette(); }
+      else if (e.key === 'Enter'){ e.preventDefault(); if (paletteFiltered[paletteSel]) goToChapter(paletteFiltered[paletteSel].id); }
+      return;
+    }
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT'){
+      e.preventDefault(); searchbox.focus();
+    }
+  });
+
+  // ===== Mobile menu =====
+  const hamburger = document.getElementById('hamburger');
+  const sidenav = document.getElementById('sidenav');
+  const overlay = document.getElementById('overlay');
+  function closeMenu(){ sidenav.classList.remove('open'); overlay.classList.remove('show'); }
+  hamburger.addEventListener('click', () => { sidenav.classList.toggle('open'); overlay.classList.toggle('show'); });
+  overlay.addEventListener('click', closeMenu);
+  links.forEach(l => l.addEventListener('click', closeMenu));
+
+  // ===== Top scroll progress bar =====
+  const scrollbar = document.getElementById('scrollbar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    scrollbar.style.width = scrolled + '%';
+  });
+</script>
+
+</body>
+</html>
